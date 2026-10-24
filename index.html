@@ -69,9 +69,11 @@
             transform: translateY(-1px);
         }
 
-        .wax-seal {
-            background: radial-gradient(circle, var(--wax-red) 60%, #540e0e 100%);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+        /* SIGILLO CERALACCA ROSSA PERGAMENA */
+        .wax-seal-stamp {
+            background: radial-gradient(circle, #a81c1c 40%, #540e0e 100%);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+            border: 3px solid #6b1111;
         }
 
         .tab-btn.active {
@@ -79,11 +81,11 @@
             color: #1a0f0a;
         }
 
-        /* FOGLIO A4 PERGAMENA INGIALLITA MANTENUTO ANCHE IN STAMPA/PDF */
+        /* FOGLIO A4 PERGAMENA INGIALLITA MANTENUTO IN PDF */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 20mm;
+            padding: 15mm 20mm;
             margin: 0 auto 20px auto;
             background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95)) !important;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 50px rgba(74, 47, 27, 0.2);
@@ -94,17 +96,23 @@
             print-color-adjust: exact !important;
         }
 
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--leather-dark); }
         ::-webkit-scrollbar-thumb { background: var(--brass-dark); border-radius: 4px; }
 
-        /* REGOLE PER RIMUOVERE URL E RIFERIMENTI DI STAMPA BROWSER */
+        /* STAMPA PULITA PERGAMENA */
         @media print {
             body { background: transparent !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
             .a4-page {
-                width: 100% !important; min-height: 100vh !important;
-                margin: 0 !important; padding: 15mm !important;
+                width: 100% !important; 
+                height: 100vh !important;
+                margin: 0 !important; 
+                padding: 12mm 15mm !important;
                 box-shadow: none !important; 
                 page-break-after: always;
             }
@@ -181,11 +189,6 @@
 
         <section class="lg:col-span-8 space-y-6">
             <div class="parchment-bg leather-border p-5 md:p-6 rounded-lg relative">
-                <div class="absolute -top-3 -right-3 w-14 h-14 wax-seal rounded-full flex flex-col items-center justify-center text-amber-100 font-rye text-[9px] border border-amber-300 leading-tight">
-                    <span>OTIS</span>
-                    <span>CORBIN</span>
-                </div>
-
                 <div class="border-b-2 border-amber-900/40 pb-4 mb-4">
                     <div class="flex justify-between items-start flex-wrap gap-2">
                         <div>
@@ -326,7 +329,7 @@
                         <div id="developmentsList" class="space-y-4"></div>
                     </div>
 
-                    <!-- ARCHIVIO ATTI PERGAMENA SALVATI PER IL CLIENTE CON DOWNLOAD MULTI-FORMATO -->
+                    <!-- ARCHIVIO ATTI PERGAMENA SALVATI PER IL CLIENTE -->
                     <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/10">
                         <h4 class="font-rye text-md text-amber-950 mb-3 border-b border-amber-900/30 pb-2 flex items-center gap-2">
                             <i class="fa-solid fa-box-archive text-amber-800"></i> Atti in Pergamena Salvati nel Database
@@ -339,7 +342,7 @@
         </section>
     </div>
 
-    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA -->
+    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (IDENTICO AL SECONDO FILE) -->
     <div id="documentEditorView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
@@ -390,42 +393,52 @@
 
         <!-- CONTENITORE FOGLI PERGAMENA A4 -->
         <div id="parchmentPagesContainer" class="space-y-6">
-            <!-- Pagina 1 di Default -->
+            <!-- Pagina 1 di Default MODELLO SECONDO FILE -->
             <div class="a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between" id="parchment_page_1">
                 <div>
-                    <!-- INTESTAZIONE MODELLO ESATTO -->
-                    <div class="border-b-2 border-amber-950 pb-3 mb-6 text-center">
-                        <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-1">Studio Legale Otis Corbin</h1>
-                        <p class="font-serif-vintage text-sm font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
-                        <p class="font-typewriter text-xs text-amber-950 font-semibold mt-0.5">Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post</p>
+                    <!-- INTESTAZIONE MODELLO ESATTO DAL SECONDO FILE -->
+                    <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
+                        <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-0.5">Studio Legale Otis Corbin</h1>
+                        <p class="font-serif-vintage text-xs font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
+                        <p class="font-typewriter text-[11px] text-amber-950 font-semibold mt-0.5">Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post</p>
                     </div>
 
                     <!-- CAMPI CITTA' E ADDI' -->
-                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-6">
+                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-4">
                         <div class="flex items-center gap-1">
                             <span class="font-bold">Città di:</span>
-                            <input type="text" id="docCity" value="Strawberry" class="bg-transparent border-b border-amber-950 w-32 px-1 focus:outline-none">
+                            <input type="text" id="docCity" value="Strawberry" class="bg-transparent border-b border-amber-950 w-32 px-1 focus:outline-none font-bold">
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="font-bold">addì:</span>
-                            <input type="text" id="docDate" value="14 Maggio 1900" class="bg-transparent border-b border-amber-950 w-36 px-1 focus:outline-none">
+                            <input type="text" id="docDate" value="14 Maggio 1900" class="bg-transparent border-b border-amber-950 w-36 px-1 focus:outline-none font-bold">
                         </div>
                     </div>
 
                     <!-- CORPO DELL'ATTO -->
                     <div>
-                        <textarea id="docTextPage_1" rows="18" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                        <textarea id="docTextPage_1" rows="15" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                     </div>
                 </div>
 
-                <!-- PIE' DI PAGINA E FIRMA -->
-                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
-                    <div class="text-xs font-typewriter">
-                        <p class="font-bold text-sm text-amber-950">1900</p>
+                <!-- PIE' DI PAGINA E FIRMA CON SIGILLO CERALACCA ROSSA -->
+                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break">
+                    <!-- SIGILLO CERALACCA ROSSA -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 wax-seal-stamp rounded-full flex flex-col items-center justify-center text-amber-100 font-rye text-[8px] text-center leading-tight">
+                            <span class="font-bold">OTIS</span>
+                            <span class="text-[7px]">CORBIN</span>
+                            <span class="text-[6px] tracking-widest text-amber-300">LEX</span>
+                        </div>
+                        <div class="text-xs font-typewriter">
+                            <p class="font-bold text-sm text-amber-950 mb-0">1900</p>
+                        </div>
                     </div>
+
+                    <!-- FIRMA AVVOCATO -->
                     <div class="text-right">
                         <p class="font-signature text-3xl text-amber-950 font-bold mb-0">Otis Corbin</p>
-                        <p class="font-bold text-sm text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                        <p class="font-bold text-sm text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
                         <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
                     </div>
                 </div>
@@ -478,7 +491,7 @@
                     <textarea id="letterBody" rows="10" class="w-full bg-amber-50/30 border border-amber-900/30 rounded p-4 font-serif-vintage leading-relaxed resize-y text-base"></textarea>
                 </div>
 
-                <div class="pt-6 flex justify-between items-end border-t border-amber-900/30">
+                <div class="pt-6 flex justify-between items-end border-t border-amber-900/30 avoid-break">
                     <div class="text-xs font-typewriter text-amber-900">
                         <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
                         <p>Strawberry, West Elizabeth</p>
@@ -586,7 +599,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT GESTIONALE E ESPORTAZIONE MULTI-FORMATO -->
+    <!-- SCRIPT GESTIONALE E ESPORTAZIONE COMPLETA -->
     <script>
         let casesData = [
             {
@@ -597,11 +610,19 @@
                 sections: {
                     arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: []
                 },
-                witnesses: [],
-                developments: [],
+                witnesses: [
+                    { name: 'Arthur Morgan', role: 'Testimone Oculare', text: 'Presente al momento degli avvenimenti.' }
+                ],
+                developments: [
+                    { date: '12 Maggio 1900', note: 'Richiesta cauzione presentata allo Sceriffo.' }
+                ],
                 parchmentDocs: []
             }
         ];
+
+        let agendaData = [];
+        let financeData = [];
+        let magistratesData = [];
 
         let activeCaseId = '1900-01';
         let totalParchmentPages = 1;
@@ -610,6 +631,9 @@
             renderCasesList();
             renderActiveCase();
             populateClientDropdowns();
+            renderAgendaList();
+            renderFinanceList();
+            renderMagistratesList();
         };
 
         function switchTab(tab) {
@@ -648,6 +672,11 @@
                 `;
                 listContainer.appendChild(div);
             });
+        }
+
+        function filterCases() {
+            const txt = document.getElementById('searchCases').value;
+            renderCasesList(txt);
         }
 
         function getActiveCase() { return casesData.find(c => c.id === activeCaseId); }
@@ -731,6 +760,92 @@
             renderSectionFiles(sectionKey);
         }
 
+        // AGGIUNTA TESTIMONI E SVILUPPI
+        function addWitness() {
+            const name = prompt("Nome completo del testimone:");
+            if (!name) return;
+            const role = prompt("Ruolo (es. Testimone Oculare, Perito):") || "Testimone";
+            const text = prompt("Sommario della deposizione:") || "";
+
+            const c = getActiveCase();
+            if (!c.witnesses) c.witnesses = [];
+            c.witnesses.push({ name, role, text });
+            renderWitnesses();
+        }
+
+        function renderWitnesses() {
+            const c = getActiveCase();
+            const container = document.getElementById('witnessesList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!c.witnesses || c.witnesses.length === 0) {
+                container.innerHTML = `<p class="text-amber-900/60 italic text-xs">Nessun testimone iscritto a verbale.</p>`;
+                return;
+            }
+
+            c.witnesses.forEach((w, idx) => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-50/80 border border-amber-900/30 p-3 rounded text-xs space-y-1 relative";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center font-bold text-amber-950 font-typewriter">
+                        <span><i class="fa-solid fa-user-check text-amber-900"></i> ${w.name} (${w.role})</span>
+                        <button onclick="removeWitness(${idx})" class="text-red-900 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <p class="text-amber-900 font-serif-vintage italic">${w.text}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeWitness(idx) {
+            const c = getActiveCase();
+            c.witnesses.splice(idx, 1);
+            renderWitnesses();
+        }
+
+        function addDevelopment() {
+            const date = prompt("Data (es. 15 Maggio 1900):") || "1900";
+            const note = prompt("Dettagli trattativa / sviluppo:") || "";
+            if (!note) return;
+
+            const c = getActiveCase();
+            if (!c.developments) c.developments = [];
+            c.developments.push({ date, note });
+            renderDevelopments();
+        }
+
+        function renderDevelopments() {
+            const c = getActiveCase();
+            const container = document.getElementById('developmentsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!c.developments || c.developments.length === 0) {
+                container.innerHTML = `<p class="text-amber-900/60 italic text-xs">Nessuna trattativa o sviluppo registrato.</p>`;
+                return;
+            }
+
+            c.developments.forEach((d, idx) => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-50/80 border border-amber-900/30 p-3 rounded text-xs space-y-1";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center font-bold text-amber-950 font-typewriter">
+                        <span><i class="fa-solid fa-clock-rotate-left text-amber-900"></i> Data: ${d.date}</span>
+                        <button onclick="removeDevelopment(${idx})" class="text-red-900 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <p class="text-amber-900 font-serif-vintage">${d.note}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeDevelopment(idx) {
+            const c = getActiveCase();
+            c.developments.splice(idx, 1);
+            renderDevelopments();
+        }
+
         // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4
         function addParchmentPage() {
             totalParchmentPages++;
@@ -743,9 +858,9 @@
                     <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
                         <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
                     </div>
-                    <textarea id="docTextPage_${totalParchmentPages}" rows="22" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <textarea id="docTextPage_${totalParchmentPages}" rows="20" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                 </div>
-                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
+                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break">
                     <span class="text-xs font-typewriter font-bold">1900 — Pagina ${totalParchmentPages}</span>
                     <div class="text-right">
                         <p class="font-signature text-2xl text-amber-950 font-bold mb-0">Otis Corbin</p>
@@ -797,7 +912,7 @@
                 return;
             }
 
-            docs.forEach((doc, idx) => {
+            docs.forEach((doc) => {
                 const el = document.createElement('div');
                 el.className = "bg-amber-50/80 border border-amber-900/40 p-3 rounded flex flex-wrap justify-between items-center gap-2";
                 el.innerHTML = `
@@ -815,7 +930,7 @@
             });
         }
 
-        // ESPORTAZIONE NEI FORMATI PDF, DOCX E PNG
+        // ESPORTAZIONE
         function exportCurrentDoc(format) {
             const city = document.getElementById('docCity').value || "Strawberry";
             const title = `Atto_Studio_Corbin_${city}`;
@@ -878,26 +993,10 @@
             if (!doc) return;
 
             if (format === 'pdf') {
-                alert(`Impostazione dell'atto per la stampa PDF...`);
                 openDocumentWriterForCurrentCase();
+                window.print();
             } else if (format === 'docx') {
-                const { Document, Packer, Paragraph, TextRun } = window.docx;
-                let paragraphs = [
-                    new Paragraph({ children: [new TextRun({ text: "STUDIO LEGALE OTIS CORBIN", bold: true, size: 28 })] }),
-                    new Paragraph({ children: [new TextRun({ text: doc.title, bold: true, size: 24 })] }),
-                    new Paragraph({ text: "\n" })
-                ];
-                doc.pages.forEach((pTxt, idx) => {
-                    paragraphs.push(new Paragraph({ children: [new TextRun({ text: `--- Pagina ${idx + 1} ---`, bold: true })] }));
-                    paragraphs.push(new Paragraph({ children: [new TextRun({ text: pTxt })] }));
-                });
-                const d = new Document({ sections: [{ children: paragraphs }] });
-                Packer.toBlob(d).then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `${doc.title.replace(/\s+/g, '_')}.docx`;
-                    link.click();
-                });
+                exportDocxFormat(doc.title);
             } else if (format === 'png') {
                 exportPngFormat('parchment_page_1', doc.title);
             }
@@ -912,6 +1011,93 @@
             } else if (format === 'png') {
                 exportPngFormat('letterheadSection', subject);
             }
+        }
+
+        // AGGIUNTA SCADENZE, SPESE, AUTORITÀ, PROCURE
+        function addAgendaItem() {
+            const date = prompt("Data udienza / scadenza:");
+            const desc = prompt("Descrizione evento:");
+            if (!date || !desc) return;
+            agendaData.push({ date, desc });
+            renderAgendaList();
+        }
+
+        function renderAgendaList() {
+            const container = document.getElementById('agendaList');
+            if (!container) return;
+            container.innerHTML = agendaData.length ? '' : `<p class="text-amber-900/60 italic text-xs">Nessuna udienza in programma.</p>`;
+            agendaData.forEach((item, i) => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-50/80 p-3 border border-amber-900/30 rounded flex justify-between text-xs font-typewriter";
+                div.innerHTML = `<span><strong>${item.date}:</strong> ${item.desc}</span> <button onclick="agendaData.splice(${i},1);renderAgendaList()" class="text-red-900"><i class="fa-solid fa-trash"></i></button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function addExpenseItem() {
+            const desc = prompt("Causale operazione:");
+            const amount = prompt("Importo ($):");
+            if (!desc || !amount) return;
+            financeData.push({ desc, amount });
+            renderFinanceList();
+        }
+
+        function renderFinanceList() {
+            const container = document.getElementById('financeList');
+            if (!container) return;
+            container.innerHTML = financeData.length ? '' : `<p class="text-amber-900/60 italic text-xs">Nessun movimento cassa.</p>`;
+            financeData.forEach((item, i) => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-50/80 p-3 border border-amber-900/30 rounded flex justify-between text-xs font-typewriter";
+                div.innerHTML = `<span><strong>${item.desc}:</strong> $${item.amount}</span> <button onclick="financeData.splice(${i},1);renderFinanceList()" class="text-red-900"><i class="fa-solid fa-trash"></i></button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function addMagistrate() {
+            const name = prompt("Nome Autorità / Magistrato:");
+            const title = prompt("Titolo / Giurisdizione:");
+            if (!name) return;
+            magistratesData.push({ name, title });
+            renderMagistratesList();
+        }
+
+        function renderMagistratesList() {
+            const container = document.getElementById('magistratesList');
+            if (!container) return;
+            container.innerHTML = magistratesData.length ? '' : `<p class="text-amber-900/60 italic text-xs col-span-2">Nessun contatto salvato in rubrica.</p>`;
+            magistratesData.forEach((m, i) => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-50/80 p-3 border border-amber-900/30 rounded flex justify-between text-xs font-serif-vintage";
+                div.innerHTML = `<div><strong class="block text-sm font-rye text-amber-950">${m.name}</strong><span class="text-amber-900 font-typewriter">${m.title}</span></div> <button onclick="magistratesData.splice(${i},1);renderMagistratesList()" class="text-red-900"><i class="fa-solid fa-trash"></i></button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function generateMandateDoc() {
+            const selId = document.getElementById('formClientSelect').value;
+            const c = casesData.find(item => item.id === selId);
+            if (!c) { alert("Seleziona un cliente prima."); return; }
+
+            const preview = document.getElementById('mandatePreview');
+            preview.innerHTML = `
+                <div class="bg-amber-100/90 p-6 border border-amber-900/50 rounded font-serif-vintage space-y-4">
+                    <h3 class="font-rye text-center text-lg uppercase text-amber-950">MANDATO DI RAPPRESENTANZA E PROCURA SPECIALE</h3>
+                    <p class="text-xs leading-relaxed">Il sottoscritto <strong>${c.client.firstName} ${c.client.lastName}</strong>, residente in ${c.client.city}, delega e nomina quale proprio difensore e procuratore legale l'Avv. Otis Corbin per la causa: <em>"${c.title}"</em>.</p>
+                    <div class="pt-4 flex justify-between items-end font-typewriter text-xs">
+                        <span>Strawberry, 1900</span>
+                        <span class="font-signature text-2xl">${c.client.firstName} ${c.client.lastName}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function autoFillLetterFromCase() {
+            const selId = document.getElementById('letterCaseSelect').value;
+            const c = casesData.find(item => item.id === selId);
+            if (!c) return;
+            document.getElementById('letterRecipient').value = `${c.client.firstName} ${c.client.lastName} — ${c.client.city}`;
+            document.getElementById('letterSubject').value = `Pratica ${c.client.mailNo} - ${c.title}`;
         }
 
         function populateClientDropdowns() {
