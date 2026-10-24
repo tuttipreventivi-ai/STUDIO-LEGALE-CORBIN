@@ -27,14 +27,12 @@
         .font-signature { font-family: 'Alex Brush', cursive; }
 
         :root {
-            --parchment: #f2e3c6;
-            --parchment-dark: #e1cca0;
-            --ink: #2b1e16;
+            --parchment: #f9f3e6;
+            --parchment-dark: #e8d7b5;
+            --ink: #1f140e;
             --leather-dark: #2c1a0e;
-            --leather-mid: #4a2f1b;
             --brass: #c59b27;
             --brass-dark: #8c6a15;
-            --wax-red: #8b1e1e;
         }
 
         body {
@@ -46,8 +44,8 @@
         }
 
         .parchment-bg {
-            background: #f2e3c6 linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95));
-            box-shadow: inset 0 0 80px rgba(74, 47, 27, 0.3), 0 10px 30px rgba(0,0,0,0.7);
+            background: #f9f3e6 linear-gradient(to bottom, rgba(249,243,230,0.98), rgba(232,215,181,0.95));
+            box-shadow: inset 0 0 80px rgba(74, 47, 27, 0.2), 0 10px 30px rgba(0,0,0,0.7);
             border: 2px solid var(--brass-dark);
         }
 
@@ -69,11 +67,25 @@
             transform: translateY(-1px);
         }
 
-        /* SIGILLO CERALACCA ROSSA PERGAMENA */
-        .wax-seal-stamp {
-            background: radial-gradient(circle, #a81c1c 40%, #540e0e 100%);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.4);
-            border: 3px solid #6b1111;
+        /* SIGILLO CERALACCA DI DESIGN RAFFINATO (SULLA FIRMA) */
+        .wax-seal-designer {
+            width: 72px;
+            height: 72px;
+            background: radial-gradient(circle at 35% 35%, #b91c1c 0%, #7f1d1d 60%, #450a0a 100%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6);
+            border: 2px solid #571010;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .wax-seal-designer::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 1.5px dashed rgba(254, 243, 199, 0.6);
+            border-radius: 50%;
         }
 
         .tab-btn.active {
@@ -81,23 +93,29 @@
             color: #1a0f0a;
         }
 
-        /* FOGLIO A4 PERGAMENA INGIALLITA MANTENUTO IN PDF */
+        /* FOGLIO A4 PERGAMENA CORRISPONDENTE AL SECONDO FILE (IDENTICO) */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 15mm 20mm;
+            padding: 12mm 18mm;
             margin: 0 auto 20px auto;
-            background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95)) !important;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 50px rgba(74, 47, 27, 0.2);
+            background: #fdf8eb linear-gradient(to bottom, rgba(249,243,230,0.99), rgba(235,218,185,0.97)) !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 40px rgba(74, 47, 27, 0.15);
             border: 1px solid var(--brass-dark);
             position: relative;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            page-break-after: always;
+            page-break-inside: avoid;
         }
 
         .avoid-break {
             page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -109,16 +127,18 @@
             body { background: transparent !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
             .a4-page {
-                width: 100% !important; 
-                height: 100vh !important;
+                width: 210mm !important; 
+                height: 297mm !important;
                 margin: 0 !important; 
-                padding: 12mm 15mm !important;
+                padding: 12mm 18mm !important;
                 box-shadow: none !important; 
-                page-break-after: always;
+                border: none !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
             }
             @page {
                 margin: 0;
-                size: A4;
+                size: A4 portrait;
             }
         }
     </style>
@@ -207,12 +227,12 @@
                     </div>
                 </div>
 
-                <!-- Rubrica Cliente -->
+                <!-- Rubrica Cliente (Con Campi Missiva alfanumerica e Ruolo) -->
                 <div class="mb-6 bg-amber-900/10 p-4 rounded border border-amber-900/30">
                     <h3 class="font-rye text-md text-amber-950 mb-2 flex items-center gap-2 border-b border-amber-900/30 pb-1">
                         <i class="fa-solid fa-address-book text-amber-800"></i> Rubrica Anagrafica Cliente
                     </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-typewriter">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-xs font-typewriter">
                         <div>
                             <label class="block font-bold text-amber-900 uppercase">Nome</label>
                             <input type="text" id="clientFirstName" onchange="updateClientField('firstName', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded">
@@ -223,7 +243,11 @@
                         </div>
                         <div>
                             <label class="block font-bold text-amber-900 uppercase">Nr. Missiva</label>
-                            <input type="text" id="clientMailNo" onchange="updateClientField('mailNo', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded font-bold text-amber-950">
+                            <input type="text" id="clientMailNo" onchange="updateClientField('mailNo', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded font-bold text-amber-950" placeholder="Alfanumerico">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-amber-900 uppercase">Ruolo</label>
+                            <input type="text" id="clientRole" onchange="updateClientField('role', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded" placeholder="es. Querelante">
                         </div>
                         <div>
                             <label class="block font-bold text-amber-900 uppercase">Città</label>
@@ -342,7 +366,7 @@
         </section>
     </div>
 
-    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (IDENTICO AL SECONDO FILE) -->
+    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (IDENTICO ESATTO AL SECONDO FILE + FIRMA CON CERALACCA ELEGANTE SOPRA) -->
     <div id="documentEditorView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
@@ -393,10 +417,10 @@
 
         <!-- CONTENITORE FOGLI PERGAMENA A4 -->
         <div id="parchmentPagesContainer" class="space-y-6">
-            <!-- Pagina 1 di Default MODELLO SECONDO FILE -->
-            <div class="a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between" id="parchment_page_1">
+            <!-- Pagina 1 di Default: Modello Esatto del Secondo File + Sigillo di Design sopra la Firma -->
+            <div class="a4-page font-serif-vintage text-amber-950 relative" id="parchment_page_1">
                 <div>
-                    <!-- INTESTAZIONE MODELLO ESATTO DAL SECONDO FILE -->
+                    <!-- INTESTAZIONE MODELLO ESATTO SECONDO FILE -->
                     <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
                         <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-0.5">Studio Legale Otis Corbin</h1>
                         <p class="font-serif-vintage text-xs font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
@@ -417,29 +441,33 @@
 
                     <!-- CORPO DELL'ATTO -->
                     <div>
-                        <textarea id="docTextPage_1" rows="15" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                        <textarea id="docTextPage_1" rows="16" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                     </div>
                 </div>
 
-                <!-- PIE' DI PAGINA E FIRMA CON SIGILLO CERALACCA ROSSA -->
-                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break">
-                    <!-- SIGILLO CERALACCA ROSSA -->
-                    <div class="flex items-center gap-3">
-                        <div class="w-14 h-14 wax-seal-stamp rounded-full flex flex-col items-center justify-center text-amber-100 font-rye text-[8px] text-center leading-tight">
-                            <span class="font-bold">OTIS</span>
-                            <span class="text-[7px]">CORBIN</span>
-                            <span class="text-[6px] tracking-widest text-amber-300">LEX</span>
-                        </div>
-                        <div class="text-xs font-typewriter">
-                            <p class="font-bold text-sm text-amber-950 mb-0">1900</p>
-                        </div>
+                <!-- PIE' DI PAGINA E FIRMA CON CERALACCA DI DESIGN SOVRAPPOSTA -->
+                <div class="pt-3 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
+                    <!-- Spazio vuoto o rif. anno -->
+                    <div class="text-xs font-typewriter text-amber-900">
+                        <span class="font-bold text-amber-950">Stile Legale Wildlands</span>
                     </div>
 
-                    <!-- FIRMA AVVOCATO -->
-                    <div class="text-right">
-                        <p class="font-signature text-3xl text-amber-950 font-bold mb-0">Otis Corbin</p>
-                        <p class="font-bold text-sm text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
-                        <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
+                    <!-- FIRMA AVVOCATO EDIFICATA CON CERALACCA DI DESIGN SOPRA -->
+                    <div class="text-right relative flex items-center gap-4">
+                        <!-- Ceralacca Design Sofisticata -->
+                        <div class="wax-seal-designer shadow-xl" title="Sigillo Ufficiale Studio Otis Corbin">
+                            <div class="text-center leading-none text-amber-100 font-rye text-[8px] flex flex-col justify-center items-center">
+                                <span class="tracking-widest text-[9px] font-bold text-amber-200">OC</span>
+                                <span class="text-[6px] tracking-tighter text-amber-300">1900</span>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 -mr-2">Otis Corbin</p>
+                            <p class="font-bold text-sm text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
+                            <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
+                            <p class="font-typewriter text-[10px] text-amber-950 font-bold">1900</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -496,9 +524,14 @@
                         <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
                         <p>Strawberry, West Elizabeth</p>
                     </div>
-                    <div class="text-center">
-                        <p class="font-signature text-3xl text-amber-950 font-bold px-4 border-b border-amber-950/60 inline-block">Otis Corbin</p>
-                        <p class="text-[10px] font-typewriter text-amber-900 uppercase tracking-widest mt-1">Avv. Otis Corbin — Patrocinante</p>
+                    <div class="text-right flex items-center gap-3">
+                        <div class="wax-seal-designer" style="width: 50px; height: 50px;">
+                            <div class="text-center leading-none text-amber-100 font-rye text-[7px]">OC</div>
+                        </div>
+                        <div>
+                            <p class="font-signature text-3xl text-amber-950 font-bold px-4 inline-block mb-0">Otis Corbin</p>
+                            <p class="text-[10px] font-typewriter text-amber-900 uppercase tracking-widest mt-1">Avv. Otis Corbin — Patrocinante</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -523,11 +556,11 @@
         <div id="financeList" class="space-y-4"></div>
     </div>
 
-    <!-- VISTA 6: RUBRICA AUTORITÀ -->
+    <!-- VISTA 6: RUBRICA AUTORITÀ (Con campi Missiva e Ruolo integrati) -->
     <div id="magistratesView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
         <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-user-shield text-amber-800"></i> Rubrica Generale Autorità & Magistrati</h2>
-            <button onclick="addMagistrate()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1"><i class="fa-solid fa-user-plus"></i> Nuova Autorità</button>
+            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-user-shield text-amber-800"></i> Rubrica Generale Autorità & Contatti</h2>
+            <button onclick="addMagistrate()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1"><i class="fa-solid fa-user-plus"></i> Nuovo Contatto</button>
         </div>
         <div id="magistratesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
@@ -535,7 +568,7 @@
     <!-- VISTA 7: PROCURE & MANDATI -->
     <div id="formsView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
         <div class="border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-file-contract text-amber-800"></i> Modulistica Procure alle Liti & Mandati Spefici</h2>
+            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-file-contract text-amber-800"></i> Modulistica Procure alle Liti & Mandati Specifici</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-amber-50/60 p-4 border border-amber-900/30 rounded space-y-3">
@@ -550,7 +583,7 @@
         </div>
     </div>
 
-    <!-- MODALE NUOVA CAUSA -->
+    <!-- MODALE NUOVA CAUSA (Con campi Missiva alfanumerica e Ruolo) -->
     <div id="newCaseModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="parchment-bg leather-border max-w-lg w-full p-6 rounded-lg shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-2">
@@ -560,40 +593,80 @@
             <form onsubmit="createNewCase(event)" class="space-y-3 font-serif-vintage text-sm">
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Nome Cliente</label>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Nome</label>
                         <input type="text" id="newClientFirstName" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
                     </div>
                     <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Cognome Cliente</label>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Cognome</label>
                         <input type="text" id="newClientLastName" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Nr. Missiva</label>
-                        <input type="text" id="newClientMailNo" placeholder="es. MS-1900-44" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Campo Missiva (Alfanumerico)</label>
+                        <input type="text" id="newClientMailNo" placeholder="es. MS-1900-44A" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter font-bold">
                     </div>
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Campo Ruolo</label>
+                        <input type="text" id="newClientRole" placeholder="es. Imputato / Cliente" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-bold text-amber-950 text-xs uppercase">Città</label>
                         <input type="text" id="newClientCity" placeholder="es. Strawberry" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Stato Causa</label>
+                        <select id="newStatus" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                            <option value="In Corso">In Corso</option>
+                            <option value="In Appello">In Appello</option>
+                            <option value="Taglia Pendente">Taglia Pendente</option>
+                            <option value="Archiviata">Archiviata</option>
+                        </select>
                     </div>
                 </div>
                 <div>
                     <label class="block font-bold text-amber-950 text-xs uppercase">Oggetto della Causa / Titolo</label>
                     <input type="text" id="newTitle" placeholder="es. Contenzioso Terreni e Furto di Bestiame" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-bold">
                 </div>
-                <div>
-                    <label class="block font-bold text-amber-950 text-xs uppercase">Stato Causa</label>
-                    <select id="newStatus" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
-                        <option value="In Corso">In Corso</option>
-                        <option value="In Appello">In Appello</option>
-                        <option value="Taglia Pendente">Taglia Pendente</option>
-                        <option value="Archiviata">Archiviata</option>
-                    </select>
-                </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" onclick="closeModal('newCaseModal')" class="px-4 py-2 border border-amber-900 rounded text-xs uppercase font-bold">Annulla</button>
                     <button type="submit" class="btn-western px-5 py-2 rounded text-xs uppercase">Registra Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE NUOVO CONTATTO / AUTORITÀ (Con campi Missiva e Ruolo) -->
+    <div id="newMagistrateModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="parchment-bg leather-border max-w-md w-full p-6 rounded-lg shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-2">
+                <h3 class="font-rye text-lg text-amber-950">Nuovo Contatto / Autorità</h3>
+                <button onclick="closeModal('newMagistrateModal')" class="text-amber-950 font-bold text-xl">&times;</button>
+            </div>
+            <form onsubmit="saveNewMagistrate(event)" class="space-y-3 font-serif-vintage text-sm">
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Nome e Cognome / Autorità</label>
+                    <input type="text" id="magName" placeholder="es. Giudice G. Freeman" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Campo Missiva (Alfanum.)</label>
+                        <input type="text" id="magMailNo" placeholder="es. MIS-882" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Campo Ruolo</label>
+                        <input type="text" id="magRole" placeholder="es. Magistrato Capo" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Giurisdizione / Sede</label>
+                    <input type="text" id="magTitle" placeholder="es. Tribunale Distrettuale Strawberry" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                </div>
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" onclick="closeModal('newMagistrateModal')" class="px-4 py-2 border border-amber-900 rounded text-xs uppercase font-bold">Annulla</button>
+                    <button type="submit" class="btn-western px-5 py-2 rounded text-xs uppercase">Salva Contatto</button>
                 </div>
             </form>
         </div>
@@ -606,7 +679,7 @@
                 id: '1900-01',
                 title: 'Difesa per Disturbo della Pace e Rissa alla Prigione',
                 status: 'In Corso',
-                client: { firstName: 'Micah', lastName: 'Bell', mailNo: 'MS-1900-88', city: 'Strawberry' },
+                client: { firstName: 'Micah', lastName: 'Bell', mailNo: 'MS-1900-88', role: 'Imputato Principale', city: 'Strawberry' },
                 sections: {
                     arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: []
                 },
@@ -622,7 +695,9 @@
 
         let agendaData = [];
         let financeData = [];
-        let magistratesData = [];
+        let magistratesData = [
+            { name: 'Giudice Aaron Whitaker', mailNo: 'MIS-990-W', role: 'Magistrato Inquirente', title: 'Tribunale di Strawberry' }
+        ];
 
         let activeCaseId = '1900-01';
         let totalParchmentPages = 1;
@@ -666,7 +741,7 @@
                         <span>Rif. ${c.client.mailNo}</span>
                         <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-900/30">${c.status}</span>
                     </div>
-                    <div class="font-serif-vintage text-amber-950 text-sm font-bold truncate">${c.client.firstName} ${c.client.lastName}</div>
+                    <div class="font-serif-vintage text-amber-950 text-sm font-bold truncate">${c.client.firstName} ${c.client.lastName} <span class="text-xs font-typewriter font-normal text-amber-900">(${c.client.role || 'Cliente'})</span></div>
                     <div class="text-xs text-amber-900/80 italic truncate">${c.title}</div>
                     <div class="text-[10px] text-amber-900 font-typewriter mt-1"><i class="fa-solid fa-location-dot"></i> ${c.client.city}</div>
                 `;
@@ -685,7 +760,7 @@
             const c = getActiveCase();
             if (!c) return;
 
-            document.getElementById('caseNumberDisplay').innerText = `Rif. Registro Missiva: ${c.client.mailNo}`;
+            document.getElementById('caseNumberDisplay').innerText = `Rif. Registro Missiva: ${c.client.mailNo} | Ruolo: ${c.client.role || 'N.D.'}`;
             document.getElementById('caseTitleDisplay').innerText = c.title;
             const badge = document.getElementById('caseStatusBadge');
             badge.innerText = c.status;
@@ -694,6 +769,7 @@
             document.getElementById('clientFirstName').value = c.client.firstName || '';
             document.getElementById('clientLastName').value = c.client.lastName || '';
             document.getElementById('clientMailNo').value = c.client.mailNo || '';
+            document.getElementById('clientRole').value = c.client.role || '';
             document.getElementById('clientCity').value = c.client.city || '';
 
             renderSectionFiles('arringaApertura');
@@ -846,25 +922,30 @@
             renderDevelopments();
         }
 
-        // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4
+        // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4 CON FIRMA E CERALACCA DI DESIGN COERENTE
         function addParchmentPage() {
             totalParchmentPages++;
             const container = document.getElementById('parchmentPagesContainer');
             const pageDiv = document.createElement('div');
-            pageDiv.className = "a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between";
+            pageDiv.className = "a4-page font-serif-vintage text-amber-950 relative";
             pageDiv.id = `parchment_page_${totalParchmentPages}`;
             pageDiv.innerHTML = `
                 <div>
                     <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
                         <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
                     </div>
-                    <textarea id="docTextPage_${totalParchmentPages}" rows="20" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <textarea id="docTextPage_${totalParchmentPages}" rows="18" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                 </div>
-                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break">
+                <div class="pt-3 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
                     <span class="text-xs font-typewriter font-bold">1900 — Pagina ${totalParchmentPages}</span>
-                    <div class="text-right">
-                        <p class="font-signature text-2xl text-amber-950 font-bold mb-0">Otis Corbin</p>
-                        <p class="font-bold text-xs text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                    <div class="text-right relative flex items-center gap-4">
+                        <div class="wax-seal-designer" style="width: 60px; height: 60px;">
+                            <div class="text-center leading-none text-amber-100 font-rye text-[7px]">OC</div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 -mr-2">Otis Corbin</p>
+                            <p class="font-bold text-xs text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -930,7 +1011,7 @@
             });
         }
 
-        // ESPORTAZIONE
+        // ESPORTAZIONE CORRETTA SENZA PAGINA BIANCA EXTRA
         function exportCurrentDoc(format) {
             const city = document.getElementById('docCity').value || "Strawberry";
             const title = `Atto_Studio_Corbin_${city}`;
@@ -962,9 +1043,9 @@
                 paragraphs.push(new Paragraph({ text: "\n" }));
             }
 
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }));
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }));
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }),
+            new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }),
+            new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
 
             const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
 
@@ -1013,7 +1094,7 @@
             }
         }
 
-        // AGGIUNTA SCADENZE, SPESE, AUTORITÀ, PROCURE
+        // AGGIUNTA SCADENZE, SPESE, AUTORITÀ (CON CAMPI MISSIVA E RUOLO), PROCURE
         function addAgendaItem() {
             const date = prompt("Data udienza / scadenza:");
             const desc = prompt("Descrizione evento:");
@@ -1055,11 +1136,20 @@
         }
 
         function addMagistrate() {
-            const name = prompt("Nome Autorità / Magistrato:");
-            const title = prompt("Titolo / Giurisdizione:");
-            if (!name) return;
-            magistratesData.push({ name, title });
+            openModal('newMagistrateModal');
+        }
+
+        function saveNewMagistrate(e) {
+            e.preventDefault();
+            const name = document.getElementById('magName').value;
+            const mailNo = document.getElementById('magMailNo').value;
+            const role = document.getElementById('magRole').value;
+            const title = document.getElementById('magTitle').value;
+
+            magistratesData.push({ name, mailNo, role, title });
+            closeModal('newMagistrateModal');
             renderMagistratesList();
+            e.target.reset();
         }
 
         function renderMagistratesList() {
@@ -1068,8 +1158,15 @@
             container.innerHTML = magistratesData.length ? '' : `<p class="text-amber-900/60 italic text-xs col-span-2">Nessun contatto salvato in rubrica.</p>`;
             magistratesData.forEach((m, i) => {
                 const div = document.createElement('div');
-                div.className = "bg-amber-50/80 p-3 border border-amber-900/30 rounded flex justify-between text-xs font-serif-vintage";
-                div.innerHTML = `<div><strong class="block text-sm font-rye text-amber-950">${m.name}</strong><span class="text-amber-900 font-typewriter">${m.title}</span></div> <button onclick="magistratesData.splice(${i},1);renderMagistratesList()" class="text-red-900"><i class="fa-solid fa-trash"></i></button>`;
+                div.className = "bg-amber-50/80 p-3 border border-amber-900/30 rounded flex justify-between items-center text-xs font-serif-vintage";
+                div.innerHTML = `
+                    <div>
+                        <strong class="block text-sm font-rye text-amber-950">${m.name}</strong>
+                        <span class="text-amber-900 font-typewriter font-bold">[Missiva: ${m.mailNo}] — Ruolo: ${m.role}</span>
+                        <span class="block text-amber-800 text-[11px]">${m.title}</span>
+                    </div> 
+                    <button onclick="magistratesData.splice(${i},1);renderMagistratesList()" class="text-red-900"><i class="fa-solid fa-trash"></i></button>
+                `;
                 container.appendChild(div);
             });
         }
@@ -1083,10 +1180,15 @@
             preview.innerHTML = `
                 <div class="bg-amber-100/90 p-6 border border-amber-900/50 rounded font-serif-vintage space-y-4">
                     <h3 class="font-rye text-center text-lg uppercase text-amber-950">MANDATO DI RAPPRESENTANZA E PROCURA SPECIALE</h3>
-                    <p class="text-xs leading-relaxed">Il sottoscritto <strong>${c.client.firstName} ${c.client.lastName}</strong>, residente in ${c.client.city}, delega e nomina quale proprio difensore e procuratore legale l'Avv. Otis Corbin per la causa: <em>"${c.title}"</em>.</p>
+                    <p class="text-xs leading-relaxed">Il sottoscritto <strong>${c.client.firstName} ${c.client.lastName}</strong> (Missiva: ${c.client.mailNo} - Ruolo: ${c.client.role || 'Cliente'}), residente in ${c.client.city}, delega e nomina quale proprio difensore e procuratore legale l'Avv. Otis Corbin per la causa: <em>"${c.title}"</em>.</p>
                     <div class="pt-4 flex justify-between items-end font-typewriter text-xs">
                         <span>Strawberry, 1900</span>
-                        <span class="font-signature text-2xl">${c.client.firstName} ${c.client.lastName}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="wax-seal-designer" style="width: 45px; height: 45px;">
+                                <div class="text-center text-amber-100 font-rye text-[6px]">OC</div>
+                            </div>
+                            <span class="font-signature text-2xl">${c.client.firstName} ${c.client.lastName}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1096,7 +1198,7 @@
             const selId = document.getElementById('letterCaseSelect').value;
             const c = casesData.find(item => item.id === selId);
             if (!c) return;
-            document.getElementById('letterRecipient').value = `${c.client.firstName} ${c.client.lastName} — ${c.client.city}`;
+            document.getElementById('letterRecipient').value = `${c.client.firstName} ${c.client.lastName} [${c.client.role || 'Cliente'}] — ${c.client.city} (Missiva: ${c.client.mailNo})`;
             document.getElementById('letterSubject').value = `Pratica ${c.client.mailNo} - ${c.title}`;
         }
 
@@ -1133,6 +1235,7 @@
                     firstName: document.getElementById('newClientFirstName').value,
                     lastName: document.getElementById('newClientLastName').value,
                     mailNo: document.getElementById('newClientMailNo').value,
+                    role: document.getElementById('newClientRole').value,
                     city: document.getElementById('newClientCity').value
                 },
                 sections: { arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: [] },
@@ -1157,9 +1260,3 @@
                 populateClientDropdowns();
             }
         }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
-    </script>
-</body>
-</html>
