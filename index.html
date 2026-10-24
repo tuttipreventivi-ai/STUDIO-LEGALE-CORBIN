@@ -12,10 +12,10 @@
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Font Google d'epoca: Rye, Playfair Display, Special Elite, Alex Brush -->
+    <!-- Font Google d'epoca: Rye, Playfair Display, Special Elite, Alex Brush, Great Vibes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Rye&family=Special+Elite&display=swap" rel="stylesheet">
+    <link href="[suspicious link removed]" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,15 +24,17 @@
         .font-rye { font-family: 'Rye', cursive; }
         .font-serif-vintage { font-family: 'Playfair Display', serif; }
         .font-typewriter { font-family: 'Special Elite', monospace; }
-        .font-signature { font-family: 'Alex Brush', cursive; }
+        .font-signature { font-family: 'Great Vibes', 'Alex Brush', cursive; }
 
         :root {
-            --parchment: #f9f3e6;
+            --parchment: #fdf8eb;
             --parchment-dark: #e8d7b5;
             --ink: #1f140e;
             --leather-dark: #2c1a0e;
             --brass: #c59b27;
             --brass-dark: #8c6a15;
+            --bordeaux: #6b1111;
+            --bordeaux-dark: #450a0a;
         }
 
         body {
@@ -44,7 +46,7 @@
         }
 
         .parchment-bg {
-            background: #f9f3e6 linear-gradient(to bottom, rgba(249,243,230,0.98), rgba(232,215,181,0.95));
+            background: #fdf8eb linear-gradient(to bottom, rgba(253,248,235,0.98), rgba(232,215,181,0.95));
             box-shadow: inset 0 0 80px rgba(74, 47, 27, 0.2), 0 10px 30px rgba(0,0,0,0.7);
             border: 2px solid var(--brass-dark);
         }
@@ -67,25 +69,49 @@
             transform: translateY(-1px);
         }
 
-        /* SIGILLO CERALACCA DI DESIGN RAFFINATO (SULLA FIRMA) */
-        .wax-seal-designer {
+        /* SIGILLO CERALACCA DI DESIGN SOVRAPPOSTO ALLA FIRMA */
+        .wax-seal-designer-overlay {
             width: 72px;
             height: 72px;
-            background: radial-gradient(circle at 35% 35%, #b91c1c 0%, #7f1d1d 60%, #450a0a 100%);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -3px 6px rgba(0,0,0,0.6);
-            border: 2px solid #571010;
+            background: radial-gradient(circle at 35% 35%, #ef4444 0%, #b91c1c 45%, #7f1d1d 75%, #450a0a 100%);
             border-radius: 50%;
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.5), 
+                inset 0 3px 6px rgba(255,255,255,0.45), 
+                inset 0 -4px 8px rgba(0,0,0,0.75);
+            border: 2px solid #571010;
+            position: absolute;
+            left: -22px;
+            top: -6px;
+            z-index: 20;
+            transform: rotate(-14deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            pointer-events: none;
+            filter: drop-shadow(2px 4px 5px rgba(0,0,0,0.4));
         }
-        .wax-seal-designer::after {
+        .wax-seal-designer-overlay::before {
             content: '';
             position: absolute;
             inset: 4px;
-            border: 1.5px dashed rgba(254, 243, 199, 0.6);
+            border: 1.5px dashed rgba(254, 243, 199, 0.75);
             border-radius: 50%;
+        }
+        .wax-seal-designer-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 9px;
+            border: 1px solid rgba(217, 119, 6, 0.5);
+            border-radius: 50%;
+        }
+        .seal-monogram-text {
+            font-family: 'Rye', cursive;
+            color: #fef3c7;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.9), 0 -1px 0 rgba(255,255,255,0.3);
+            text-align: center;
+            line-height: 1;
+            z-index: 21;
         }
 
         .tab-btn.active {
@@ -93,15 +119,18 @@
             color: #1a0f0a;
         }
 
-        /* FOGLIO A4 PERGAMENA CORRISPONDENTE AL SECONDO FILE (IDENTICO) */
+        /* FOGLIO A4 PERGAMENA - CORRISPONDENZA ESATTA AL SECONDO ALLEGATO PDF */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 12mm 18mm;
+            max-height: 297mm;
+            padding: 10mm 15mm 12mm 15mm;
             margin: 0 auto 20px auto;
-            background: #fdf8eb linear-gradient(to bottom, rgba(249,243,230,0.99), rgba(235,218,185,0.97)) !important;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 40px rgba(74, 47, 27, 0.15);
-            border: 1px solid var(--brass-dark);
+            background: #fdf8eb linear-gradient(to bottom, rgba(253,248,235,1), rgba(245,233,205,0.95)) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 0 50px rgba(74, 47, 27, 0.12);
+            border: 2px solid #6b1111;
+            outline: 1.5px solid #b48328;
+            outline-offset: -5px;
             position: relative;
             box-sizing: border-box;
             display: flex;
@@ -111,6 +140,7 @@
             print-color-adjust: exact !important;
             page-break-after: always;
             page-break-inside: avoid;
+            overflow: hidden;
         }
 
         .avoid-break {
@@ -122,23 +152,44 @@
         ::-webkit-scrollbar-track { background: var(--leather-dark); }
         ::-webkit-scrollbar-thumb { background: var(--brass-dark); border-radius: 4px; }
 
-        /* STAMPA PULITA PERGAMENA */
+        /* STAMPA PULITA PERGAMENA SENZA SALTI DI PAGINA INGIUSTIFICATI */
         @media print {
-            body { background: transparent !important; padding: 0 !important; margin: 0 !important; }
+            @page {
+                margin: 0;
+                size: A4 portrait;
+            }
+            html, body {
+                background: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 210mm !important;
+                height: 297mm !important;
+            }
             .no-print { display: none !important; }
             .a4-page {
                 width: 210mm !important; 
                 height: 297mm !important;
+                max-height: 297mm !important;
                 margin: 0 !important; 
-                padding: 12mm 18mm !important;
+                padding: 10mm 15mm 12mm 15mm !important;
                 box-shadow: none !important; 
-                border: none !important;
+                border: 2px solid #6b1111 !important;
+                outline: 1.5px solid #b48328 !important;
+                outline-offset: -5px !important;
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
             }
-            @page {
-                margin: 0;
-                size: A4 portrait;
+            textarea {
+                border: none !important;
+                resize: none !important;
+                background: transparent !important;
+                outline: none !important;
+                box-shadow: none !important;
             }
         }
     </style>
@@ -366,7 +417,7 @@
         </section>
     </div>
 
-    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (IDENTICO ESATTO AL SECONDO FILE + FIRMA CON CERALACCA ELEGANTE SOPRA) -->
+    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (MODELLO ESATTO SECONDO ALLEGATO PDF + FIRMA E CERALACCA ELEGANTE) -->
     <div id="documentEditorView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
@@ -417,56 +468,71 @@
 
         <!-- CONTENITORE FOGLI PERGAMENA A4 -->
         <div id="parchmentPagesContainer" class="space-y-6">
-            <!-- Pagina 1 di Default: Modello Esatto del Secondo File + Sigillo di Design sopra la Firma -->
+            <!-- Pagina 1 di Default: Modello Esatto del Secondo File PDF + Sigillo di Design Sovrapposto alla Firma -->
             <div class="a4-page font-serif-vintage text-amber-950 relative" id="parchment_page_1">
-                <div>
-                    <!-- INTESTAZIONE MODELLO ESATTO SECONDO FILE -->
-                    <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
-                        <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-0.5">Studio Legale Otis Corbin</h1>
-                        <p class="font-serif-vintage text-xs font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
-                        <p class="font-typewriter text-[11px] text-amber-950 font-semibold mt-0.5">Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post</p>
+                <div class="flex-grow flex flex-col justify-start">
+                    <!-- INTESTAZIONE MODELLO ESATTO SECONDO ALLEGATO PDF -->
+                    <div class="text-center pt-1 pb-2">
+                        <h1 class="font-rye text-2xl md:text-3xl text-red-950 tracking-wide uppercase mb-0.5" style="color: #6b1111;">
+                            Studio Legale Otis Corbin
+                        </h1>
+                        <p class="font-serif-vintage text-xs font-semibold italic text-red-900" style="color: #8c1d1d;">
+                            Patrocinante nello Stato delle Wildlands
+                        </p>
+                        <p class="font-typewriter text-[11px] text-amber-950 font-medium mt-0.5">
+                            Sede: Stato del West Elizabeth, Città di Strawberry — Presso il Native Post
+                        </p>
+
+                        <!-- SEPARATORE CON ROMBO MODELLO ALLEGATO 2 -->
+                        <div class="relative flex items-center justify-center my-2">
+                            <div class="w-full border-t border-red-900/60" style="border-color: #6b1111;"></div>
+                            <span class="absolute bg-[#fdf8eb] px-2 text-red-950 text-xs font-bold" style="color: #6b1111;">◆</span>
+                        </div>
                     </div>
 
                     <!-- CAMPI CITTA' E ADDI' -->
-                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-4">
+                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-3">
                         <div class="flex items-center gap-1">
-                            <span class="font-bold">Città di:</span>
+                            <span class="font-bold text-amber-950">Città di:</span>
                             <input type="text" id="docCity" value="Strawberry" class="bg-transparent border-b border-amber-950 w-32 px-1 focus:outline-none font-bold">
                         </div>
                         <div class="flex items-center gap-1">
-                            <span class="font-bold">addì:</span>
+                            <span class="font-bold text-amber-950">addì:</span>
                             <input type="text" id="docDate" value="14 Maggio 1900" class="bg-transparent border-b border-amber-950 w-36 px-1 focus:outline-none font-bold">
                         </div>
                     </div>
 
                     <!-- CORPO DELL'ATTO -->
-                    <div>
-                        <textarea id="docTextPage_1" rows="16" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <div class="flex-grow">
+                        <textarea id="docTextPage_1" rows="14" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full h-full min-h-[380px] bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-none"></textarea>
                     </div>
                 </div>
 
-                <!-- PIE' DI PAGINA E FIRMA CON CERALACCA DI DESIGN SOVRAPPOSTA -->
-                <div class="pt-3 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
+                <!-- PIE' DI PAGINA E FIRMA ELEGANTE CON CERALACCA DI DESIGN SOVRAPPOSTA -->
+                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
                     <!-- Spazio vuoto o rif. anno -->
                     <div class="text-xs font-typewriter text-amber-900">
-                        <span class="font-bold text-amber-950">Stile Legale Wildlands</span>
+                        <p class="font-bold text-amber-950 mb-0">STUDIO LEGALE OTIS CORBIN</p>
+                        <p class="text-[10px] text-amber-800 italic mb-0">West Elizabeth • Strawberry</p>
                     </div>
 
-                    <!-- FIRMA AVVOCATO EDIFICATA CON CERALACCA DI DESIGN SOPRA -->
-                    <div class="text-right relative flex items-center gap-4">
-                        <!-- Ceralacca Design Sofisticata -->
-                        <div class="wax-seal-designer shadow-xl" title="Sigillo Ufficiale Studio Otis Corbin">
-                            <div class="text-center leading-none text-amber-100 font-rye text-[8px] flex flex-col justify-center items-center">
-                                <span class="tracking-widest text-[9px] font-bold text-amber-200">OC</span>
-                                <span class="text-[6px] tracking-tighter text-amber-300">1900</span>
+                    <!-- FIRMA AVVOCATO EDIFICATA ELEGANTE CON CERALACCA DI DESIGN APPOSTA SULLA FIRMA -->
+                    <div class="relative inline-block text-right pr-2">
+                        <!-- Ceralacca di Design Sovrapposta SULLA Firma -->
+                        <div class="wax-seal-designer-overlay" title="Sigillo Ufficiale Studio Otis Corbin">
+                            <div class="seal-monogram-text">
+                                <span class="block text-xs font-bold tracking-widest text-amber-200">OC</span>
+                                <span class="block text-[7px] tracking-tighter text-amber-300">1900</span>
                             </div>
                         </div>
 
-                        <div class="text-right">
-                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 -mr-2">Otis Corbin</p>
-                            <p class="font-bold text-sm text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
-                            <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
-                            <p class="font-typewriter text-[10px] text-amber-950 font-bold">1900</p>
+                        <!-- Testo Firma Altisonante ed Elegante -->
+                        <div class="pl-12">
+                            <p class="font-signature text-4xl text-amber-950 font-bold mb-0 leading-none">Otis Corbin</p>
+                            <div class="h-0.5 bg-gradient-to-r from-transparent via-amber-900 to-amber-950 my-1 w-48 ml-auto"></div>
+                            <p class="font-bold text-sm text-red-950 uppercase tracking-wider font-serif-vintage mb-0.5" style="color: #6b1111;">Avv. Otis CORBIN</p>
+                            <p class="text-xs italic text-amber-900 font-serif-vintage mb-0.5">Patrocinante nei Tribunali Superiori dello Stato</p>
+                            <p class="font-typewriter text-[10px] text-amber-950 font-bold tracking-widest">Patrocinatore e Difensore Legale • 1900</p>
                         </div>
                     </div>
                 </div>
@@ -475,7 +541,7 @@
     </div>
 
     <!-- VISTA 3: MISSIVA UFFICIALE -->
-    <div id="letterheadView" class="hidden max-w-5xl mx-auto w-full my-2">
+    <div id="letterView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <label class="font-bold text-xs uppercase text-amber-950 font-typewriter">Importa da Cliente:</label>
@@ -493,7 +559,7 @@
 
         <div id="letterheadSection" class="parchment-bg leather-border p-8 md:p-12 rounded-lg relative font-serif-vintage text-amber-950">
             <div class="border-b-2 border-amber-950/80 pb-6 mb-6 text-center relative">
-                <h1 class="font-rye text-2xl md:text-3xl uppercase tracking-widest mb-1">Studio Legale Otis Corbin</h1>
+                <h1 class="font-rye text-2xl md:text-3xl uppercase tracking-widest mb-1 text-red-950" style="color: #6b1111;">Studio Legale Otis Corbin</h1>
                 <p class="font-typewriter text-xs md:text-sm text-amber-900 font-bold uppercase">West Elizabeth, Strawberry presso Native Post Missiva CC523</p>
             </div>
 
@@ -521,16 +587,18 @@
 
                 <div class="pt-6 flex justify-between items-end border-t border-amber-900/30 avoid-break">
                     <div class="text-xs font-typewriter text-amber-900">
-                        <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
+                        <p class="font-bold text-amber-950">STUDIO LEGALE OTIS CORBIN</p>
                         <p>Strawberry, West Elizabeth</p>
                     </div>
-                    <div class="text-right flex items-center gap-3">
-                        <div class="wax-seal-designer" style="width: 50px; height: 50px;">
-                            <div class="text-center leading-none text-amber-100 font-rye text-[7px]">OC</div>
+                    <div class="relative inline-block text-right pr-2">
+                        <div class="wax-seal-designer-overlay" style="width: 54px; height: 54px; left: -16px; top: -4px;">
+                            <div class="seal-monogram-text">
+                                <span class="block text-[10px] font-bold text-amber-200">OC</span>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-signature text-3xl text-amber-950 font-bold px-4 inline-block mb-0">Otis Corbin</p>
-                            <p class="text-[10px] font-typewriter text-amber-900 uppercase tracking-widest mt-1">Avv. Otis Corbin — Patrocinante</p>
+                        <div class="pl-10">
+                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 leading-none">Otis Corbin</p>
+                            <p class="text-xs font-bold text-red-950 uppercase font-serif-vintage mt-1 mb-0" style="color: #6b1111;">Avv. Otis Corbin — Patrocinante</p>
                         </div>
                     </div>
                 </div>
@@ -674,6 +742,23 @@
 
     <!-- SCRIPT GESTIONALE E ESPORTAZIONE COMPLETA -->
     <script>
+        // FUNZIONI DI GESTIONE MODALI
+        function openModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) {
+                m.classList.remove('hidden');
+                m.classList.add('flex');
+            }
+        }
+
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) {
+                m.classList.remove('flex');
+                m.classList.add('hidden');
+            }
+        }
+
         let casesData = [
             {
                 id: '1900-01',
@@ -758,7 +843,16 @@
 
         function renderActiveCase() {
             const c = getActiveCase();
-            if (!c) return;
+            if (!c) {
+                document.getElementById('caseNumberDisplay').innerText = '';
+                document.getElementById('caseTitleDisplay').innerText = 'Nessuna Causa Selezionata';
+                document.getElementById('clientFirstName').value = '';
+                document.getElementById('clientLastName').value = '';
+                document.getElementById('clientMailNo').value = '';
+                document.getElementById('clientRole').value = '';
+                document.getElementById('clientCity').value = '';
+                return;
+            }
 
             document.getElementById('caseNumberDisplay').innerText = `Rif. Registro Missiva: ${c.client.mailNo} | Ruolo: ${c.client.role || 'N.D.'}`;
             document.getElementById('caseTitleDisplay').innerText = c.title;
@@ -795,7 +889,7 @@
             const container = document.getElementById(`files_${sectionKey}`);
             if (!container) return;
             container.innerHTML = '';
-            if (!c.sections) c.sections = {};
+            if (!c || !c.sections) return;
             if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
 
             const files = c.sections[sectionKey];
@@ -820,6 +914,7 @@
 
         function uploadSectionFile(sectionKey, event) {
             const c = getActiveCase();
+            if (!c) return;
             const files = event.target.files;
             if (!files.length) return;
             if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
@@ -832,11 +927,11 @@
 
         function removeSectionFile(sectionKey, index) {
             const c = getActiveCase();
+            if (!c) return;
             c.sections[sectionKey].splice(index, 1);
             renderSectionFiles(sectionKey);
         }
 
-        // AGGIUNTA TESTIMONI E SVILUPPI
         function addWitness() {
             const name = prompt("Nome completo del testimone:");
             if (!name) return;
@@ -844,6 +939,7 @@
             const text = prompt("Sommario della deposizione:") || "";
 
             const c = getActiveCase();
+            if (!c) return;
             if (!c.witnesses) c.witnesses = [];
             c.witnesses.push({ name, role, text });
             renderWitnesses();
@@ -854,6 +950,7 @@
             const container = document.getElementById('witnessesList');
             if (!container) return;
             container.innerHTML = '';
+            if (!c) return;
 
             if (!c.witnesses || c.witnesses.length === 0) {
                 container.innerHTML = `<p class="text-amber-900/60 italic text-xs">Nessun testimone iscritto a verbale.</p>`;
@@ -876,6 +973,7 @@
 
         function removeWitness(idx) {
             const c = getActiveCase();
+            if (!c) return;
             c.witnesses.splice(idx, 1);
             renderWitnesses();
         }
@@ -886,6 +984,7 @@
             if (!note) return;
 
             const c = getActiveCase();
+            if (!c) return;
             if (!c.developments) c.developments = [];
             c.developments.push({ date, note });
             renderDevelopments();
@@ -896,6 +995,7 @@
             const container = document.getElementById('developmentsList');
             if (!container) return;
             container.innerHTML = '';
+            if (!c) return;
 
             if (!c.developments || c.developments.length === 0) {
                 container.innerHTML = `<p class="text-amber-900/60 italic text-xs">Nessuna trattativa o sviluppo registrato.</p>`;
@@ -918,11 +1018,12 @@
 
         function removeDevelopment(idx) {
             const c = getActiveCase();
+            if (!c) return;
             c.developments.splice(idx, 1);
             renderDevelopments();
         }
 
-        // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4 CON FIRMA E CERALACCA DI DESIGN COERENTE
+        // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4 CON FIRMA E CERALACCA DI DESIGN SOVRAPPOSTA
         function addParchmentPage() {
             totalParchmentPages++;
             const container = document.getElementById('parchmentPagesContainer');
@@ -930,21 +1031,25 @@
             pageDiv.className = "a4-page font-serif-vintage text-amber-950 relative";
             pageDiv.id = `parchment_page_${totalParchmentPages}`;
             pageDiv.innerHTML = `
-                <div>
-                    <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
+                <div class="flex-grow flex flex-col justify-start">
+                    <div class="border-b border-amber-950 pb-1 mb-3 text-center">
                         <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
                     </div>
-                    <textarea id="docTextPage_${totalParchmentPages}" rows="18" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <div class="flex-grow">
+                        <textarea id="docTextPage_${totalParchmentPages}" rows="16" placeholder="Continua il testo dell'atto..." class="w-full h-full min-h-[420px] bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-none"></textarea>
+                    </div>
                 </div>
-                <div class="pt-3 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
-                    <span class="text-xs font-typewriter font-bold">1900 — Pagina ${totalParchmentPages}</span>
-                    <div class="text-right relative flex items-center gap-4">
-                        <div class="wax-seal-designer" style="width: 60px; height: 60px;">
-                            <div class="text-center leading-none text-amber-100 font-rye text-[7px]">OC</div>
+                <div class="pt-2 border-t border-amber-950/60 flex justify-between items-end avoid-break mt-auto">
+                    <span class="text-xs font-typewriter font-bold text-amber-900">1900 — Pagina ${totalParchmentPages}</span>
+                    <div class="relative inline-block text-right pr-2">
+                        <div class="wax-seal-designer-overlay" style="width: 58px; height: 58px; left: -18px; top: -4px;">
+                            <div class="seal-monogram-text">
+                                <span class="block text-[11px] font-bold text-amber-200">OC</span>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 -mr-2">Otis Corbin</p>
-                            <p class="font-bold text-xs text-amber-950 font-serif-vintage mb-0">Avv. Otis CORBIN</p>
+                        <div class="pl-10">
+                            <p class="font-signature text-3xl text-amber-950 font-bold mb-0 leading-none">Otis Corbin</p>
+                            <p class="font-bold text-xs text-red-950 uppercase font-serif-vintage mb-0" style="color: #6b1111;">Avv. Otis CORBIN</p>
                         </div>
                     </div>
                 </div>
@@ -986,6 +1091,7 @@
             const container = document.getElementById('savedParchmentDocsList');
             if (!container) return;
             container.innerHTML = '';
+            if (!c) return;
 
             const docs = c.parchmentDocs || [];
             if (docs.length === 0) {
@@ -1011,7 +1117,6 @@
             });
         }
 
-        // ESPORTAZIONE CORRETTA SENZA PAGINA BIANCA EXTRA
         function exportCurrentDoc(format) {
             const city = document.getElementById('docCity').value || "Strawberry";
             const title = `Atto_Studio_Corbin_${city}`;
@@ -1029,7 +1134,7 @@
             const { Document, Packer, Paragraph, TextRun } = window.docx;
             
             let paragraphs = [
-                new Paragraph({ children: [new TextRun({ text: "Studio Legale Otis Corbin", bold: true, size: 28 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Studio Legale Otis Corbin", bold: true, size: 28, color: "6B1111" })] }),
                 new Paragraph({ children: [new TextRun({ text: "Patrocinante nello Stato delle Wildlands", italic: true, size: 20 })] }),
                 new Paragraph({ children: [new TextRun({ text: "Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post", size: 18 })] }),
                 new Paragraph({ text: "---------------------------------------------------------------------------------" }),
@@ -1043,9 +1148,12 @@
                 paragraphs.push(new Paragraph({ text: "\n" }));
             }
 
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }),
-            new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }),
-            new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
+            paragraphs.push(
+                new Paragraph({ children: [new TextRun({ text: "Otis Corbin", bold: true, size: 32, italic: true })] }),
+                new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22, color: "6B1111" })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinante nei Tribunali Superiori dello Stato", italic: true, size: 18 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale • 1900", bold: true, size: 16 })] })
+            );
 
             const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
 
@@ -1070,6 +1178,7 @@
 
         function downloadSavedDoc(docId, format) {
             const c = getActiveCase();
+            if (!c) return;
             const doc = c.parchmentDocs.find(d => d.id === docId);
             if (!doc) return;
 
@@ -1094,7 +1203,6 @@
             }
         }
 
-        // AGGIUNTA SCADENZE, SPESE, AUTORITÀ (CON CAMPI MISSIVA E RUOLO), PROCURE
         function addAgendaItem() {
             const date = prompt("Data udienza / scadenza:");
             const desc = prompt("Descrizione evento:");
@@ -1183,11 +1291,13 @@
                     <p class="text-xs leading-relaxed">Il sottoscritto <strong>${c.client.firstName} ${c.client.lastName}</strong> (Missiva: ${c.client.mailNo} - Ruolo: ${c.client.role || 'Cliente'}), residente in ${c.client.city}, delega e nomina quale proprio difensore e procuratore legale l'Avv. Otis Corbin per la causa: <em>"${c.title}"</em>.</p>
                     <div class="pt-4 flex justify-between items-end font-typewriter text-xs">
                         <span>Strawberry, 1900</span>
-                        <div class="flex items-center gap-3">
-                            <div class="wax-seal-designer" style="width: 45px; height: 45px;">
-                                <div class="text-center text-amber-100 font-rye text-[6px]">OC</div>
+                        <div class="relative inline-block text-right pr-2">
+                            <div class="wax-seal-designer-overlay" style="width: 42px; height: 42px; left: -12px; top: -2px;">
+                                <div class="seal-monogram-text">
+                                    <span class="block text-[8px] font-bold text-amber-200">OC</span>
+                                </div>
                             </div>
-                            <span class="font-signature text-2xl">${c.client.firstName} ${c.client.lastName}</span>
+                            <span class="font-signature text-2xl pl-6">${c.client.firstName} ${c.client.lastName}</span>
                         </div>
                     </div>
                 </div>
@@ -1254,9 +1364,13 @@
         function deleteCurrentCase() {
             if (confirm("Sei sicuro di voler archiviare ed eliminare questa causa dal registro?")) {
                 casesData = casesData.filter(c => c.id !== activeCaseId);
-                if (casesData.length > 0) activeCaseId = casesData[0].id;
+                if (casesData.length > 0) activeCaseId = casesData.id;
+                else activeCaseId = null;
                 renderCasesList();
                 renderActiveCase();
                 populateClientDropdowns();
             }
         }
+    </script>
+</body>
+</html>
