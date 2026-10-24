@@ -79,7 +79,7 @@
             color: #1a0f0a;
         }
 
-        /* FOGLIO A4 PERGAMENA INTESTATA MULTI-PAGINA */
+        /* FOGLIO A4 ESATTO COME DA PDF */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
@@ -112,234 +112,32 @@
 </head>
 <body class="min-h-screen p-2 md:p-6 flex flex-col justify-between">
 
-    <!-- INTESTAZIONE PRINCIPALE -->
+    <!-- INTESTAZIONE GESTIONALE STUDIO -->
     <header class="no-print max-w-7xl mx-auto w-full mb-4 parchment-bg leather-border p-4 md:p-6 rounded-lg text-center relative overflow-hidden">
-        <div class="flex justify-center items-center gap-3 mb-1">
-            <div class="h-0.5 bg-amber-900 w-12 md:w-24"></div>
-            <span class="font-typewriter text-xs md:text-sm tracking-widest text-amber-950 uppercase font-bold">
-                West Elizabeth, Strawberry presso Native Post Missiva CC523
-            </span>
-            <div class="h-0.5 bg-amber-900 w-12 md:w-24"></div>
-        </div>
         <h1 class="font-rye text-2xl md:text-4xl text-amber-950 tracking-wide uppercase my-1">
             Studio Legale Otis Corbin
         </h1>
         <p class="font-serif-vintage italic text-md md:text-lg text-amber-900 font-bold">
-            Patrocinante in Cause Civili, Penali e Contenziosi Territoriali • Anno 1900
+            Patrocinante nello Stato delle Wildlands • Anno 1900
         </p>
     </header>
 
-    <!-- NAVIGAZIONE TAB BAR -->
+    <!-- BARRA NAVIGAZIONE TAB -->
     <nav class="no-print max-w-7xl mx-auto w-full mb-4 flex flex-wrap gap-2 border-b-2 border-amber-900/60 font-rye text-xs md:text-sm">
         <button id="tabCasesBtn" onclick="switchTab('cases')" class="tab-btn active px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
             <i class="fa-solid fa-folder-open"></i> Dossier Clienti
         </button>
         <button id="tabDocumentEditorBtn" onclick="switchTab('documentEditor')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-signature text-amber-400"></i> Redazione Atto A4
-        </button>
-        <button id="tabLetterBtn" onclick="switchTab('letter')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-scroll"></i> Missiva Ufficiale
-        </button>
-        <button id="tabAgendaBtn" onclick="switchTab('agenda')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-calendar-days"></i> Udienze & Scadenze
-        </button>
-        <button id="tabFinanceBtn" onclick="switchTab('finance')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-coins"></i> Fondo Cassa & Spese
-        </button>
-        <button id="tabMagistratesBtn" onclick="switchTab('magistrates')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-user-shield"></i> Rubrica Autorità
-        </button>
-        <button id="tabFormsBtn" onclick="switchTab('forms')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-contract"></i> Procure & Mandati
+            <i class="fa-solid fa-file-signature text-amber-400"></i> Redazione Carta Intestata
         </button>
     </nav>
 
-    <!-- VISTA 1: DOSSIER CAUSE E CLIENTE -->
-    <div id="casesView" class="no-print max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start flex-grow">
-        <aside class="lg:col-span-4 parchment-bg leather-border p-4 md:p-5 rounded-lg flex flex-col h-full">
-            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
-                <h2 class="font-rye text-lg text-amber-950 flex items-center gap-2">
-                    <i class="fa-solid fa-box-archive text-amber-800"></i> Registro Cause
-                </h2>
-                <button onclick="openModal('newCaseModal')" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1">
-                    <i class="fa-solid fa-plus"></i> Nuova Causa
-                </button>
-            </div>
-
-            <div class="mb-3">
-                <input type="text" id="searchCases" oninput="filterCases()" placeholder="Cerca cliente, causa o missiva..." 
-                    class="w-full bg-amber-50/60 border border-amber-900/40 rounded px-3 py-1.5 text-sm font-typewriter focus:outline-none">
-            </div>
-
-            <div id="casesList" class="space-y-3 overflow-y-auto max-h-[650px] pr-1 flex-grow"></div>
-        </aside>
-
-        <section class="lg:col-span-8 space-y-6">
-            <div class="parchment-bg leather-border p-5 md:p-6 rounded-lg relative">
-                <div class="absolute -top-3 -right-3 w-14 h-14 wax-seal rounded-full flex flex-col items-center justify-center text-amber-100 font-rye text-[9px] border border-amber-300 leading-tight">
-                    <span>OTIS</span>
-                    <span>CORBIN</span>
-                </div>
-
-                <div class="border-b-2 border-amber-900/40 pb-4 mb-4">
-                    <div class="flex justify-between items-start flex-wrap gap-2">
-                        <div>
-                            <span id="caseNumberDisplay" class="font-typewriter text-xs font-bold text-amber-800 tracking-wider"></span>
-                            <h2 id="caseTitleDisplay" class="font-rye text-2xl text-amber-950 mt-0.5"></h2>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span id="caseStatusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase font-typewriter border border-amber-900/30"></span>
-                            <button onclick="openDocumentWriterForCurrentCase()" class="btn-western px-2.5 py-1 rounded text-xs uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-feather-pointed"></i> Redigi Atto Pergamena
-                            </button>
-                            <button onclick="deleteCurrentCase()" class="text-red-900 hover:text-red-700 text-sm p-1" title="Elimina Causa">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rubrica Cliente -->
-                <div class="mb-6 bg-amber-900/10 p-4 rounded border border-amber-900/30">
-                    <h3 class="font-rye text-md text-amber-950 mb-2 flex items-center gap-2 border-b border-amber-900/30 pb-1">
-                        <i class="fa-solid fa-address-book text-amber-800"></i> Rubrica Anagrafica Cliente
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-typewriter">
-                        <div>
-                            <label class="block font-bold text-amber-900 uppercase">Nome</label>
-                            <input type="text" id="clientFirstName" onchange="updateClientField('firstName', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-amber-900 uppercase">Cognome</label>
-                            <input type="text" id="clientLastName" onchange="updateClientField('lastName', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-amber-900 uppercase">Nr. Missiva</label>
-                            <input type="text" id="clientMailNo" onchange="updateClientField('mailNo', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded font-bold text-amber-950">
-                        </div>
-                        <div>
-                            <label class="block font-bold text-amber-900 uppercase">Città</label>
-                            <input type="text" id="clientCity" onchange="updateClientField('city', this.value)" class="w-full bg-amber-50/80 border border-amber-900/40 p-1.5 rounded">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sottosezioni Dossier -->
-                <div class="space-y-6">
-                    <div class="border border-amber-900/30 rounded p-4 bg-amber-50/40">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-rye text-sm text-amber-950 flex items-center gap-2"><i class="fa-solid fa-scroll text-amber-800"></i> Arringa d'Apertura</h4>
-                            <label class="btn-western px-2.5 py-1 rounded text-xs cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                <input type="file" onchange="uploadSectionFile('arringaApertura', event)" class="hidden" multiple>
-                            </label>
-                        </div>
-                        <div id="files_arringaApertura" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                    </div>
-
-                    <div class="border border-amber-900/30 rounded p-4 bg-amber-50/40">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-rye text-sm text-amber-950 flex items-center gap-2"><i class="fa-solid fa-gavel text-amber-800"></i> Arringa Conclusiva</h4>
-                            <label class="btn-western px-2.5 py-1 rounded text-xs cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                <input type="file" onchange="uploadSectionFile('arringaConclusiva', event)" class="hidden" multiple>
-                            </label>
-                        </div>
-                        <div id="files_arringaConclusiva" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                    </div>
-
-                    <div class="border border-amber-900/30 rounded p-4 bg-amber-50/40">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-rye text-sm text-amber-950 flex items-center gap-2"><i class="fa-solid fa-building-columns text-amber-800"></i> Atti Procura</h4>
-                            <label class="btn-western px-2.5 py-1 rounded text-xs cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                <input type="file" onchange="uploadSectionFile('attiProcura', event)" class="hidden" multiple>
-                            </label>
-                        </div>
-                        <div id="files_attiProcura" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                    </div>
-
-                    <div class="border border-amber-900/30 rounded p-4 bg-amber-50/40">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-rye text-sm text-amber-950 flex items-center gap-2"><i class="fa-solid fa-landmark text-amber-800"></i> Comunicazioni Tribunale</h4>
-                            <label class="btn-western px-2.5 py-1 rounded text-xs cursor-pointer flex items-center gap-1">
-                                <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                <input type="file" onchange="uploadSectionFile('comunicazioniTribunale', event)" class="hidden" multiple>
-                            </label>
-                        </div>
-                        <div id="files_comunicazioniTribunale" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                    </div>
-
-                    <!-- Perizie -->
-                    <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
-                        <h4 class="font-rye text-md text-amber-950 mb-3 border-b border-amber-900/30 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-microscope text-amber-800"></i> Perizie
-                        </h4>
-                        <div class="space-y-4">
-                            <div class="border border-amber-900/30 rounded p-3 bg-amber-50/60">
-                                <div class="flex justify-between items-center mb-2">
-                                    <h5 class="font-rye text-xs text-amber-950 flex items-center gap-2"><i class="fa-solid fa-notes-medical text-amber-800"></i> Perizie Mediche</h5>
-                                    <label class="btn-western px-2.5 py-1 rounded text-[11px] cursor-pointer flex items-center gap-1">
-                                        <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                        <input type="file" onchange="uploadSectionFile('perizieMediche', event)" class="hidden" multiple>
-                                    </label>
-                                </div>
-                                <div id="files_perizieMediche" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                            </div>
-                            <div class="border border-amber-900/30 rounded p-3 bg-amber-50/60">
-                                <div class="flex justify-between items-center mb-2">
-                                    <h5 class="font-rye text-xs text-amber-950 flex items-center gap-2"><i class="fa-solid fa-compass-drafting text-amber-800"></i> Perizie Tecniche</h5>
-                                    <label class="btn-western px-2.5 py-1 rounded text-[11px] cursor-pointer flex items-center gap-1">
-                                        <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
-                                        <input type="file" onchange="uploadSectionFile('perizieTecniche', event)" class="hidden" multiple>
-                                    </label>
-                                </div>
-                                <div id="files_perizieTecniche" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Teste & Deposizioni -->
-                    <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
-                        <div class="flex justify-between items-center mb-3 border-b border-amber-900/30 pb-2">
-                            <h4 class="font-rye text-md text-amber-950 flex items-center gap-2"><i class="fa-solid fa-users-between-lines text-amber-800"></i> Teste & Deposizioni</h4>
-                            <button onclick="addWitness()" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-user-plus"></i> Aggiungi Teste
-                            </button>
-                        </div>
-                        <div id="witnessesList" class="space-y-4"></div>
-                    </div>
-
-                    <!-- Sviluppi & Trattative -->
-                    <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
-                        <div class="flex justify-between items-center mb-3 border-b border-amber-900/30 pb-2">
-                            <h4 class="font-rye text-md text-amber-950 flex items-center gap-2"><i class="fa-solid fa-handshake text-amber-800"></i> Sviluppi Pratica & Trattative Controparte</h4>
-                            <button onclick="addDevelopment()" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-plus"></i> Nuova Trattativa
-                            </button>
-                        </div>
-                        <div id="developmentsList" class="space-y-4"></div>
-                    </div>
-
-                    <!-- ARCHIVIO ATTI PERGAMENA SALVATI PER IL CLIENTE CON DOWNLOAD MULTI-FORMATO -->
-                    <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/10">
-                        <h4 class="font-rye text-md text-amber-950 mb-3 border-b border-amber-900/30 pb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-box-archive text-amber-800"></i> Atti in Pergamena Salvati nel Database
-                        </h4>
-                        <div id="savedParchmentDocsList" class="space-y-3"></div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (MULTI-PAGINA CON ESPORTAZIONE PDF / DOCX / PNG) -->
-    <div id="documentEditorView" class="hidden max-w-5xl mx-auto w-full my-2">
+    <!-- VISTA REDAZIONE CARTA INTESTATA (ESATTA STRUTTURA DEL PDF) -->
+    <div id="documentEditorView" class="max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-2">
-                    <label class="font-bold text-xs uppercase font-typewriter text-amber-950">Associa a Cliente:</label>
+                    <label class="font-bold text-xs uppercase font-typewriter text-amber-950">Associa Causa Cliente:</label>
                     <select id="docClientSelect" class="bg-amber-50 border border-amber-900/40 p-1.5 rounded text-xs font-serif-vintage">
                     </select>
                 </div>
@@ -367,367 +165,70 @@
                     <span id="pageCounter" class="text-xs font-typewriter font-bold text-amber-900">Pagine Totali: 1</span>
                 </div>
 
-                <!-- PANNELLO SCELTA FORMATO DI DOWNLOAD -->
+                <!-- DOWNLOAD MULTI-FORMATO -->
                 <div class="flex items-center gap-2 bg-amber-900/10 p-1.5 rounded border border-amber-900/30">
-                    <span class="font-typewriter text-xs font-bold text-amber-950 uppercase"><i class="fa-solid fa-download"></i> Esporta in:</span>
-                    <button onclick="exportCurrentDoc('pdf')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Stampa o Salva PDF">
+                    <span class="font-typewriter text-xs font-bold text-amber-950 uppercase"><i class="fa-solid fa-download"></i> Scarica Atto in:</span>
+                    <button onclick="exportCurrentDoc('pdf')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
                         <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
-                    <button onclick="exportCurrentDoc('docx')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Scarica Documento Word Editabile">
+                    <button onclick="exportCurrentDoc('docx')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
                         <i class="fa-solid fa-file-word"></i> Word (.docx)
                     </button>
-                    <button onclick="exportCurrentDoc('png')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Scarica Immagine Alta Risoluzione">
-                        <i class="fa-solid fa-file-image"></i> Immagine (.png)
+                    <button onclick="exportCurrentDoc('png')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
+                        <i class="fa-solid fa-file-image"></i> PNG
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- CONTENITORE FOGLI PERGAMENA A4 -->
+        <!-- CONTENITORE FOGLIO A4 CON INTESTAZIONE UFFICIALE -->
         <div id="parchmentPagesContainer" class="space-y-6">
-            <!-- Pagina 1 di Default -->
             <div class="a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between" id="parchment_page_1">
                 <div>
-                    <div class="border-b-2 border-amber-950/80 pb-3 mb-4 text-center relative">
-                        <div class="flex justify-between items-start mb-1 text-[10px] font-typewriter text-amber-900">
-                            <span>REGISTRO ATTI CC523</span>
-                            <span>STRAWBERRY, WEST ELIZABETH</span>
-                        </div>
-                        <h1 class="font-rye text-xl md:text-2xl text-amber-950 uppercase tracking-widest">Studio Legale Otis Corbin</h1>
-                        <p class="font-typewriter text-[11px] text-amber-900 font-bold uppercase">West Elizabeth, Strawberry presso Native Post Missiva CC523</p>
+                    <!-- INTESTAZIONE FEDELE AL PDF MODELLO -->
+                    <div class="border-b-2 border-amber-950 pb-3 mb-6 text-center">
+                        <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-1">Studio Legale Otis Corbin</h1>
+                        <p class="font-serif-vintage text-sm font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
+                        <p class="font-typewriter text-xs text-amber-950 font-semibold mt-0.5">Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post</p>
                     </div>
 
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-4 text-xs font-typewriter mb-2">
-                            <div>
-                                <label class="font-bold text-amber-900 uppercase block">Titolo / Tipologia Atto:</label>
-                                <input type="text" id="docTypeTitle" value="DEPOSIZIONE GIURATA / VERBALE D'UDIENZA" class="w-full bg-amber-50/50 border-b border-amber-900/40 font-bold p-1">
-                            </div>
-                            <div>
-                                <label class="font-bold text-amber-900 uppercase block">Data Redazione:</label>
-                                <input type="text" id="docDate" value="Strawberry, 1900" class="w-full bg-amber-50/50 border-b border-amber-900/40 p-1">
-                            </div>
+                    <!-- CAMPI CITTA' E ADDI' -->
+                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-6">
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold">Città di:</span>
+                            <input type="text" id="docCity" value="Strawberry" class="bg-transparent border-b border-amber-950 w-32 px-1 focus:outline-none">
                         </div>
-
-                        <div>
-                            <textarea id="docTextPage_1" rows="18" placeholder="Scrivi il testo dell'atto, deposizione o verbale..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-sm leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold">addì:</span>
+                            <input type="text" id="docDate" value="14 Maggio 1900" class="bg-transparent border-b border-amber-950 w-36 px-1 focus:outline-none">
                         </div>
                     </div>
+
+                    <!-- CORPO DELL'ATTO / DEPOSIZIONE -->
+                    <div>
+                        <textarea id="docTextPage_1" rows="18" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    </div>
                 </div>
 
-                <div class="pt-4 border-t border-amber-900/30 flex justify-between items-end text-xs font-typewriter">
-                    <div>
-                        <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
-                        <p class="text-[10px]">Atto Ufficiale • Pagina 1</p>
+                <!-- PIE' DI PAGINA E FIRMA FEDELE AL PDF -->
+                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
+                    <div class="text-xs font-typewriter">
+                        <p class="font-bold text-sm text-amber-950">1900</p>
                     </div>
-                    <div class="text-center">
-                        <p class="font-signature text-2xl text-amber-950 font-bold">Otis Corbin</p>
-                        <p class="text-[9px] uppercase tracking-widest">Avv. Otis Corbin</p>
+                    <div class="text-right">
+                        <p class="font-signature text-3xl text-amber-950 font-bold mb-0">Otis Corbin</p>
+                        <p class="font-bold text-sm text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                        <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- VISTA 3: MISSIVA UFFICIALE (CON SCELTA FORMATO PDF/DOCX/PNG) -->
-    <div id="letterheadView" class="hidden max-w-5xl mx-auto w-full my-2">
-        <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <label class="font-bold text-xs uppercase text-amber-950 font-typewriter">Importa da Cliente:</label>
-                <select id="letterCaseSelect" onchange="autoFillLetterFromCase()" class="bg-amber-50 border border-amber-900/40 p-1.5 rounded text-xs font-serif-vintage">
-                </select>
-            </div>
-            
-            <div class="flex items-center gap-2 bg-amber-900/10 p-1.5 rounded border border-amber-900/30">
-                <span class="font-typewriter text-xs font-bold text-amber-950 uppercase"><i class="fa-solid fa-download"></i> Scarica in:</span>
-                <button onclick="exportLetter('pdf')" class="btn-western px-3 py-1 rounded text-xs uppercase"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button onclick="exportLetter('docx')" class="btn-western px-3 py-1 rounded text-xs uppercase"><i class="fa-solid fa-file-word"></i> Word</button>
-                <button onclick="exportLetter('png')" class="btn-western px-3 py-1 rounded text-xs uppercase"><i class="fa-solid fa-file-image"></i> Immagine</button>
-            </div>
-        </div>
-
-        <div id="letterheadSection" class="parchment-bg leather-border p-8 md:p-12 rounded-lg relative font-serif-vintage text-amber-950">
-            <div class="border-b-2 border-amber-950/80 pb-6 mb-6 text-center relative">
-                <h1 class="font-rye text-2xl md:text-3xl uppercase tracking-widest mb-1">Studio Legale Otis Corbin</h1>
-                <p class="font-typewriter text-xs md:text-sm text-amber-900 font-bold uppercase">West Elizabeth, Strawberry presso Native Post Missiva CC523</p>
-            </div>
-
-            <div class="space-y-6 text-sm">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block font-bold text-amber-900 text-xs font-typewriter mb-1">Luogo e Data</label>
-                        <input type="text" id="letterDate" value="Strawberry, West Elizabeth — 1900" class="w-full bg-amber-50/40 border-b border-amber-900/40 p-1 font-typewriter">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-amber-900 text-xs font-typewriter mb-1">Destinatario</label>
-                        <input type="text" id="letterRecipient" class="w-full bg-amber-50/40 border-b border-amber-900/40 p-1 font-bold">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-amber-900 text-xs font-typewriter mb-1">Oggetto Missiva</label>
-                    <input type="text" id="letterSubject" class="w-full bg-amber-50/40 border-b-2 border-amber-950 p-1.5 font-bold uppercase">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-amber-900 text-xs font-typewriter mb-1">Testo della Missiva</label>
-                    <textarea id="letterBody" rows="10" class="w-full bg-amber-50/30 border border-amber-900/30 rounded p-4 font-serif-vintage leading-relaxed resize-y text-base"></textarea>
-                </div>
-
-                <div class="pt-6 flex justify-between items-end border-t border-amber-900/30">
-                    <div class="text-xs font-typewriter text-amber-900">
-                        <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
-                        <p>Strawberry, West Elizabeth</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="font-signature text-3xl text-amber-950 font-bold px-4 border-b border-amber-950/60 inline-block">Otis Corbin</p>
-                        <p class="text-[10px] font-typewriter text-amber-900 uppercase tracking-widest mt-1">Avv. Otis Corbin — Patrocinante</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- VISTA 4: SCADENZARIO & UDIENZE -->
-    <div id="agendaView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
-        <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-calendar-days text-amber-800"></i> Scadenzario Udienze & Termini Processuali</h2>
-            <button onclick="addAgendaItem()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1"><i class="fa-solid fa-plus"></i> Nuova Scadenza</button>
-        </div>
-        <div id="agendaList" class="space-y-3"></div>
-    </div>
-
-    <!-- VISTA 5: FONDO CASSA & REGISTRO SPESE -->
-    <div id="financeView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
-        <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-coins text-amber-800"></i> Gestione Fondo Cassa & Spese Cliente</h2>
-            <button onclick="addExpenseItem()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1"><i class="fa-solid fa-plus"></i> Registra Operazione</button>
-        </div>
-        <div id="financeList" class="space-y-4"></div>
-    </div>
-
-    <!-- VISTA 6: RUBRICA AUTORITÀ -->
-    <div id="magistratesView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
-        <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-user-shield text-amber-800"></i> Rubrica Generale Autorità & Magistrati</h2>
-            <button onclick="addMagistrate()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1"><i class="fa-solid fa-user-plus"></i> Nuova Autorità</button>
-        </div>
-        <div id="magistratesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </div>
-
-    <!-- VISTA 7: PROCURE & MANDATI -->
-    <div id="formsView" class="hidden max-w-7xl mx-auto w-full my-2 parchment-bg leather-border p-6 rounded-lg">
-        <div class="border-b-2 border-amber-900/40 pb-3 mb-4">
-            <h2 class="font-rye text-xl text-amber-950 flex items-center gap-2"><i class="fa-solid fa-file-contract text-amber-800"></i> Modulistica Procure alle Liti & Mandati Spefici</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-amber-50/60 p-4 border border-amber-900/30 rounded space-y-3">
-                <h3 class="font-rye text-sm text-amber-950">Genera Procura Speciale</h3>
-                <label class="block text-xs font-typewriter font-bold text-amber-900">Seleziona Cliente:</label>
-                <select id="formClientSelect" class="w-full bg-white border border-amber-900/40 p-2 rounded text-xs font-serif-vintage"></select>
-                <button onclick="generateMandateDoc()" class="btn-western w-full py-2 rounded text-xs uppercase">Genera Documento Procura</button>
-            </div>
-            <div class="md:col-span-2 bg-amber-50/40 p-4 border border-amber-900/30 rounded" id="mandatePreview">
-                <p class="text-amber-900/60 italic text-xs">Seleziona un cliente e genera il mandato per visualizzarlo e stamparlo.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALE NUOVA CAUSA -->
-    <div id="newCaseModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="parchment-bg leather-border max-w-lg w-full p-6 rounded-lg shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-2">
-                <h3 class="font-rye text-lg text-amber-950">Nuova Causa / Cliente</h3>
-                <button onclick="closeModal('newCaseModal')" class="text-amber-950 font-bold text-xl">&times;</button>
-            </div>
-            <form onsubmit="createNewCase(event)" class="space-y-3 font-serif-vintage text-sm">
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Nome Cliente</label>
-                        <input type="text" id="newClientFirstName" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Cognome Cliente</label>
-                        <input type="text" id="newClientLastName" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Nr. Missiva</label>
-                        <input type="text" id="newClientMailNo" placeholder="es. MS-1900-44" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-amber-950 text-xs uppercase">Città</label>
-                        <input type="text" id="newClientCity" placeholder="es. Strawberry" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-bold text-amber-950 text-xs uppercase">Oggetto della Causa / Titolo</label>
-                    <input type="text" id="newTitle" placeholder="es. Contenzioso Terreni e Furto di Bestiame" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-bold">
-                </div>
-                <div>
-                    <label class="block font-bold text-amber-950 text-xs uppercase">Stato Causa</label>
-                    <select id="newStatus" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
-                        <option value="In Corso">In Corso</option>
-                        <option value="In Appello">In Appello</option>
-                        <option value="Taglia Pendente">Taglia Pendente</option>
-                        <option value="Archiviata">Archiviata</option>
-                    </select>
-                </div>
-                <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeModal('newCaseModal')" class="px-4 py-2 border border-amber-900 rounded text-xs uppercase font-bold">Annulla</button>
-                    <button type="submit" class="btn-western px-5 py-2 rounded text-xs uppercase">Registra Cliente</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- SCRIPT GESTIONALE E ESPORTAZIONE MULTI-FORMATO -->
+    <!-- LOGICA JAVASCRIPT GESTIONALE & ESPORTAZIONE MULTI-FORMATO -->
     <script>
-        let casesData = [
-            {
-                id: '1900-01',
-                title: 'Difesa per Disturbo della Pace e Rissa alla Prigione',
-                status: 'In Corso',
-                client: { firstName: 'Micah', lastName: 'Bell', mailNo: 'MS-1900-88', city: 'Strawberry' },
-                sections: {
-                    arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: []
-                },
-                witnesses: [],
-                developments: [],
-                parchmentDocs: []
-            }
-        ];
-
-        let activeCaseId = '1900-01';
         let totalParchmentPages = 1;
 
-        window.onload = function() {
-            renderCasesList();
-            renderActiveCase();
-            populateClientDropdowns();
-        };
-
-        function switchTab(tab) {
-            const tabs = ['cases', 'documentEditor', 'letter', 'agenda', 'finance', 'magistrates', 'forms'];
-            tabs.forEach(t => {
-                const view = document.getElementById(t + 'View');
-                const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
-                if (view) view.classList.toggle('hidden', t !== tab);
-                if (btn) btn.classList.toggle('active', t === tab);
-            });
-            if (tab === 'documentEditor' || tab === 'forms') populateClientDropdowns();
-        }
-
-        function renderCasesList(filterText = '') {
-            const listContainer = document.getElementById('casesList');
-            listContainer.innerHTML = '';
-            const filtered = casesData.filter(c => 
-                `${c.client.firstName} ${c.client.lastName}`.toLowerCase().includes(filterText.toLowerCase()) || 
-                c.title.toLowerCase().includes(filterText.toLowerCase()) ||
-                c.client.mailNo.toLowerCase().includes(filterText.toLowerCase())
-            );
-
-            filtered.forEach(c => {
-                const isActive = c.id === activeCaseId;
-                const div = document.createElement('div');
-                div.className = `p-3 rounded border cursor-pointer transition-all ${isActive ? 'bg-amber-900/20 border-amber-900 font-bold shadow-md' : 'bg-amber-50/50 border-amber-900/30 hover:bg-amber-100/50'}`;
-                div.onclick = () => { activeCaseId = c.id; renderCasesList(filterText); renderActiveCase(); };
-                div.innerHTML = `
-                    <div class="flex justify-between items-start text-xs font-typewriter text-amber-900 mb-1">
-                        <span>Rif. ${c.client.mailNo}</span>
-                        <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-900/30">${c.status}</span>
-                    </div>
-                    <div class="font-serif-vintage text-amber-950 text-sm font-bold truncate">${c.client.firstName} ${c.client.lastName}</div>
-                    <div class="text-xs text-amber-900/80 italic truncate">${c.title}</div>
-                    <div class="text-[10px] text-amber-900 font-typewriter mt-1"><i class="fa-solid fa-location-dot"></i> ${c.client.city}</div>
-                `;
-                listContainer.appendChild(div);
-            });
-        }
-
-        function getActiveCase() { return casesData.find(c => c.id === activeCaseId); }
-
-        function renderActiveCase() {
-            const c = getActiveCase();
-            if (!c) return;
-
-            document.getElementById('caseNumberDisplay').innerText = `Rif. Registro Missiva: ${c.client.mailNo}`;
-            document.getElementById('caseTitleDisplay').innerText = c.title;
-            const badge = document.getElementById('caseStatusBadge');
-            badge.innerText = c.status;
-            badge.className = `px-3 py-1 rounded text-xs font-bold uppercase font-typewriter border border-amber-900/30 ${c.status === 'In Corso' ? 'bg-amber-300 text-amber-950' : 'bg-amber-800 text-amber-100'}`;
-
-            document.getElementById('clientFirstName').value = c.client.firstName || '';
-            document.getElementById('clientLastName').value = c.client.lastName || '';
-            document.getElementById('clientMailNo').value = c.client.mailNo || '';
-            document.getElementById('clientCity').value = c.client.city || '';
-
-            renderSectionFiles('arringaApertura');
-            renderSectionFiles('arringaConclusiva');
-            renderSectionFiles('attiProcura');
-            renderSectionFiles('comunicazioniTribunale');
-            renderSectionFiles('perizieMediche');
-            renderSectionFiles('perizieTecniche');
-            renderWitnesses();
-            renderDevelopments();
-            renderSavedParchmentDocs();
-        }
-
-        function updateClientField(field, value) {
-            const c = getActiveCase();
-            if (!c) return;
-            c.client[field] = value;
-            renderCasesList();
-        }
-
-        function renderSectionFiles(sectionKey) {
-            const c = getActiveCase();
-            const container = document.getElementById(`files_${sectionKey}`);
-            if (!container) return;
-            container.innerHTML = '';
-            if (!c.sections) c.sections = {};
-            if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
-
-            const files = c.sections[sectionKey];
-            if (files.length === 0) {
-                container.innerHTML = `<p class="text-amber-900/60 italic text-xs col-span-2">Nessun documento caricato.</p>`;
-                return;
-            }
-
-            files.forEach((f, idx) => {
-                const el = document.createElement('div');
-                el.className = "flex justify-between items-center bg-amber-100/80 border border-amber-900/30 p-2 rounded";
-                el.innerHTML = `
-                    <div class="truncate pr-2">
-                        <i class="fa-solid fa-file-lines text-amber-900"></i> <span class="font-bold text-amber-950">${f.name}</span>
-                        <span class="text-[10px] text-amber-800 block">${f.size}</span>
-                    </div>
-                    <button onclick="removeSectionFile('${sectionKey}', ${idx})" class="text-red-900 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
-                `;
-                container.appendChild(el);
-            });
-        }
-
-        function uploadSectionFile(sectionKey, event) {
-            const c = getActiveCase();
-            const files = event.target.files;
-            if (!files.length) return;
-            if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
-
-            for (let f of files) {
-                c.sections[sectionKey].push({ name: f.name, size: (f.size / 1024).toFixed(0) + ' KB' });
-            }
-            renderSectionFiles(sectionKey);
-        }
-
-        function removeSectionFile(sectionKey, index) {
-            const c = getActiveCase();
-            c.sections[sectionKey].splice(index, 1);
-            renderSectionFiles(sectionKey);
-        }
-
-        // REDAZIONE ATTI PERGAMENA MULTI-PAGINA A4
         function addParchmentPage() {
             totalParchmentPages++;
             const container = document.getElementById('parchmentPagesContainer');
@@ -736,82 +237,28 @@
             pageDiv.id = `parchment_page_${totalParchmentPages}`;
             pageDiv.innerHTML = `
                 <div>
-                    <div class="border-b-2 border-amber-950/80 pb-2 mb-4 text-center">
-                        <p class="font-typewriter text-[10px] text-amber-900 uppercase">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
+                    <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
+                        <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
                     </div>
-                    <textarea id="docTextPage_${totalParchmentPages}" rows="22" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-sm leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <textarea id="docTextPage_${totalParchmentPages}" rows="22" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                 </div>
-                <div class="pt-4 border-t border-amber-900/30 flex justify-between items-end text-xs font-typewriter">
-                    <span>Atto Ufficiale • Pagina ${totalParchmentPages}</span>
-                    <span class="font-signature text-xl text-amber-950 font-bold">Otis Corbin</span>
+                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
+                    <span class="text-xs font-typewriter font-bold">1900 — Pagina ${totalParchmentPages}</span>
+                    <div class="text-right">
+                        <p class="font-signature text-2xl text-amber-950 font-bold mb-0">Otis Corbin</p>
+                        <p class="font-bold text-xs text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                    </div>
                 </div>
             `;
             container.appendChild(pageDiv);
             document.getElementById('pageCounter').innerText = `Pagine Totali: ${totalParchmentPages}`;
         }
 
-        function saveParchmentDocumentToDB() {
-            const clientId = document.getElementById('docClientSelect').value;
-            const targetSection = document.getElementById('docTargetSection').value;
-            const title = document.getElementById('docTypeTitle').value;
-            const date = document.getElementById('docDate').value;
-
-            const targetCase = casesData.find(c => c.id === clientId);
-            if (!targetCase) { alert("Seleziona un cliente valido."); return; }
-
-            let fullText = [];
-            for (let i = 1; i <= totalParchmentPages; i++) {
-                const txt = document.getElementById(`docTextPage_${i}`)?.value || '';
-                fullText.push(txt);
-            }
-
-            if (!targetCase.parchmentDocs) targetCase.parchmentDocs = [];
-            targetCase.parchmentDocs.push({
-                id: 'doc_' + Date.now(),
-                title: title,
-                date: date,
-                section: targetSection,
-                pages: fullText
-            });
-
-            alert(`Atto "${title}" salvato nel database del cliente ${targetCase.client.firstName} ${targetCase.client.lastName}!`);
-            renderSavedParchmentDocs();
-        }
-
-        function renderSavedParchmentDocs() {
-            const c = getActiveCase();
-            const container = document.getElementById('savedParchmentDocsList');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const docs = c.parchmentDocs || [];
-            if (docs.length === 0) {
-                container.innerHTML = `<p class="text-amber-900/60 italic text-xs">Nessun atto in pergamena salvato per questo cliente.</p>`;
-                return;
-            }
-
-            docs.forEach((doc, idx) => {
-                const el = document.createElement('div');
-                el.className = "bg-amber-50/80 border border-amber-900/40 p-3 rounded flex flex-wrap justify-between items-center gap-2";
-                el.innerHTML = `
-                    <div>
-                        <span class="font-rye text-xs text-amber-950 font-bold">${doc.title}</span>
-                        <div class="text-[10px] font-typewriter text-amber-900">Data: ${doc.date} | Sezione: ${doc.section} | Pagine: ${doc.pages.length}</div>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="downloadSavedDoc('${doc.id}', 'pdf')" class="btn-western px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button onclick="downloadSavedDoc('${doc.id}', 'docx')" class="btn-western px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-file-word"></i> Word</button>
-                        <button onclick="downloadSavedDoc('${doc.id}', 'png')" class="btn-western px-2 py-1 rounded text-[10px]"><i class="fa-solid fa-file-image"></i> PNG</button>
-                    </div>
-                `;
-                container.appendChild(el);
-            });
-        }
-
-        // ESPORTAZIONE NEI FORMATI PDF, DOCX E PNG
+        // ESPORTAZIONE FORMATI
         function exportCurrentDoc(format) {
-            const title = document.getElementById('docTypeTitle').value || "Atto_Studio_Corbin";
-            
+            const city = document.getElementById('docCity').value || "Strawberry";
+            const title = `Atto_Studio_Corbin_${city}`;
+
             if (format === 'pdf') {
                 window.print();
             } else if (format === 'docx') {
@@ -822,36 +269,28 @@
         }
 
         function exportDocxFormat(title) {
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = window.docx;
+            const { Document, Packer, Paragraph, TextRun } = window.docx;
             
             let paragraphs = [
-                new Paragraph({
-                    children: [new TextRun({ text: "STUDIO LEGALE OTIS CORBIN", bold: true, size: 28, color: "4A2F1B" })],
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: "West Elizabeth, Strawberry presso Native Post Missiva CC523", italic: true, size: 20 })],
-                }),
+                new Paragraph({ children: [new TextRun({ text: "Studio Legale Otis Corbin", bold: true, size: 28 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinante nello Stato delle Wildlands", italic: true, size: 20 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post", size: 18 })] }),
                 new Paragraph({ text: "---------------------------------------------------------------------------------" }),
-                new Paragraph({
-                    children: [new TextRun({ text: title, bold: true, size: 24, color: "2C1A0E" })],
-                }),
+                new Paragraph({ children: [new TextRun({ text: `Città di: ${document.getElementById('docCity').value} addì: ${document.getElementById('docDate').value}`, bold: true, size: 20 })] }),
                 new Paragraph({ text: "\n" })
             ];
 
             for (let i = 1; i <= totalParchmentPages; i++) {
                 const txt = document.getElementById(`docTextPage_${i}`)?.value || '';
-                paragraphs.push(new Paragraph({
-                    children: [new TextRun({ text: `--- Pagina ${i} ---`, bold: true, size: 18 })]
-                }));
-                paragraphs.push(new Paragraph({
-                    children: [new TextRun({ text: txt, size: 22 })]
-                }));
+                paragraphs.push(new Paragraph({ children: [new TextRun({ text: txt, size: 22 })] }));
                 paragraphs.push(new Paragraph({ text: "\n" }));
             }
 
-            const doc = new Document({
-                sections: [{ properties: {}, children: paragraphs }]
-            });
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
+
+            const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
 
             Packer.toBlob(doc).then(blob => {
                 const link = document.createElement('a');
@@ -871,109 +310,6 @@
                 link.click();
             });
         }
-
-        function downloadSavedDoc(docId, format) {
-            const c = getActiveCase();
-            const doc = c.parchmentDocs.find(d => d.id === docId);
-            if (!doc) return;
-
-            if (format === 'pdf') {
-                alert(`Impostazione dell'atto "${doc.title}" per la stampa PDF...`);
-                openDocumentWriterForCurrentCase();
-            } else if (format === 'docx') {
-                const { Document, Packer, Paragraph, TextRun } = window.docx;
-                let paragraphs = [
-                    new Paragraph({ children: [new TextRun({ text: "STUDIO LEGALE OTIS CORBIN", bold: true, size: 28 })] }),
-                    new Paragraph({ children: [new TextRun({ text: doc.title, bold: true, size: 24 })] }),
-                    new Paragraph({ text: "\n" })
-                ];
-                doc.pages.forEach((pTxt, idx) => {
-                    paragraphs.push(new Paragraph({ children: [new TextRun({ text: `--- Pagina ${idx + 1} ---`, bold: true })] }));
-                    paragraphs.push(new Paragraph({ children: [new TextRun({ text: pTxt })] }));
-                });
-                const d = new Document({ sections: [{ children: paragraphs }] });
-                Packer.toBlob(d).then(blob => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = `${doc.title.replace(/\s+/g, '_')}.docx`;
-                    link.click();
-                });
-            } else if (format === 'png') {
-                exportPngFormat('parchment_page_1', doc.title);
-            }
-        }
-
-        function exportLetter(format) {
-            const subject = document.getElementById('letterSubject').value || "Missiva_Ufficiale";
-            if (format === 'pdf') {
-                window.print();
-            } else if (format === 'docx') {
-                exportDocxFormat(subject);
-            } else if (format === 'png') {
-                exportPngFormat('letterheadSection', subject);
-            }
-        }
-
-        function populateClientDropdowns() {
-            const docSel = document.getElementById('docClientSelect');
-            const formSel = document.getElementById('formClientSelect');
-            const letterSel = document.getElementById('letterCaseSelect');
-
-            [docSel, formSel, letterSel].forEach(sel => {
-                if (!sel) return;
-                sel.innerHTML = '<option value="">-- Seleziona Cliente --</option>';
-                casesData.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.id;
-                    opt.innerText = `${c.client.firstName} ${c.client.lastName} (${c.client.mailNo})`;
-                    sel.appendChild(opt);
-                });
-            });
-        }
-
-        function openDocumentWriterForCurrentCase() {
-            switchTab('documentEditor');
-            document.getElementById('docClientSelect').value = activeCaseId;
-        }
-
-        function createNewCase(e) {
-            e.preventDefault();
-            const newId = '1900-' + Math.floor(10 + Math.random() * 90);
-            const newObj = {
-                id: newId,
-                title: document.getElementById('newTitle').value,
-                status: document.getElementById('newStatus').value,
-                client: {
-                    firstName: document.getElementById('newClientFirstName').value,
-                    lastName: document.getElementById('newClientLastName').value,
-                    mailNo: document.getElementById('newClientMailNo').value,
-                    city: document.getElementById('newClientCity').value
-                },
-                sections: { arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: [] },
-                witnesses: [], developments: [], parchmentDocs: []
-            };
-
-            casesData.unshift(newObj);
-            activeCaseId = newId;
-            closeModal('newCaseModal');
-            renderCasesList();
-            renderActiveCase();
-            populateClientDropdowns();
-            e.target.reset();
-        }
-
-        function deleteCurrentCase() {
-            if (confirm("Sei sicuro di voler archiviare ed eliminare questa causa dal registro?")) {
-                casesData = casesData.filter(c => c.id !== activeCaseId);
-                if (casesData.length > 0) activeCaseId = casesData[0].id;
-                renderCasesList();
-                renderActiveCase();
-                populateClientDropdowns();
-            }
-        }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
     </script>
 </body>
 </html>
