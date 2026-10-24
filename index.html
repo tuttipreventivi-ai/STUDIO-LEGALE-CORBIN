@@ -259,7 +259,44 @@
                         <div id="files_comunicazioniTribunale" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
                     </div>
 
-                    <!-- 5. SEZIONE TESTE & DEPOSIZIONI (SCALABILE DEDICATA) -->
+                    <!-- 5. PERIZIE (CON SOTTO-SEZIONI PERIZIE MEDICHE E PERIZIE TECNICHE) -->
+                    <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
+                        <h4 class="font-rye text-md text-amber-950 mb-3 border-b border-amber-900/30 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-microscope text-amber-800"></i> Perizie
+                        </h4>
+                        
+                        <div class="space-y-4">
+                            <!-- Sotto-sezione Perizie Mediche -->
+                            <div class="border border-amber-900/30 rounded p-3 bg-amber-50/60">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h5 class="font-rye text-xs text-amber-950 flex items-center gap-2">
+                                        <i class="fa-solid fa-notes-medical text-amber-800"></i> Perizie Mediche
+                                    </h5>
+                                    <label class="btn-western px-2.5 py-1 rounded text-[11px] uppercase cursor-pointer flex items-center gap-1">
+                                        <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
+                                        <input type="file" onchange="uploadSectionFile('perizieMediche', event)" class="hidden" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+                                    </label>
+                                </div>
+                                <div id="files_perizieMediche" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
+                            </div>
+
+                            <!-- Sotto-sezione Perizie Tecniche -->
+                            <div class="border border-amber-900/30 rounded p-3 bg-amber-50/60">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h5 class="font-rye text-xs text-amber-950 flex items-center gap-2">
+                                        <i class="fa-solid fa-compass-drafting text-amber-800"></i> Perizie Tecniche
+                                    </h5>
+                                    <label class="btn-western px-2.5 py-1 rounded text-[11px] uppercase cursor-pointer flex items-center gap-1">
+                                        <i class="fa-solid fa-file-circle-plus"></i> Aggiungi File
+                                        <input type="file" onchange="uploadSectionFile('perizieTecniche', event)" class="hidden" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+                                    </label>
+                                </div>
+                                <div id="files_perizieTecniche" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-typewriter"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. SEZIONE TESTE & DEPOSIZIONI -->
                     <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
                         <div class="flex justify-between items-center mb-3 border-b border-amber-900/30 pb-2">
                             <h4 class="font-rye text-md text-amber-950 flex items-center gap-2">
@@ -275,7 +312,7 @@
                         </div>
                     </div>
 
-                    <!-- 6. SVILUPPI PRATICA & TRATTATIVE CONTROPARTE -->
+                    <!-- 7. SVILUPPI PRATICA & TRATTATIVE CONTROPARTE -->
                     <div class="border-2 border-amber-900/40 rounded p-4 bg-amber-900/5">
                         <div class="flex justify-between items-center mb-3 border-b border-amber-900/30 pb-2">
                             <h4 class="font-rye text-md text-amber-950 flex items-center gap-2">
@@ -422,7 +459,9 @@
                     arringaApertura: [{ name: 'Bozza_Arringa_Apertura_Micah.docx', size: '320 KB' }],
                     arringaConclusiva: [],
                     attiProcura: [{ name: 'Atto_Imputazione_Procura.pdf', size: '1.2 MB' }],
-                    comunicazioniTribunale: [{ name: 'Notifica_Udienza_Giudice.pdf', size: '450 KB' }]
+                    comunicazioniTribunale: [{ name: 'Notifica_Udienza_Giudice.pdf', size: '450 KB' }],
+                    perizieMediche: [{ name: 'Referto_Medico_Lesioni.pdf', size: '620 KB' }],
+                    perizieTecniche: [{ name: 'Perizia_Balistica_Cella.pdf', size: '1.5 MB' }]
                 },
                 witnesses: [
                     {
@@ -515,6 +554,8 @@
             renderSectionFiles('arringaConclusiva');
             renderSectionFiles('attiProcura');
             renderSectionFiles('comunicazioniTribunale');
+            renderSectionFiles('perizieMediche');
+            renderSectionFiles('perizieTecniche');
 
             // Render Teste & Sviluppi
             renderWitnesses();
@@ -531,9 +572,13 @@
         function renderSectionFiles(sectionKey) {
             const c = getActiveCase();
             const container = document.getElementById(`files_${sectionKey}`);
+            if (!container) return;
             container.innerHTML = '';
 
-            const files = c.sections[sectionKey] || [];
+            if (!c.sections) c.sections = {};
+            if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
+
+            const files = c.sections[sectionKey];
             if (files.length === 0) {
                 container.innerHTML = `<p class="text-amber-900/60 italic text-xs col-span-2">Nessun documento caricato.</p>`;
                 return;
@@ -557,6 +602,9 @@
             const c = getActiveCase();
             const files = event.target.files;
             if (!files.length) return;
+
+            if (!c.sections) c.sections = {};
+            if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
 
             for (let f of files) {
                 c.sections[sectionKey].push({
@@ -854,7 +902,7 @@
                     mailNo: document.getElementById('newClientMailNo').value,
                     city: document.getElementById('newClientCity').value
                 },
-                sections: { arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [] },
+                sections: { arringaApertura: [], arringaConclusiva: [], attiProcura: [], comunicazioniTribunale: [], perizieMediche: [], perizieTecniche: [] },
                 witnesses: [],
                 developments: []
             };
