@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio Legale Otis Corbin - West Elizabeth, Strawberry</title>
     
-    <!-- Tailwind CSS per layout reattivo -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Librerie per esportazione DOCX e Immagini PNG -->
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Font Google d'epoca: Rye, Playfair Display, Special Elite, Alex Brush -->
+    <!-- Font Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Rye&family=Special+Elite&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -69,44 +69,39 @@
             transform: translateY(-1px);
         }
 
-        .wax-seal {
-            background: radial-gradient(circle, var(--wax-red) 60%, #540e0e 100%);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
-        }
-
-        .tab-btn.active {
-            background: var(--brass);
-            color: #1a0f0a;
-        }
-
-        /* FOGLIO A4 ESATTO COME DA PDF */
+        /* FOGLIO A4 PERGAMENA INGESELLITA (MANTENUTA ANCHE IN STAMPA) */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
             padding: 20mm;
             margin: 0 auto 20px auto;
-            background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95));
+            background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95)) !important;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 50px rgba(74, 47, 27, 0.2);
             border: 1px solid var(--brass-dark);
             position: relative;
             box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--leather-dark); }
         ::-webkit-scrollbar-thumb { background: var(--brass-dark); border-radius: 4px; }
 
+        /* REGOLE DI STAMPA PULITE SENZA URL E RIFERIMENTI */
         @media print {
-            body { background: white !important; padding: 0 !important; margin: 0 !important; }
+            body { background: #1a0f0a !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
             .a4-page {
                 width: 100% !important; min-height: 100vh !important;
                 margin: 0 !important; padding: 15mm !important;
-                box-shadow: none !important; border: none !important; background: white !important;
+                box-shadow: none !important; 
                 page-break-after: always;
             }
-            .parchment-bg { background: #fff !important; box-shadow: none !important; }
-            textarea, input, select { border: none !important; background: transparent !important; }
+            @page {
+                margin: 0;
+                size: A4;
+            }
         }
     </style>
 </head>
@@ -124,40 +119,15 @@
 
     <!-- BARRA NAVIGAZIONE TAB -->
     <nav class="no-print max-w-7xl mx-auto w-full mb-4 flex flex-wrap gap-2 border-b-2 border-amber-900/60 font-rye text-xs md:text-sm">
-        <button id="tabCasesBtn" onclick="switchTab('cases')" class="tab-btn active px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
-            <i class="fa-solid fa-folder-open"></i> Dossier Clienti
-        </button>
-        <button id="tabDocumentEditorBtn" onclick="switchTab('documentEditor')" class="tab-btn px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
+        <button class="tab-btn active px-3 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-1.5">
             <i class="fa-solid fa-file-signature text-amber-400"></i> Redazione Carta Intestata
         </button>
     </nav>
 
-    <!-- VISTA REDAZIONE CARTA INTESTATA (ESATTA STRUTTURA DEL PDF) -->
+    <!-- VISTA REDAZIONE CARTA INTESTATA -->
     <div id="documentEditorView" class="max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
-                <div class="flex items-center gap-2">
-                    <label class="font-bold text-xs uppercase font-typewriter text-amber-950">Associa Causa Cliente:</label>
-                    <select id="docClientSelect" class="bg-amber-50 border border-amber-900/40 p-1.5 rounded text-xs font-serif-vintage">
-                    </select>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label class="font-bold text-xs uppercase font-typewriter text-amber-950">Sezione Causa:</label>
-                    <select id="docTargetSection" class="bg-amber-50 border border-amber-900/40 p-1.5 rounded text-xs font-serif-vintage">
-                        <option value="attiProcura">Atti Procura</option>
-                        <option value="arringaApertura">Arringa d'Apertura</option>
-                        <option value="arringaConclusiva">Arringa Conclusiva</option>
-                        <option value="comunicazioniTribunale">Comunicazioni Tribunale</option>
-                        <option value="perizieTecniche">Perizie Tecniche</option>
-                        <option value="perizieMediche">Perizie Mediche</option>
-                    </select>
-                </div>
-                <button onclick="saveParchmentDocumentToDB()" class="btn-western px-4 py-2 rounded text-xs uppercase flex items-center gap-1">
-                    <i class="fa-solid fa-floppy-disk"></i> Salva nel Database Cliente
-                </button>
-            </div>
-
-            <div class="border-t border-amber-900/30 pt-3 flex flex-wrap justify-between items-center gap-3">
                 <div class="flex items-center gap-2">
                     <button onclick="addParchmentPage()" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1">
                         <i class="fa-solid fa-file-circle-plus"></i> Aggiungi Pagina A4
@@ -165,16 +135,16 @@
                     <span id="pageCounter" class="text-xs font-typewriter font-bold text-amber-900">Pagine Totali: 1</span>
                 </div>
 
-                <!-- DOWNLOAD MULTI-FORMATO -->
+                <!-- DOWNLOAD MULTI-FORMATO SENZA URL -->
                 <div class="flex items-center gap-2 bg-amber-900/10 p-1.5 rounded border border-amber-900/30">
                     <span class="font-typewriter text-xs font-bold text-amber-950 uppercase"><i class="fa-solid fa-download"></i> Scarica Atto in:</span>
-                    <button onclick="exportCurrentDoc('pdf')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
+                    <button onclick="exportCurrentDoc('pdf')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Stampa o Salva PDF Pergamena">
                         <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
-                    <button onclick="exportCurrentDoc('docx')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
+                    <button onclick="exportCurrentDoc('docx')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Scarica Documento Word Editabile">
                         <i class="fa-solid fa-file-word"></i> Word (.docx)
                     </button>
-                    <button onclick="exportCurrentDoc('png')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1">
+                    <button onclick="exportCurrentDoc('png')" class="btn-western px-3 py-1 rounded text-xs uppercase flex items-center gap-1" title="Scarica Immagine PNG">
                         <i class="fa-solid fa-file-image"></i> PNG
                     </button>
                 </div>
@@ -185,7 +155,7 @@
         <div id="parchmentPagesContainer" class="space-y-6">
             <div class="a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between" id="parchment_page_1">
                 <div>
-                    <!-- INTESTAZIONE FEDELE AL PDF MODELLO -->
+                    <!-- INTESTAZIONE FEDELE AL MODELLO -->
                     <div class="border-b-2 border-amber-950 pb-3 mb-6 text-center">
                         <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-1">Studio Legale Otis Corbin</h1>
                         <p class="font-serif-vintage text-sm font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
@@ -204,13 +174,13 @@
                         </div>
                     </div>
 
-                    <!-- CORPO DELL'ATTO / DEPOSIZIONE -->
+                    <!-- CORPO DELL'ATTO -->
                     <div>
                         <textarea id="docTextPage_1" rows="18" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                     </div>
                 </div>
 
-                <!-- PIE' DI PAGINA E FIRMA FEDELE AL PDF -->
+                <!-- PIE' DI PAGINA E FIRMA -->
                 <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
                     <div class="text-xs font-typewriter">
                         <p class="font-bold text-sm text-amber-950">1900</p>
@@ -225,7 +195,7 @@
         </div>
     </div>
 
-    <!-- LOGICA JAVASCRIPT GESTIONALE & ESPORTAZIONE MULTI-FORMATO -->
+    <!-- SCRIPT LOGICA DI ESPORTAZIONE -->
     <script>
         let totalParchmentPages = 1;
 
@@ -254,7 +224,6 @@
             document.getElementById('pageCounter').innerText = `Pagine Totali: ${totalParchmentPages}`;
         }
 
-        // ESPORTAZIONE FORMATI
         function exportCurrentDoc(format) {
             const city = document.getElementById('docCity').value || "Strawberry";
             const title = `Atto_Studio_Corbin_${city}`;
@@ -286,9 +255,9 @@
                 paragraphs.push(new Paragraph({ text: "\n" }));
             }
 
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }));
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }));
-            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }),
+            new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }),
+            new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
 
             const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
 
@@ -303,7 +272,7 @@
         function exportPngFormat(elementId, fileName) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            html2canvas(element).then(canvas => {
+            html2canvas(element, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `${fileName.replace(/\s+/g, '_')}.png`;
                 link.href = canvas.toDataURL('image/png');
