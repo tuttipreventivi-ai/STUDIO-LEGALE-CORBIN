@@ -79,34 +79,39 @@
             color: #1a0f0a;
         }
 
-        /* FOGLIO A4 PERGAMENA INTESTATA MULTI-PAGINA */
+        /* FOGLIO A4 PERGAMENA INGIALLITA MANTENUTO ANCHE IN STAMPA/PDF */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
             padding: 20mm;
             margin: 0 auto 20px auto;
-            background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95));
+            background: #fdf8eb linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95)) !important;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 50px rgba(74, 47, 27, 0.2);
             border: 1px solid var(--brass-dark);
             position: relative;
             box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--leather-dark); }
         ::-webkit-scrollbar-thumb { background: var(--brass-dark); border-radius: 4px; }
 
+        /* REGOLE PER RIMUOVERE URL E RIFERIMENTI DI STAMPA BROWSER */
         @media print {
-            body { background: white !important; padding: 0 !important; margin: 0 !important; }
+            body { background: transparent !important; padding: 0 !important; margin: 0 !important; }
             .no-print { display: none !important; }
             .a4-page {
                 width: 100% !important; min-height: 100vh !important;
                 margin: 0 !important; padding: 15mm !important;
-                box-shadow: none !important; border: none !important; background: white !important;
+                box-shadow: none !important; 
                 page-break-after: always;
             }
-            .parchment-bg { background: #fff !important; box-shadow: none !important; }
-            textarea, input, select { border: none !important; background: transparent !important; }
+            @page {
+                margin: 0;
+                size: A4;
+            }
         }
     </style>
 </head>
@@ -334,7 +339,7 @@
         </section>
     </div>
 
-    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA (MULTI-PAGINA CON ESPORTAZIONE PDF / DOCX / PNG) -->
+    <!-- VISTA 2: REDAZIONE ATTO A4 CARTA PERGAMENA INTESTATA -->
     <div id="documentEditorView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-3">
@@ -388,48 +393,47 @@
             <!-- Pagina 1 di Default -->
             <div class="a4-page font-serif-vintage text-amber-950 relative flex flex-col justify-between" id="parchment_page_1">
                 <div>
-                    <div class="border-b-2 border-amber-950/80 pb-3 mb-4 text-center relative">
-                        <div class="flex justify-between items-start mb-1 text-[10px] font-typewriter text-amber-900">
-                            <span>REGISTRO ATTI CC523</span>
-                            <span>STRAWBERRY, WEST ELIZABETH</span>
-                        </div>
-                        <h1 class="font-rye text-xl md:text-2xl text-amber-950 uppercase tracking-widest">Studio Legale Otis Corbin</h1>
-                        <p class="font-typewriter text-[11px] text-amber-900 font-bold uppercase">West Elizabeth, Strawberry presso Native Post Missiva CC523</p>
+                    <!-- INTESTAZIONE MODELLO ESATTO -->
+                    <div class="border-b-2 border-amber-950 pb-3 mb-6 text-center">
+                        <h1 class="font-rye text-2xl md:text-3xl text-amber-950 tracking-wide uppercase mb-1">Studio Legale Otis Corbin</h1>
+                        <p class="font-serif-vintage text-sm font-bold italic text-amber-900">Patrocinante nello Stato delle Wildlands</p>
+                        <p class="font-typewriter text-xs text-amber-950 font-semibold mt-0.5">Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post</p>
                     </div>
 
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-4 text-xs font-typewriter mb-2">
-                            <div>
-                                <label class="font-bold text-amber-900 uppercase block">Titolo / Tipologia Atto:</label>
-                                <input type="text" id="docTypeTitle" value="DEPOSIZIONE GIURATA / VERBALE D'UDIENZA" class="w-full bg-amber-50/50 border-b border-amber-900/40 font-bold p-1">
-                            </div>
-                            <div>
-                                <label class="font-bold text-amber-900 uppercase block">Data Redazione:</label>
-                                <input type="text" id="docDate" value="Strawberry, 1900" class="w-full bg-amber-50/50 border-b border-amber-900/40 p-1">
-                            </div>
+                    <!-- CAMPI CITTA' E ADDI' -->
+                    <div class="flex justify-end gap-2 text-xs font-typewriter mb-6">
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold">Città di:</span>
+                            <input type="text" id="docCity" value="Strawberry" class="bg-transparent border-b border-amber-950 w-32 px-1 focus:outline-none">
                         </div>
+                        <div class="flex items-center gap-1">
+                            <span class="font-bold">addì:</span>
+                            <input type="text" id="docDate" value="14 Maggio 1900" class="bg-transparent border-b border-amber-950 w-36 px-1 focus:outline-none">
+                        </div>
+                    </div>
 
-                        <div>
-                            <textarea id="docTextPage_1" rows="18" placeholder="Scrivi il testo dell'atto, deposizione o verbale..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-sm leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
-                        </div>
+                    <!-- CORPO DELL'ATTO -->
+                    <div>
+                        <textarea id="docTextPage_1" rows="18" placeholder="Scrivi qui l'atto, la deposizione o la memoria difensiva..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-amber-900/30 flex justify-between items-end text-xs font-typewriter">
-                    <div>
-                        <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
-                        <p class="text-[10px]">Atto Ufficiale • Pagina 1</p>
+                <!-- PIE' DI PAGINA E FIRMA -->
+                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
+                    <div class="text-xs font-typewriter">
+                        <p class="font-bold text-sm text-amber-950">1900</p>
                     </div>
-                    <div class="text-center">
-                        <p class="font-signature text-2xl text-amber-950 font-bold">Otis Corbin</p>
-                        <p class="text-[9px] uppercase tracking-widest">Avv. Otis Corbin</p>
+                    <div class="text-right">
+                        <p class="font-signature text-3xl text-amber-950 font-bold mb-0">Otis Corbin</p>
+                        <p class="font-bold text-sm text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                        <p class="text-xs italic text-amber-900 font-serif-vintage">Patrocinatore e Difensore Legale</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- VISTA 3: MISSIVA UFFICIALE (CON SCELTA FORMATO PDF/DOCX/PNG) -->
+    <!-- VISTA 3: MISSIVA UFFICIALE -->
     <div id="letterheadView" class="hidden max-w-5xl mx-auto w-full my-2">
         <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -736,14 +740,17 @@
             pageDiv.id = `parchment_page_${totalParchmentPages}`;
             pageDiv.innerHTML = `
                 <div>
-                    <div class="border-b-2 border-amber-950/80 pb-2 mb-4 text-center">
-                        <p class="font-typewriter text-[10px] text-amber-900 uppercase">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
+                    <div class="border-b-2 border-amber-950 pb-2 mb-4 text-center">
+                        <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
                     </div>
-                    <textarea id="docTextPage_${totalParchmentPages}" rows="22" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-sm leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
+                    <textarea id="docTextPage_${totalParchmentPages}" rows="22" placeholder="Continua il testo dell'atto..." class="w-full bg-transparent border border-amber-900/20 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-y"></textarea>
                 </div>
-                <div class="pt-4 border-t border-amber-900/30 flex justify-between items-end text-xs font-typewriter">
-                    <span>Atto Ufficiale • Pagina ${totalParchmentPages}</span>
-                    <span class="font-signature text-xl text-amber-950 font-bold">Otis Corbin</span>
+                <div class="pt-4 border-t border-amber-950/60 flex justify-between items-end">
+                    <span class="text-xs font-typewriter font-bold">1900 — Pagina ${totalParchmentPages}</span>
+                    <div class="text-right">
+                        <p class="font-signature text-2xl text-amber-950 font-bold mb-0">Otis Corbin</p>
+                        <p class="font-bold text-xs text-amber-950 font-serif-vintage">Avv. Otis CORBIN</p>
+                    </div>
                 </div>
             `;
             container.appendChild(pageDiv);
@@ -753,7 +760,7 @@
         function saveParchmentDocumentToDB() {
             const clientId = document.getElementById('docClientSelect').value;
             const targetSection = document.getElementById('docTargetSection').value;
-            const title = document.getElementById('docTypeTitle').value;
+            const title = "Atto_Studio_Corbin";
             const date = document.getElementById('docDate').value;
 
             const targetCase = casesData.find(c => c.id === clientId);
@@ -774,7 +781,7 @@
                 pages: fullText
             });
 
-            alert(`Atto "${title}" salvato nel database del cliente ${targetCase.client.firstName} ${targetCase.client.lastName}!`);
+            alert(`Atto salvato nel database del cliente ${targetCase.client.firstName} ${targetCase.client.lastName}!`);
             renderSavedParchmentDocs();
         }
 
@@ -810,8 +817,9 @@
 
         // ESPORTAZIONE NEI FORMATI PDF, DOCX E PNG
         function exportCurrentDoc(format) {
-            const title = document.getElementById('docTypeTitle').value || "Atto_Studio_Corbin";
-            
+            const city = document.getElementById('docCity').value || "Strawberry";
+            const title = `Atto_Studio_Corbin_${city}`;
+
             if (format === 'pdf') {
                 window.print();
             } else if (format === 'docx') {
@@ -822,36 +830,28 @@
         }
 
         function exportDocxFormat(title) {
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = window.docx;
+            const { Document, Packer, Paragraph, TextRun } = window.docx;
             
             let paragraphs = [
-                new Paragraph({
-                    children: [new TextRun({ text: "STUDIO LEGALE OTIS CORBIN", bold: true, size: 28, color: "4A2F1B" })],
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: "West Elizabeth, Strawberry presso Native Post Missiva CC523", italic: true, size: 20 })],
-                }),
+                new Paragraph({ children: [new TextRun({ text: "Studio Legale Otis Corbin", bold: true, size: 28 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinante nello Stato delle Wildlands", italic: true, size: 20 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Sede: Stato del West Elizabeth, Città di Strawberry - Presso il Native Post", size: 18 })] }),
                 new Paragraph({ text: "---------------------------------------------------------------------------------" }),
-                new Paragraph({
-                    children: [new TextRun({ text: title, bold: true, size: 24, color: "2C1A0E" })],
-                }),
+                new Paragraph({ children: [new TextRun({ text: `Città di: ${document.getElementById('docCity').value} addì: ${document.getElementById('docDate').value}`, bold: true, size: 20 })] }),
                 new Paragraph({ text: "\n" })
             ];
 
             for (let i = 1; i <= totalParchmentPages; i++) {
                 const txt = document.getElementById(`docTextPage_${i}`)?.value || '';
-                paragraphs.push(new Paragraph({
-                    children: [new TextRun({ text: `--- Pagina ${i} ---`, bold: true, size: 18 })]
-                }));
-                paragraphs.push(new Paragraph({
-                    children: [new TextRun({ text: txt, size: 22 })]
-                }));
+                paragraphs.push(new Paragraph({ children: [new TextRun({ text: txt, size: 22 })] }));
                 paragraphs.push(new Paragraph({ text: "\n" }));
             }
 
-            const doc = new Document({
-                sections: [{ properties: {}, children: paragraphs }]
-            });
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }));
+            paragraphs.push(new Paragraph({ children: [new TextRun({ text: "1900", bold: true, size: 18 })] }));
+
+            const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
 
             Packer.toBlob(doc).then(blob => {
                 const link = document.createElement('a');
@@ -864,7 +864,7 @@
         function exportPngFormat(elementId, fileName) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            html2canvas(element).then(canvas => {
+            html2canvas(element, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `${fileName.replace(/\s+/g, '_')}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -878,7 +878,7 @@
             if (!doc) return;
 
             if (format === 'pdf') {
-                alert(`Impostazione dell'atto "${doc.title}" per la stampa PDF...`);
+                alert(`Impostazione dell'atto per la stampa PDF...`);
                 openDocumentWriterForCurrentCase();
             } else if (format === 'docx') {
                 const { Document, Packer, Paragraph, TextRun } = window.docx;
