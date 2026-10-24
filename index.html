@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Legale Otis Corbin - West Elizabeth, Strawberry</title>
+    
+    <!-- Tailwind CSS per layout reattivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Google d'epoca: Rye (Western), Playfair Display (Elegante), Special Elite (Macchina da scrivere), Alex Brush (Firma d'epoca) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Rye&family=Special+Elite&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Font personalizzati RDR2 Stile 1900 */
+        .font-rye { font-family: 'Rye', cursive; }
+        .font-serif-vintage { font-family: 'Playfair Display', serif; }
+        .font-typewriter { font-family: 'Special Elite', monospace; }
+        .font-signature { font-family: 'Alex Brush', cursive; }
+
+        /* Color Palette Western / Strawberry - West Elizabeth */
+        :root {
+            --parchment: #f2e3c6;
+            --parchment-dark: #e1cca0;
+            --ink: #2b1e16;
+            --leather-dark: #2c1a0e;
+            --leather-mid: #4a2f1b;
+            --brass: #c59b27;
+            --brass-dark: #8c6a15;
+            --wax-red: #8b1e1e;
+        }
+
+        body {
+            background-color: #1a0f0a;
+            background-image: radial-gradient(#3a2214 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--ink);
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Texture Carta Pergamena Invecchiata */
+        .parchment-bg {
+            background: #f2e3c6 linear-gradient(to bottom, rgba(242,227,198,0.98), rgba(225,204,160,0.95));
+            box-shadow: inset 0 0 80px rgba(74, 47, 27, 0.3), 0 10px 30px rgba(0,0,0,0.7);
+            border: 2px solid var(--brass-dark);
+        }
+
+        /* Effetto bordo in cuoio lavorato */
+        .leather-border {
+            border: 8px solid var(--leather-dark);
+            outline: 2px solid var(--brass);
+        }
+
+        /* Bottone Stile Ottone & Ceralacca */
+        .btn-western {
+            background: linear-gradient(135deg, var(--brass) 0%, var(--brass-dark) 100%);
+            color: #1a0f0a;
+            font-family: 'Rye', cursive;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-western:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+        .btn-western:active {
+            transform: translateY(1px);
+        }
+
+        /* Sigillo di Ceralacca */
+        .wax-seal {
+            background: radial-gradient(circle, var(--wax-red) 60%, #540e0e 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+        }
+
+        /* Tab Attivo */
+        .tab-btn.active {
+            background: var(--brass);
+            color: #1a0f0a;
+            border-bottom-color: transparent;
+        }
+
+        /* Custom Scrollbar pergamena */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--leather-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--brass-dark);
+            border-radius: 4px;
+        }
+
+        /* REGOLA PER LA STAMPA CLEAN DELLA MISSIVA */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print, header, footer, aside, nav, .tab-bar, button {
+                display: none !important;
+            }
+            #letterheadSection {
+                display: block !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 20px !important;
+                border: 2px solid #000 !important;
+                box-shadow: none !important;
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .parchment-bg {
+                background: #fff !important;
+                box-shadow: none !important;
+            }
+            textarea, input, select {
+                border: none !important;
+                background: transparent !important;
+                resize: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-2 md:p-6 flex flex-col justify-between">
+
+    <!-- INTESTAZIONE PRINCIPALE / BANNER STUDIO LEGALE OTIS CORBIN -->
+    <header class="no-print max-w-7xl mx-auto w-full mb-4 parchment-bg leather-border p-4 md:p-6 rounded-lg text-center relative overflow-hidden">
+        <div class="absolute top-2 left-3 text-2xl text-amber-900 opacity-40"><i class="fa-solid fa-scale-balanced"></i></div>
+        <div class="absolute top-2 right-3 text-2xl text-amber-900 opacity-40"><i class="fa-solid fa-scale-balanced"></i></div>
+        
+        <div class="flex justify-center items-center gap-3 mb-1">
+            <div class="h-0.5 bg-amber-900 w-12 md:w-24"></div>
+            <span class="font-typewriter text-xs md:text-sm tracking-widest text-amber-950 uppercase font-bold">
+                West Elizabeth, Strawberry presso Native Post Missiva CC523
+            </span>
+            <div class="h-0.5 bg-amber-900 w-12 md:w-24"></div>
+        </div>
+
+        <h1 class="font-rye text-2xl md:text-4xl text-amber-950 tracking-wide uppercase drop-shadow-sm my-1">
+            Studio Legale Otis Corbin
+        </h1>
+        <p class="font-serif-vintage italic text-md md:text-lg text-amber-900 font-bold">
+            Patrocinante in Cause Civili, Penali e Contenziosi Territoriali • Anno 1900
+        </p>
+    </header>
+
+    <!-- BARRA NAVIGAZIONE TAB -->
+    <nav class="no-print max-w-7xl mx-auto w-full mb-4 flex gap-2 border-b-2 border-amber-900/60 font-rye text-sm">
+        <button id="tabCasesBtn" onclick="switchTab('cases')" class="tab-btn active px-4 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-2">
+            <i class="fa-solid fa-folder-open"></i> Registro Cause & Dossier
+        </button>
+        <button id="tabLetterBtn" onclick="switchTab('letter')" class="tab-btn px-4 py-2 rounded-t-lg bg-amber-950/80 text-amber-200 border border-amber-900 flex items-center gap-2">
+            <i class="fa-solid fa-scroll"></i> Prestampato & Missiva Ufficiale
+        </button>
+    </nav>
+
+    <!-- VISTA 1: REGISTRO CAUSE & DOSSIER -->
+    <div id="casesView" class="no-print max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-start flex-grow">
+
+        <!-- SIDEBAR SINISTRA: LISTA CAUSE & NUOVA CAUSA (4 Colonne) -->
+        <aside class="lg:col-span-4 parchment-bg leather-border p-4 md:p-5 rounded-lg flex flex-col h-full">
+            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-3 mb-4">
+                <h2 class="font-rye text-lg text-amber-950 flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-amber-800"></i> Cause Attive
+                </h2>
+                <button onclick="openModal('newCaseModal')" class="btn-western px-3 py-1.5 rounded text-xs uppercase flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Nuova
+                </button>
+            </div>
+
+            <!-- Filtri rapidi -->
+            <div class="mb-3">
+                <input type="text" id="searchCases" oninput="filterCases()" placeholder="Cerca cliente, luogo o causa..." 
+                    class="w-full bg-amber-50/60 border border-amber-900/40 rounded px-3 py-1.5 text-sm font-typewriter focus:outline-none focus:border-amber-800">
+            </div>
+
+            <!-- Lista Cause Dinamica -->
+            <div id="casesList" class="space-y-3 overflow-y-auto max-h-[600px] pr-1 flex-grow">
+                <!-- Inserito dinamicamente da JS -->
+            </div>
+        </aside>
+
+        <!-- SEZIONE CENTRALE/DESTRA: DETTAGLIO CAUSA SELEZIONATA (8 Colonne) -->
+        <section class="lg:col-span-8 space-y-6">
+
+            <!-- SCHEDA DETTAGLIO PRINCIPALE -->
+            <div class="parchment-bg leather-border p-5 md:p-6 rounded-lg relative">
+                <!-- Sigillo decorativo in ceralacca -->
+                <div class="absolute -top-3 -right-3 w-14 h-14 wax-seal rounded-full flex flex-col items-center justify-center text-amber-100 font-rye text-[9px] border border-amber-300 leading-tight">
+                    <span>OTIS</span>
+                    <span>CORBIN</span>
+                </div>
+
+                <!-- Testata Causa -->
+                <div class="border-b-2 border-amber-900/40 pb-3 mb-4 flex flex-wrap justify-between items-start gap-2">
+                    <div>
+                        <span id="caseNumberDisplay" class="font-typewriter text-xs font-bold text-amber-800 tracking-wider"></span>
+                        <h2 id="caseTitleDisplay" class="font-rye text-xl md:text-2xl text-amber-950"></h2>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="caseStatusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase tracking-wider font-typewriter border border-amber-900/30"></span>
+                        <button onclick="prepareLetterForCurrentCase()" class="btn-western px-2.5 py-1 rounded text-xs uppercase flex items-center gap-1" title="Redigi Missiva per questa causa">
+                            <i class="fa-solid fa-feather-pointed"></i> Redigi Missiva
+                        </button>
+                        <button onclick="deleteCurrentCase()" class="text-red-900 hover:text-red-700 text-sm p-1" title="Elimina Causa">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Griglia Dettagli Causa -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-serif-vintage bg-amber-900/5 p-4 rounded border border-amber-900/20 mb-6">
+                    <div>
+                        <p class="text-amber-900/80 font-bold text-xs uppercase tracking-wider">Assistito / Cliente:</p>
+                        <p id="caseClientDisplay" class="font-bold text-base text-amber-950"></p>
+                    </div>
+                    <div>
+                        <p class="text-amber-900/80 font-bold text-xs uppercase tracking-wider">Giurisdizione / Tribunale:</p>
+                        <p id="caseJurisdictionDisplay" class="text-amber-950"></p>
+                    </div>
+                    <div>
+                        <p class="text-amber-900/80 font-bold text-xs uppercase tracking-wider">Giudice / Sceriffo Preposto:</p>
+                        <p id="caseJudgeDisplay" class="text-amber-950"></p>
+                    </div>
+                    <div>
+                        <p class="text-amber-900/80 font-bold text-xs uppercase tracking-wider">Onorario / Deposito Iniziale:</p>
+                        <p id="caseFeeDisplay" class="font-typewriter font-bold text-emerald-900"></p>
+                    </div>
+                </div>
+
+                <!-- AREA ALLEGATI FILE (Word, PDF, Immagini) -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-rye text-md text-amber-950 flex items-center gap-2">
+                            <i class="fa-solid fa-paperclip text-amber-800"></i> Documenti Depositati & Prove
+                        </h3>
+                        <label class="btn-western px-3 py-1 rounded text-xs uppercase cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-file-circle-plus"></i> Allegare File
+                            <input type="file" id="fileInput" onchange="handleFileUpload(event)" class="hidden" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        </label>
+                    </div>
+
+                    <!-- Lista Files -->
+                    <div id="attachmentsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Caricato da JS -->
+                    </div>
+                </div>
+
+                <!-- DIARIO ATTI LEGALI & CRONOLOGIA UDIENZE -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-rye text-md text-amber-950 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-amber-800"></i> Registro Udienze & Deposizioni
+                        </h3>
+                        <button onclick="openModal('newEventModal')" class="btn-western px-2.5 py-1 rounded text-xs uppercase flex items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Nota Atto
+                        </button>
+                    </div>
+
+                    <div id="timelineList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Caricato da JS -->
+                    </div>
+                </div>
+
+                <!-- NOTE DI STUDIO RISERVATE -->
+                <div>
+                    <h3 class="font-rye text-md text-amber-950 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-user-secret text-amber-800"></i> Tattica Difensiva & Appunti dell'Avv. Corbin
+                    </h3>
+                    <textarea id="caseNotes" oninput="saveNotes()" rows="4" 
+                        placeholder="Annota testimonianze, accordi con lo Sceriffo di Strawberry o memorie difensive riservate..."
+                        class="w-full bg-amber-50/60 border-2 border-amber-900/30 rounded p-3 text-sm font-typewriter focus:outline-none focus:border-amber-900 resize-none"></textarea>
+                    <span class="text-[10px] text-amber-900/60 font-typewriter float-right italic">Salvataggio automatico attivo</span>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <!-- VISTA 2: PRESTAMPATO & MISSIVA UFFICIALE (STAMPABILE) -->
+    <div id="letterheadView" class="hidden max-w-5xl mx-auto w-full my-2">
+        
+        <!-- Barra di Controllo Redazione / Stampa -->
+        <div class="no-print parchment-bg border-2 border-amber-900/60 p-4 rounded-lg mb-6 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <label class="font-bold text-xs uppercase text-amber-950 font-typewriter">Carica Dati da Causa:</label>
+                <select id="letterCaseSelect" onchange="autoFillLetterFromCase()" class="bg-amber-50 border border-amber-900/40 p-1.5 rounded text-xs font-serif-vintage">
+                    <!-- Opzioni popolati da JS -->
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="clearLetterForm()" class="px-3 py-1.5 border border-amber-900 text-amber-950 rounded text-xs font-bold uppercase">
+                    <i class="fa-solid fa-eraser"></i> Svuota
+                </button>
+                <button onclick="window.print()" class="btn-western px-5 py-2 rounded text-xs uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Stampa / Esporta Missiva (PDF)
+                </button>
+            </div>
+        </div>
+
+        <!-- FOGLIO DI CARTA PERGAMENA INTESTATA (STAMPABILE COMPLETO) -->
+        <div id="letterheadSection" class="parchment-bg leather-border p-8 md:p-12 rounded-lg relative font-serif-vintage shadow-2xl text-amber-950">
+            
+            <!-- Intestazione Fissa Obbligatoria -->
+            <div class="border-b-2 border-amber-950/80 pb-6 mb-6 text-center relative">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="font-typewriter text-[10px] text-amber-900 uppercase">Rif. Registro CC523</span>
+                    <span class="font-typewriter text-[10px] text-amber-900 uppercase">Ufficio di Strawberry</span>
+                </div>
+                
+                <h1 class="font-rye text-2xl md:text-3xl text-amber-950 uppercase tracking-widest mb-1">
+                    Studio Legale Otis Corbin
+                </h1>
+                <p class="font-typewriter text-xs md:text-sm text-amber-900 font-bold uppercase tracking-wider">
+                    West Elizabeth, Strawberry presso Native Post Missiva CC523
+                </p>
+                <p class="font-serif-vintage italic text-xs text-amber-900/80 mt-1">
+                    Patrocinio Legale, Curatela di Proprietà, Contratti & Difesa Penale nei Territori dell'Ovest
+                </p>
+
+                <!-- Sigillo in ceralacca d'epoca in basso a destra dell'intestazione -->
+                <div class="absolute right-0 -bottom-6 w-12 h-12 wax-seal rounded-full hidden sm:flex items-center justify-center text-amber-100 font-rye text-[8px] border border-amber-300">
+                    O.C.
+                </div>
+            </div>
+
+            <!-- Modulo Compilabile della Missiva -->
+            <div class="space-y-6 text-sm">
+                
+                <!-- Data e Luogo + Destinatario -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block font-bold text-amber-900 text-xs uppercase font-typewriter mb-1">Luogo e Data di Redazione</label>
+                        <input type="text" id="letterDate" value="Strawberry, West Elizabeth — 14 Maggio 1900" 
+                            class="w-full bg-amber-50/40 border-b border-amber-900/40 p-1 font-typewriter focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-amber-900 text-xs uppercase font-typewriter mb-1">Destinatario / Autorità Ricevente</label>
+                        <input type="text" id="letterRecipient" placeholder="es. Spett.le Giudice di Pace, Corte di Blackwater" 
+                            class="w-full bg-amber-50/40 border-b border-amber-900/40 p-1 font-bold focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Oggetto della Missiva -->
+                <div>
+                    <label class="block font-bold text-amber-900 text-xs uppercase font-typewriter mb-1">Oggetto della Missiva Ufficiale</label>
+                    <input type="text" id="letterSubject" placeholder="es. MEMORIA DIFENSIVA E DEPOSITO CAUZIONE" 
+                        class="w-full bg-amber-50/40 border-b-2 border-amber-950 p-1.5 font-bold tracking-wide uppercase focus:outline-none">
+                </div>
+
+                <!-- Corpo del Documento -->
+                <div>
+                    <label class="block font-bold text-amber-900 text-xs uppercase font-typewriter mb-1">Testo del Documento / Notifica / Istanza</label>
+                    <textarea id="letterBody" rows="12" 
+                        placeholder="Il sottoscritto Avv. Otis Corbin, nell'interesse del proprio assistito..."
+                        class="w-full bg-amber-50/30 border border-amber-900/30 rounded p-4 font-serif-vintage leading-relaxed focus:outline-none focus:border-amber-900 resize-y text-base"></textarea>
+                </div>
+
+                <!-- Allegati Citati nella Missiva -->
+                <div>
+                    <label class="block font-bold text-amber-900 text-xs uppercase font-typewriter mb-1">Allegati Citati ed Acclusi</label>
+                    <input type="text" id="letterAttachments" placeholder="es. Allegato A: Dichiarazione giurata; Allegato B: Mappa dei confini territoriali." 
+                        class="w-full bg-amber-50/40 border-b border-amber-900/40 p-1 font-typewriter text-xs focus:outline-none">
+                </div>
+
+                <!-- Blocco Firma e Sigillo dell'Avvocato -->
+                <div class="pt-8 flex justify-between items-end border-t border-amber-900/30">
+                    <div class="text-xs font-typewriter text-amber-900">
+                        <p class="font-bold">STUDIO LEGALE OTIS CORBIN</p>
+                        <p>N. Registro Atti: CC523-1900</p>
+                        <p>Strawberry, West Elizabeth</p>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-xs font-typewriter text-amber-900 mb-1">In Fede e Rispetto,</p>
+                        <p class="font-signature text-3xl text-amber-950 font-bold px-4 border-b border-amber-950/60 inline-block">Otis Corbin</p>
+                        <p class="text-[10px] font-typewriter text-amber-900 uppercase tracking-widest mt-1">Avv. Otis Corbin — Patrocinante</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE: CREAZIONE NUOVA CAUSA -->
+    <div id="newCaseModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="parchment-bg leather-border max-w-lg w-full p-6 rounded-lg shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-2">
+                <h3 class="font-rye text-lg text-amber-950">Apertura Nuova Causa</h3>
+                <button onclick="closeModal('newCaseModal')" class="text-amber-950 font-bold text-xl">&times;</button>
+            </div>
+
+            <form id="newCaseForm" onsubmit="createNewCase(event)" class="space-y-3 font-serif-vintage text-sm">
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Nome Assistito / Cliente</label>
+                    <input type="text" id="newClient" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                </div>
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Oggetto della Causa / Capo d'Imputazione</label>
+                    <input type="text" id="newTitle" required class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Giurisdizione</label>
+                        <select id="newJurisdiction" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                            <option>Distretto di West Elizabeth (Strawberry)</option>
+                            <option>Corte Federale di Blackwater</option>
+                            <option>Tribunale di Lemoyne (Saint Denis)</option>
+                            <option>Corte di New Hanover (Valentine)</option>
+                            <option>Giurisdizione di Ambarino</option>
+                            <option>Giurisdizione di New Austin (Armadillo)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Stato Causa</label>
+                        <select id="newStatus" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                            <option value="In Corso">In Corso</option>
+                            <option value="In Appello">In Appello</option>
+                            <option value="Taglia Pendente">Taglia Pendente</option>
+                            <option value="Archiviata">Archiviata</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Giudice / Sceriffo Preposto</label>
+                        <input type="text" id="newJudge" placeholder="es. Sceriffo Hanley" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-amber-950 text-xs uppercase">Onorario / Deposito ($)</label>
+                        <input type="number" id="newFee" placeholder="es. 200" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3">
+                    <button type="button" onclick="closeModal('newCaseModal')" class="px-4 py-2 border border-amber-900 rounded text-xs uppercase font-bold">Annulla</button>
+                    <button type="submit" class="btn-western px-5 py-2 rounded text-xs uppercase">Registra Atti</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE: AGGIUNGI NOTA REGISTRO UDIENZE -->
+    <div id="newEventModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="parchment-bg leather-border max-w-md w-full p-6 rounded-lg shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b-2 border-amber-900/40 pb-2">
+                <h3 class="font-rye text-lg text-amber-950">Aggiungi Atto o Udienza</h3>
+                <button onclick="closeModal('newEventModal')" class="text-amber-950 font-bold text-xl">&times;</button>
+            </div>
+
+            <form id="newEventForm" onsubmit="addTimelineEvent(event)" class="space-y-3 font-serif-vintage text-sm">
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Data dell'Atto</label>
+                    <input type="text" id="eventDate" required placeholder="es. 20 Maggio 1900" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded font-typewriter">
+                </div>
+                <div>
+                    <label class="block font-bold text-amber-950 text-xs uppercase">Descrizione / Esito Dibattimento</label>
+                    <textarea id="eventDesc" required rows="3" class="w-full bg-amber-50 border border-amber-900/40 p-2 rounded resize-none"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('newEventModal')" class="px-4 py-2 border border-amber-900 rounded text-xs uppercase font-bold">Annulla</button>
+                    <button type="submit" class="btn-western px-5 py-2 rounded text-xs uppercase">Aggiungi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER D'EPOCA CON INTESTAZIONE UFFICIALE OTIS CORBIN -->
+    <footer class="no-print max-w-7xl mx-auto w-full text-center mt-6 py-3 font-typewriter text-xs text-amber-200/60 border-t border-amber-900/40">
+        Studio Legale Otis Corbin — West Elizabeth, Strawberry presso Native Post Missiva CC523 • Anno 1900.
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT GESTIONALE -->
+    <script>
+        // Dati Iniziali Demo Studio Legale Otis Corbin
+        let casesData = [
+            {
+                id: '1900-01',
+                client: 'Micah Bell',
+                title: 'Difesa per Disturbo della Pace e Rissa',
+                jurisdiction: 'Distretto di West Elizabeth (Strawberry)',
+                judge: 'Sceriffo Hanley',
+                status: 'In Corso',
+                fee: 150,
+                notes: 'L\'assistito sostiene che lo scontro alla prigione sia stato scatenato da una vecchia controversia di debiti. Chiedere il rilascio su cauzione.',
+                attachments: [
+                    { name: 'Mandato_Arresto_Strawberry.pdf', type: 'pdf', date: '04/05/1900', size: '1.1 MB' },
+                    { name: 'Verbale_Sceriffo_Hanley.docx', type: 'doc', date: '05/05/1900', size: '420 KB' }
+                ],
+                timeline: [
+                    { date: '04 Maggio 1900', desc: 'Arresto ed incarcerazione presso la Prigione di Strawberry.' },
+                    { date: '08 Maggio 1900', desc: 'Incontro preliminare con l\'Avv. Otis Corbin per la linea difensiva.' }
+                ]
+            },
+            {
+                id: '1900-08',
+                client: 'Propietari Segheria Strawberry',
+                title: 'Contenzioso Diritti di Taglio Legname',
+                jurisdiction: 'Corte Federale di Blackwater',
+                judge: 'On.le Giudice Melville',
+                status: 'In Appello',
+                fee: 850,
+                notes: 'Ricorso presentato per contestare l\'esproprio dei terreni boschivi a favore della ferrovia.',
+                attachments: [
+                    { name: 'Atto_Proprieta_Terriera.pdf', type: 'pdf', date: '10/02/1900', size: '2.5 MB' }
+                ],
+                timeline: [
+                    { date: '15 Marzo 1900', desc: 'Prima udienza collegiale presso la Corte di Blackwater.' }
+                ]
+            },
+            {
+                id: '1900-14',
+                client: 'Arthur Morgan',
+                title: 'Ricorso Istanza Proscioglimento',
+                jurisdiction: 'Distretto di West Elizabeth (Strawberry)',
+                judge: 'Sceriffo Hanley',
+                status: 'Taglia Pendente',
+                fee: 300,
+                notes: 'Verificare credibilità dei testimoni oculari nell\'area di Big Valley.',
+                attachments: [],
+                timeline: [
+                    { date: '01 Maggio 1900', desc: 'Istanza di annullamento depositata tramite Native Post CC523.' }
+                ]
+            }
+        ];
+
+        let activeCaseId = '1900-01';
+
+        // Inizializzazione all'avvio
+        window.onload = function() {
+            renderCasesList();
+            renderActiveCaseDetails();
+            populateLetterCaseSelect();
+        };
+
+        // Cambio Tab (Cause vs Prestampato)
+        function switchTab(tab) {
+            const casesView = document.getElementById('casesView');
+            const letterheadView = document.getElementById('letterheadView');
+            const tabCasesBtn = document.getElementById('tabCasesBtn');
+            const tabLetterBtn = document.getElementById('tabLetterBtn');
+
+            if(tab === 'cases') {
+                casesView.classList.remove('hidden');
+                letterheadView.classList.add('hidden');
+                tabCasesBtn.classList.add('active');
+                tabLetterBtn.classList.remove('active');
+            } else {
+                casesView.classList.add('hidden');
+                letterheadView.classList.remove('hidden');
+                tabCasesBtn.classList.remove('active');
+                tabLetterBtn.classList.add('active');
+            }
+        }
+
+        // Renderizza la Sidebar delle Cause
+        function renderCasesList(filterText = '') {
+            const listContainer = document.getElementById('casesList');
+            listContainer.innerHTML = '';
+
+            const filtered = casesData.filter(c => 
+                c.client.toLowerCase().includes(filterText.toLowerCase()) || 
+                c.title.toLowerCase().includes(filterText.toLowerCase()) ||
+                c.id.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            filtered.forEach(c => {
+                const isActive = c.id === activeCaseId;
+                const activeClass = isActive ? 'bg-amber-900/20 border-amber-900 font-bold' : 'bg-amber-50/40 border-amber-900/20 hover:bg-amber-900/10';
+                
+                let badgeColor = 'bg-amber-200 text-amber-900';
+                if(c.status === 'In Corso') badgeColor = 'bg-amber-800 text-amber-100';
+                if(c.status === 'Taglia Pendente') badgeColor = 'bg-red-900 text-red-100';
+                if(c.status === 'Archiviata') badgeColor = 'bg-stone-400 text-stone-900';
+
+                listContainer.innerHTML += `
+                    <div onclick="selectCase('${c.id}')" class="p-3 rounded border cursor-pointer transition-all ${activeClass}">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-typewriter text-xs text-amber-900">#${c.id}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded ${badgeColor} uppercase font-typewriter">${c.status}</span>
+                        </div>
+                        <h4 class="font-bold text-amber-950 text-sm leading-tight">${c.client}</h4>
+                        <p class="text-xs text-amber-900/80 font-serif-vintage truncate">${c.title}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Seleziona Causa
+        function selectCase(id) {
+            activeCaseId = id;
+            renderCasesList(document.getElementById('searchCases').value);
+            renderActiveCaseDetails();
+        }
+
+        // Renderizza il Dettaglio della Causa Selezionata
+        function renderActiveCaseDetails() {
+            const current = casesData.find(c => c.id === activeCaseId);
+            if (!current) return;
+
+            document.getElementById('caseNumberDisplay').innerText = `FASCICOLO #${current.id}`;
+            document.getElementById('caseTitleDisplay').innerText = current.title;
+            document.getElementById('caseClientDisplay').innerText = current.client;
+            document.getElementById('caseJurisdictionDisplay').innerText = current.jurisdiction;
+            document.getElementById('caseJudgeDisplay').innerText = current.judge || 'Non assegnato';
+            document.getElementById('caseFeeDisplay').innerText = `$ ${current.fee.toFixed(2)}`;
+            document.getElementById('caseNotes').value = current.notes || '';
+
+            // Badge Stato
+            const badge = document.getElementById('caseStatusBadge');
+            badge.innerText = current.status;
+            badge.className = "px-3 py-1 rounded text-xs font-bold uppercase tracking-wider font-typewriter border ";
+            if(current.status === 'Taglia Pendente') badge.classList.add('bg-red-900', 'text-amber-100', 'border-red-950');
+            else if(current.status === 'In Corso') badge.classList.add('bg-amber-900', 'text-amber-100', 'border-amber-950');
+            else badge.classList.add('bg-amber-200', 'text-amber-950', 'border-amber-400');
+
+            // Render Allegati & Timeline
+            renderAttachments(current.attachments);
+            renderTimeline(current.timeline);
+        }
+
+        // Renderizza Allegati
+        function renderAttachments(attachments) {
+            const container = document.getElementById('attachmentsList');
+            container.innerHTML = '';
+
+            if(!attachments || attachments.length === 0) {
+                container.innerHTML = `<p class="col-span-2 text-xs font-typewriter text-amber-900/60 italic py-2">Nessun documento o prova depositata nel fascicolo.</p>`;
+                return;
+            }
+
+            attachments.forEach((file, index) => {
+                let icon = 'fa-file-lines';
+                if(file.type === 'pdf') icon = 'fa-file-pdf text-red-900';
+                if(file.type === 'doc' || file.type === 'docx') icon = 'fa-file-word text-blue-900';
+                if(file.type === 'jpg' || file.type === 'png') icon = 'fa-file-image text-amber-900';
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 bg-amber-50/70 border border-amber-900/30 rounded text-xs">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <i class="fa-solid ${icon} text-lg"></i>
+                            <div class="truncate">
+                                <p class="font-bold text-amber-950 truncate">${file.name}</p>
+                                <p class="text-[10px] text-amber-900/70 font-typewriter">${file.date} • ${file.size}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="downloadDummyFile('${file.name}')" class="text-amber-900 hover:text-amber-700 p-1" title="Scarica Documento">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            <button onclick="removeAttachment(${index})" class="text-red-900 hover:text-red-700 p-1" title="Rimuovi">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Renderizza Registro Udienze
+        function renderTimeline(timeline) {
+            const container = document.getElementById('timelineList');
+            container.innerHTML = '';
+
+            if(!timeline || timeline.length === 0) {
+                container.innerHTML = `<p class="text-xs font-typewriter text-amber-900/60 italic py-2">Nessun atto registrato.</p>`;
+                return;
+            }
+
+            timeline.forEach((item) => {
+                container.innerHTML += `
+                    <div class="p-2 border-l-2 border-amber-900 bg-amber-900/5 rounded-r text-xs">
+                        <span class="font-typewriter font-bold text-amber-900 block">${item.date}</span>
+                        <p class="text-amber-950 font-serif-vintage">${item.desc}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Popola il menu a tendina della Missiva
+        function populateLetterCaseSelect() {
+            const select = document.getElementById('letterCaseSelect');
+            select.innerHTML = '<option value="">-- Seleziona Causa per Compilazione Automatica --</option>';
+            casesData.forEach(c => {
+                select.innerHTML += `<option value="${c.id}">Fascicolo #${c.id} - ${c.client}</option>`;
+            });
+        }
+
+        // Prepara Missiva per la Causa Corrente
+        function prepareLetterForCurrentCase() {
+            switchTab('letter');
+            document.getElementById('letterCaseSelect').value = activeCaseId;
+            autoFillLetterFromCase();
+        }
+
+        // Compilazione Automatica della Missiva da Causa
+        function autoFillLetterFromCase() {
+            const caseId = document.getElementById('letterCaseSelect').value;
+            if(!caseId) return;
+
+            const c = casesData.find(item => item.id === caseId);
+            if(!c) return;
+
+            document.getElementById('letterRecipient').value = `${c.judge} — ${c.jurisdiction}`;
+            document.getElementById('letterSubject').value = `ISTANZA LEGALE / CAUSA #${c.id}: ${c.client.toUpperCase()} - ${c.title.toUpperCase()}`;
+            
+            document.getElementById('letterBody').value = 
+`Il sottoscritto Avv. Otis Corbin, con studio in West Elizabeth, Strawberry presso Native Post Missiva CC523, in qualità di patrocinante legale di ${c.client},
+
+PREMESSO CHE
+in relazione alla causa avente ad oggetto "${c.title}" pendente presso ${c.jurisdiction};
+
+ESPONE E RICHIEDE QUANTO SEGUE
+${c.notes ? 'In base agli elementi raccolti: ' + c.notes : 'Si richiede formale riesame del procedimento ed il tempestivo riscontro della presente istanza.'}
+
+Certi dell'accoglimento della presente, si restano in attesa di sollecita determinazione.`;
+
+            if(c.attachments && c.attachments.length > 0) {
+                const filenames = c.attachments.map(a => a.name).join(', ');
+                document.getElementById('letterAttachments').value = `Documenti acclusi: ${filenames}`;
+            } else {
+                document.getElementById('letterAttachments').value = 'Nessun documento accluso.';
+            }
+        }
+
+        // Svuota Modulo Missiva
+        function clearLetterForm() {
+            document.getElementById('letterCaseSelect').value = '';
+            document.getElementById('letterRecipient').value = '';
+            document.getElementById('letterSubject').value = '';
+            document.getElementById('letterBody').value = '';
+            document.getElementById('letterAttachments').value = '';
+        }
+
+        // Gestione Caricamento File (Simulato)
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            if(!files.length) return;
+
+            const current = casesData.find(c => c.id === activeCaseId);
+            const today = new Date().toLocaleDateString('it-IT');
+
+            Array.from(files).forEach(file => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                current.attachments.push({
+                    name: file.name,
+                    type: ext,
+                    date: today,
+                    size: (file.size / 1024).toFixed(0) + ' KB'
+                });
+            });
+
+            renderAttachments(current.attachments);
+        }
+
+        // Rimuovi Allegato
+        function removeAttachment(index) {
+            const current = casesData.find(c => c.id === activeCaseId);
+            current.attachments.splice(index, 1);
+            renderAttachments(current.attachments);
+        }
+
+        // Download Simulato
+        function downloadDummyFile(filename) {
+            alert(`[STUDIO LEGALE OTIS CORBIN]\n\nDownload del documento ufficiale: "${filename}" in corso...`);
+        }
+
+        // Salvataggio Note Riservate
+        function saveNotes() {
+            const current = casesData.find(c => c.id === activeCaseId);
+            if(current) {
+                current.notes = document.getElementById('caseNotes').value;
+            }
+        }
+
+        // Crea Nuova Causa
+        function createNewCase(event) {
+            event.preventDefault();
+            const year = "1900";
+            const randomNum = Math.floor(10 + Math.random() * 90);
+            
+            const newCase = {
+                id: `${year}-${randomNum}`,
+                client: document.getElementById('newClient').value,
+                title: document.getElementById('newTitle').value,
+                jurisdiction: document.getElementById('newJurisdiction').value,
+                judge: document.getElementById('newJudge').value || 'Sceriffo / Giudice di Pace',
+                status: document.getElementById('newStatus').value,
+                fee: parseFloat(document.getElementById('newFee').value) || 0,
+                notes: '',
+                attachments: [],
+                timeline: [{ date: 'Oggi', desc: 'Fascicolo aperto e registrato presso lo Studio Legale Otis Corbin.' }]
+            };
+
+            casesData.unshift(newCase);
+            activeCaseId = newCase.id;
+            
+            closeModal('newCaseModal');
+            document.getElementById('newCaseForm').reset();
+            
+            renderCasesList();
+            renderActiveCaseDetails();
+            populateLetterCaseSelect();
+        }
+
+        // Aggiungi Evento Timeline
+        function addTimelineEvent(event) {
+            event.preventDefault();
+            const current = casesData.find(c => c.id === activeCaseId);
+            
+            current.timeline.unshift({
+                date: document.getElementById('eventDate').value,
+                desc: document.getElementById('eventDesc').value
+            });
+
+            closeModal('newEventModal');
+            document.getElementById('newEventForm').reset();
+            renderTimeline(current.timeline);
+        }
+
+        // Elimina Causa
+        function deleteCurrentCase() {
+            if(confirm("Si desidera eliminare ed archiviare definitivamente questo fascicolo dello Studio Otis Corbin?")) {
+                casesData = casesData.filter(c => c.id !== activeCaseId);
+                if(casesData.length > 0) {
+                    activeCaseId = casesData[0].id;
+                } else {
+                    activeCaseId = null;
+                }
+                renderCasesList();
+                renderActiveCaseDetails();
+                populateLetterCaseSelect();
+            }
+        }
+
+        // Filtra cause
+        function filterCases() {
+            const text = document.getElementById('searchCases').value;
+            renderCasesList(text);
+        }
+
+        // Gestione Modali
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('flex');
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
