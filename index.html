@@ -78,7 +78,6 @@
             box-shadow: inset 0 -3px 0 var(--bordeaux);
         }
 
-        /* FOGLIO A4 PERGAMENA CORRISPONDENTE ESATTAMENTE AL MODELLO PDF FONTE */
         .a4-page {
             width: 210mm;
             height: 297mm;
@@ -87,12 +86,9 @@
             margin: 0 auto 25px auto;
             background: #fdf8eb linear-gradient(to bottom, #fdf8eb 0%, #f7ebd0 100%) !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 60px rgba(74, 47, 27, 0.12);
-            
-            /* Doppia cornice d'epoca bordò + filetto d'oro */
             border: 3px solid #6b1111;
             outline: 1.5px solid #b48328;
             outline-offset: -6px;
-
             position: relative;
             box-sizing: border-box;
             display: flex;
@@ -103,7 +99,6 @@
             overflow: hidden;
         }
 
-        /* SIGILLO IN CERALACCA ULTRA ELEGANTE 3D APPOSTO SULLA FIRMA */
         .wax-seal-container {
             position: absolute;
             left: -28px;
@@ -476,7 +471,7 @@
                                         <div id="files_arringaConclusiva" class="space-y-2"></div>
                                     </div>
 
-                                    <!-- Domande Testimoni (aggiungibili a piacere) -->
+                                    <!-- Domande Testimoni -->
                                     <div class="border border-amber-900/20 rounded p-2.5 bg-amber-50/80">
                                         <div class="flex justify-between items-center mb-1">
                                             <span class="font-rye text-[11px] text-amber-950">Domande Testimoni (Aggiungibili a piacere)</span>
@@ -511,7 +506,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Navigatore Mese 1900 -->
             <div class="lg:col-span-7 bg-amber-50/80 border border-amber-900/40 p-4 rounded-lg">
                 <div class="flex justify-between items-center mb-4">
                     <button onclick="changeMonth1900(-1)" class="btn-western px-3 py-1 rounded text-xs">&larr; Mese Precedente</button>
@@ -524,7 +518,6 @@
                 <div id="calendarGrid1900" class="grid grid-cols-7 gap-1 font-typewriter text-xs"></div>
             </div>
 
-            <!-- Registro Appuntamenti Mese/Giorno -->
             <div class="lg:col-span-5 bg-amber-900/10 border border-amber-900/40 p-4 rounded-lg flex flex-col justify-between">
                 <div>
                     <h3 class="font-rye text-md text-amber-950 border-b border-amber-900/30 pb-2 mb-3 flex items-center gap-2">
@@ -818,25 +811,12 @@
         </div>
     </div>
 
-    <!-- SCRIPT GESTIONALE E ESPORTAZIONE COMPLETA -->
+    <!-- SCRIPT GESTIONALE E PERSISTENZA LOCALSTORAGE -->
     <script>
-        function openModal(modalId) {
-            const m = document.getElementById(modalId);
-            if (m) {
-                m.classList.remove('hidden');
-                m.classList.add('flex');
-            }
-        }
+        const STORAGE_KEY_CASES = 'studio_corbin_cases_1900_v2';
+        const STORAGE_KEY_APPS = 'studio_corbin_apps_1900_v2';
 
-        function closeModal(modalId) {
-            const m = document.getElementById(modalId);
-            if (m) {
-                m.classList.remove('flex');
-                m.classList.add('hidden');
-            }
-        }
-
-        let casesData = [
+        const defaultCasesData = [
             {
                 id: '1900-01',
                 title: 'Difesa per Disturbo della Pace e Rissa alla Prigione',
@@ -879,28 +859,67 @@
             }
         ];
 
-        let appointments1900 = [
-            {
-                id: 'app_1',
-                date: '1900-05-15',
-                time: '10:00',
-                clientId: '1900-01',
-                title: 'Incontro con lo Sceriffo di Strawberry',
-                notes: 'Discussione deposito cauzionale.'
-            }
-        ];
+        let casesData = [];
+        let appointments1900 = [];
 
-        let activeCaseId = '1900-01';
-        let currentMonth1900 = 4; // Maggio (0-indexed)
+        function loadFromLocalStorage() {
+            try {
+                const savedCases = localStorage.getItem(STORAGE_KEY_CASES);
+                if (savedCases) {
+                    casesData = JSON.parse(savedCases);
+                } else {
+                    casesData = JSON.parse(JSON.stringify(defaultCasesData));
+                }
+
+                const savedApps = localStorage.getItem(STORAGE_KEY_APPS);
+                if (savedApps) {
+                    appointments1900 = JSON.parse(savedApps);
+                } else {
+                    appointments1900 = [
+                        {
+                            id: 'app_1',
+                            date: '1900-05-15',
+                            time: '10:00',
+                            clientId: '1900-01',
+                            title: 'Incontro con lo Sceriffo di Strawberry',
+                            notes: 'Discussione deposito cauzionale.'
+                        }
+                    ];
+                }
+            } catch(e) {
+                console.error("Errore nel caricamento dei dati:", e);
+                casesData = JSON.parse(JSON.stringify(defaultCasesData));
+            }
+        }
+
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY_CASES, JSON.stringify(casesData));
+                localStorage.setItem(STORAGE_KEY_APPS, JSON.stringify(appointments1900));
+            } catch(e) {
+                console.error("Errore nel salvataggio dei dati:", e);
+            }
+        }
+
+        let activeCaseId = null;
+        let currentMonth1900 = 4;
         let totalParchmentPages = 1;
 
-        window.onload = function() {
-            renderCasesList();
-            renderActiveCase();
-            populateClientDropdowns();
-            renderCalendar1900();
-            renderAppointmentsList();
-        };
+        function openModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) {
+                m.classList.remove('hidden');
+                m.classList.add('flex');
+            }
+        }
+
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) {
+                m.classList.remove('flex');
+                m.classList.add('hidden');
+            }
+        }
 
         function switchTab(tab) {
             const tabs = ['cases', 'calendar', 'documentEditor', 'letter'];
@@ -914,14 +933,35 @@
             if (tab === 'calendar') renderCalendar1900();
         }
 
+        window.onload = function() {
+            loadFromLocalStorage();
+            if (casesData.length > 0) {
+                activeCaseId = casesData[0].id;
+            } else {
+                activeCaseId = null;
+            }
+            renderCasesList();
+            renderActiveCase();
+            populateClientDropdowns();
+            renderCalendar1900();
+            renderAppointmentsList();
+        };
+
         function renderCasesList(filterText = '') {
             const listContainer = document.getElementById('casesList');
+            if (!listContainer) return;
             listContainer.innerHTML = '';
+
             const filtered = casesData.filter(c => 
                 `${c.client.firstName} ${c.client.lastName}`.toLowerCase().includes(filterText.toLowerCase()) || 
-                c.title.toLowerCase().includes(filterText.toLowerCase()) ||
-                c.client.mailNo.toLowerCase().includes(filterText.toLowerCase())
+                (c.title || '').toLowerCase().includes(filterText.toLowerCase()) ||
+                (c.client.mailNo || '').toLowerCase().includes(filterText.toLowerCase())
             );
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<p class="text-amber-900/60 italic text-xs p-2">Nessun cliente presente nel registro.</p>`;
+                return;
+            }
 
             filtered.forEach(c => {
                 const isActive = c.id === activeCaseId;
@@ -930,12 +970,12 @@
                 div.onclick = () => { activeCaseId = c.id; renderCasesList(filterText); renderActiveCase(); };
                 div.innerHTML = `
                     <div class="flex justify-between items-start text-xs font-typewriter text-amber-900 mb-1">
-                        <span>Rif. Missiva: ${c.client.mailNo}</span>
-                        <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-900/30 bg-amber-200 text-amber-950">${c.status}</span>
+                        <span>Rif. Missiva: ${escapeHtml(c.client.mailNo)}</span>
+                        <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-900/30 bg-amber-200 text-amber-950">${escapeHtml(c.status || 'IN CARICO')}</span>
                     </div>
-                    <div class="font-serif-vintage text-amber-950 text-sm font-bold truncate">${c.client.firstName} ${c.client.lastName}</div>
-                    <div class="text-xs text-amber-900/80 italic truncate">${c.title}</div>
-                    <div class="text-[10px] text-amber-900 font-typewriter mt-1"><i class="fa-solid fa-location-dot"></i> ${c.client.city}</div>
+                    <div class="font-serif-vintage text-amber-950 text-sm font-bold truncate">${escapeHtml(c.client.firstName)} ${escapeHtml(c.client.lastName)}</div>
+                    <div class="text-xs text-amber-900/80 italic truncate">${escapeHtml(c.title || 'Senza Titolo')}</div>
+                    <div class="text-[10px] text-amber-900 font-typewriter mt-1"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(c.client.city || 'Strawberry')}</div>
                 `;
                 listContainer.appendChild(div);
             });
@@ -946,21 +986,34 @@
             renderCasesList(txt);
         }
 
-        function getActiveCase() { return casesData.find(c => c.id === activeCaseId); }
+        function getActiveCase() { 
+            return casesData.find(c => c.id === activeCaseId); 
+        }
 
         function renderActiveCase() {
             const c = getActiveCase();
             if (!c) {
-                document.getElementById('caseNumberDisplay').innerText = '';
+                document.getElementById('caseNumberDisplay').innerText = 'Nessun cliente selezionato';
                 document.getElementById('caseTitleInput').value = '';
                 document.getElementById('clientFirstName').value = '';
                 document.getElementById('clientLastName').value = '';
                 document.getElementById('clientMailNo').value = '';
+                
+                ['attiProcura', 'comunicazioniTribunale', 'perizieMediche', 'perizieTecniche', 'istanze', 'arringaIntroduttiva', 'arringaConclusiva'].forEach(sk => {
+                    const el = document.getElementById(`files_${sk}`);
+                    if (el) el.innerHTML = `<p class="text-amber-900/60 italic text-xs">Seleziona o aggiungi un cliente.</p>`;
+                });
+                const dn = document.getElementById('dealNotesList');
+                if (dn) dn.innerHTML = `<p class="text-amber-900/60 italic text-xs">Seleziona o aggiungi un cliente.</p>`;
+                const wl = document.getElementById('witnessesList');
+                if (wl) wl.innerHTML = `<p class="text-amber-900/60 italic text-xs">Seleziona o aggiungi un cliente.</p>`;
+                const wq = document.getElementById('witnessQuestionsList');
+                if (wq) wq.innerHTML = `<p class="text-amber-900/60 italic text-xs">Seleziona o aggiungi un cliente.</p>`;
                 return;
             }
 
             document.getElementById('caseNumberDisplay').innerText = `Rif. Registro Missiva: ${c.client.mailNo}`;
-            document.getElementById('caseTitleInput').value = c.title;
+            document.getElementById('caseTitleInput').value = c.title || '';
             document.getElementById('caseStatusSelect').value = c.status || 'IN CARICO';
 
             document.getElementById('clientFirstName').value = c.client.firstName || '';
@@ -981,10 +1034,88 @@
             renderWitnessQuestions();
         }
 
+        function createNewCase(e) {
+            if (e) e.preventDefault();
+            
+            const title = document.getElementById('newTitle').value.trim();
+            const firstName = document.getElementById('newClientFirstName').value.trim();
+            const lastName = document.getElementById('newClientLastName').value.trim();
+            const mailNo = document.getElementById('newClientMailNo').value.trim();
+            const city = document.getElementById('newClientCity').value;
+            const status = document.getElementById('newStatus').value;
+
+            if (!firstName || !lastName || !mailNo) {
+                alert("Compilare tutti i campi obbligatori dell'anagrafica cliente.");
+                return;
+            }
+
+            const newId = '1900-' + Date.now();
+            const newCase = {
+                id: newId,
+                title: title || 'Fascicolo Legale',
+                status: status || 'IN CARICO',
+                client: {
+                    firstName: firstName,
+                    lastName: lastName,
+                    mailNo: mailNo,
+                    city: city || 'Strawberry'
+                },
+                sections: {
+                    attiProcura: [],
+                    comunicazioniTribunale: [],
+                    perizieMediche: [],
+                    perizieTecniche: [],
+                    istanze: [],
+                    arringaIntroduttiva: [],
+                    arringaConclusiva: []
+                },
+                dealNotes: [],
+                witnesses: [],
+                witnessQuestions: [],
+                parchmentDocs: []
+            };
+
+            casesData.unshift(newCase);
+            activeCaseId = newId;
+
+            saveToLocalStorage();
+            closeModal('newCaseModal');
+            
+            renderCasesList();
+            renderActiveCase();
+            populateClientDropdowns();
+
+            if (e && e.target) e.target.reset();
+        }
+
+        function deleteCurrentCase() {
+            const c = getActiveCase();
+            if (!c) {
+                alert("Nessun cliente selezionato da eliminare.");
+                return;
+            }
+
+            if (confirm(`Sei sicuro di voler eliminare ed archiviare definitivamente la causa di ${c.client.firstName} ${c.client.lastName}?`)) {
+                casesData = casesData.filter(item => item.id !== activeCaseId);
+                
+                if (casesData.length > 0) {
+                    activeCaseId = casesData[0].id;
+                } else {
+                    activeCaseId = null;
+                }
+
+                saveToLocalStorage();
+                renderCasesList();
+                renderActiveCase();
+                populateClientDropdowns();
+            }
+        }
+
         function updateCaseTitle(val) {
             const c = getActiveCase();
             if (!c) return;
             c.title = val;
+            saveToLocalStorage();
             renderCasesList();
         }
 
@@ -992,6 +1123,7 @@
             const c = getActiveCase();
             if (!c) return;
             c.status = val;
+            saveToLocalStorage();
             renderCasesList();
         }
 
@@ -999,6 +1131,7 @@
             const c = getActiveCase();
             if (!c) return;
             c.client[field] = value;
+            saveToLocalStorage();
             renderCasesList();
         }
 
@@ -1013,9 +1146,12 @@
 
         function uploadSectionFile(sectionKey, event) {
             const c = getActiveCase();
-            if (!c) return;
+            if (!c) {
+                alert("Seleziona o crea prima un cliente per caricare documenti.");
+                return;
+            }
             const files = event.target.files;
-            if (!files.length) return;
+            if (!files || !files.length) return;
             if (!c.sections) c.sections = {};
             if (!c.sections[sectionKey]) c.sections[sectionKey] = [];
 
@@ -1034,6 +1170,7 @@
                     });
                     loadedCount++;
                     if (loadedCount === files.length) {
+                        saveToLocalStorage();
                         renderSectionFiles(sectionKey);
                     }
                 };
@@ -1063,8 +1200,8 @@
                     <div class="flex justify-between items-center gap-2">
                         <div onclick="previewSectionFile('${sectionKey}', ${idx})" class="truncate cursor-pointer group flex-grow flex items-center gap-2">
                             <i class="fa-solid ${iconClass} text-sm group-hover:scale-110 transition-transform"></i>
-                            <span class="font-bold text-amber-950 text-xs group-hover:underline group-hover:text-amber-800 truncate">${f.name}</span>
-                            <span class="text-[10px] text-amber-900/80 font-typewriter">(${f.size})</span>
+                            <span class="font-bold text-amber-950 text-xs group-hover:underline group-hover:text-amber-800 truncate">${escapeHtml(f.name)}</span>
+                            <span class="text-[10px] text-amber-900/80 font-typewriter">(${escapeHtml(f.size)})</span>
                         </div>
                         <div class="flex items-center gap-1">
                             <button onclick="previewSectionFile('${sectionKey}', ${idx})" class="btn-western px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-eye"></i> Apri</button>
@@ -1083,6 +1220,7 @@
             const c = getActiveCase();
             if (c && c.sections && c.sections[sectionKey] && c.sections[sectionKey][index]) {
                 c.sections[sectionKey][index].note = val;
+                saveToLocalStorage();
             }
         }
 
@@ -1090,6 +1228,7 @@
             const c = getActiveCase();
             if (!c) return;
             c.sections[sectionKey].splice(index, 1);
+            saveToLocalStorage();
             renderSectionFiles(sectionKey);
         }
 
@@ -1125,36 +1264,36 @@
                 dlBtn.classList.remove('hidden');
 
                 if (typeLower.includes('image') || nameLower.match(/\.(png|jpg|jpeg|gif|webp)$/)) {
-                    content.innerHTML = `<img src="${f.dataUrl}" alt="${f.name}" class="max-h-[55vh] max-w-full rounded border-2 border-amber-900/40 shadow-lg object-contain">`;
+                    content.innerHTML = `<img src="${f.dataUrl}" alt="${escapeHtml(f.name)}" class="max-h-[55vh] max-w-full rounded border-2 border-amber-900/40 shadow-lg object-contain">`;
                 } else if (typeLower.includes('pdf') || nameLower.endsWith('.pdf')) {
                     content.innerHTML = `<embed src="${f.dataUrl}" type="application/pdf" class="w-full h-[55vh] rounded border border-amber-900/30">`;
                 } else if (typeLower.includes('text') || nameLower.match(/\.(txt|md|json|csv)$/)) {
                     try {
                         const base64Data = f.dataUrl.split(',');
-                        const textContent = atob(base64Data[1] || base64Data);
+                        const textContent = atob(base64Data[1] || base64Data[0]);
                         content.innerHTML = `<pre class="w-full h-[55vh] overflow-auto bg-[#fdf8eb] p-4 border border-amber-900/30 rounded font-typewriter text-xs leading-relaxed whitespace-pre-wrap text-amber-950">${escapeHtml(textContent)}</pre>`;
                     } catch(e) {
-                        content.innerHTML = `<div class="text-center p-6"><i class="fa-solid fa-file-lines text-4xl text-amber-900 mb-2"></i><p class="font-bold text-amber-950">${f.name}</p></div>`;
+                        content.innerHTML = `<div class="text-center p-6"><i class="fa-solid fa-file-lines text-4xl text-amber-900 mb-2"></i><p class="font-bold text-amber-950">${escapeHtml(f.name)}</p></div>`;
                     }
                 } else {
-                    content.innerHTML = `<div class="text-center p-6 space-y-3"><i class="fa-solid fa-file-circle-check text-5xl text-amber-800"></i><p class="font-bold text-base text-amber-950">${f.name}</p></div>`;
+                    content.innerHTML = `<div class="text-center p-6 space-y-3"><i class="fa-solid fa-file-circle-check text-5xl text-amber-800"></i><p class="font-bold text-base text-amber-950">${escapeHtml(f.name)}</p></div>`;
                 }
             }
             openModal('filePreviewModal');
         }
 
-        /* SVILUPPI PRATICA E TRATTATIVE (BLOCK NOTES CON ALLEGATI) */
         function addDealNote() {
             const txt = prompt("Inserisci la nota o dettagli della trattativa / offerta:");
             if (!txt) return;
             const c = getActiveCase();
-            if (!c) return;
+            if (!c) { alert("Seleziona prima un cliente."); return; }
             if (!c.dealNotes) c.dealNotes = [];
             c.dealNotes.push({
                 id: 'deal_' + Date.now(),
                 text: txt,
                 files: []
             });
+            saveToLocalStorage();
             renderDealNotes();
         }
 
@@ -1172,9 +1311,9 @@
                 const div = document.createElement('div');
                 div.className = "bg-amber-50/90 border border-amber-900/40 p-3 rounded space-y-2";
                 
-                let filesHtml = dn.files.map((f, fIdx) => `
+                let filesHtml = (dn.files || []).map((f, fIdx) => `
                     <div class="flex justify-between items-center bg-amber-100 p-1.5 rounded text-xs font-typewriter">
-                        <span onclick="previewDealFile(${idx}, ${fIdx})" class="font-bold text-amber-950 cursor-pointer hover:underline">${f.name}</span>
+                        <span onclick="previewDealFile(${idx}, ${fIdx})" class="font-bold text-amber-950 cursor-pointer hover:underline">${escapeHtml(f.name)}</span>
                         <button onclick="removeDealFile(${idx}, ${fIdx})" class="text-red-900 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `).join('');
@@ -1203,15 +1342,26 @@
             for (let f of files) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    if (!c.dealNotes[dealIdx].files) c.dealNotes[dealIdx].files = [];
                     c.dealNotes[dealIdx].files.push({
                         name: f.name,
                         size: (f.size / 1024).toFixed(0) + ' KB',
                         type: f.type || '',
                         dataUrl: e.target.result
                     });
+                    saveToLocalStorage();
                     renderDealNotes();
                 };
                 reader.readAsDataURL(f);
+            }
+        }
+
+        function removeDealFile(dealIdx, fileIdx) {
+            const c = getActiveCase();
+            if (c && c.dealNotes && c.dealNotes[dealIdx] && c.dealNotes[dealIdx].files) {
+                c.dealNotes[dealIdx].files.splice(fileIdx, 1);
+                saveToLocalStorage();
+                renderDealNotes();
             }
         }
 
@@ -1234,14 +1384,14 @@
             const c = getActiveCase();
             if (c && c.dealNotes) {
                 c.dealNotes.splice(idx, 1);
+                saveToLocalStorage();
                 renderDealNotes();
             }
         }
 
-        /* TESTIMONI E DEPOSIZIONI (X TESTIMONI E X ATTI) */
         function addWitness() {
             const c = getActiveCase();
-            if (!c) return;
+            if (!c) { alert("Seleziona prima un cliente."); return; }
             if (!c.witnesses) c.witnesses = [];
             c.witnesses.push({
                 id: 'wit_' + Date.now(),
@@ -1251,6 +1401,7 @@
                 city: 'Strawberry',
                 files: []
             });
+            saveToLocalStorage();
             renderWitnesses();
         }
 
@@ -1270,7 +1421,7 @@
 
                 let filesHtml = (w.files || []).map((f, fIdx) => `
                     <div class="flex justify-between items-center bg-amber-100 p-1.5 rounded text-xs font-typewriter">
-                        <span onclick="previewWitnessFile(${idx}, ${fIdx})" class="font-bold text-amber-950 cursor-pointer hover:underline">${f.name}</span>
+                        <span onclick="previewWitnessFile(${idx}, ${fIdx})" class="font-bold text-amber-950 cursor-pointer hover:underline">${escapeHtml(f.name)}</span>
                         <button onclick="removeWitnessFile(${idx}, ${fIdx})" class="text-red-900 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `).join('');
@@ -1317,6 +1468,7 @@
             const c = getActiveCase();
             if (c && c.witnesses && c.witnesses[wIdx]) {
                 c.witnesses[wIdx][field] = val;
+                saveToLocalStorage();
             }
         }
 
@@ -1336,9 +1488,19 @@
                         type: f.type || '',
                         dataUrl: e.target.result
                     });
+                    saveToLocalStorage();
                     renderWitnesses();
                 };
                 reader.readAsDataURL(f);
+            }
+        }
+
+        function removeWitnessFile(wIdx, fIdx) {
+            const c = getActiveCase();
+            if (c && c.witnesses && c.witnesses[wIdx] && c.witnesses[wIdx].files) {
+                c.witnesses[wIdx].files.splice(fIdx, 1);
+                saveToLocalStorage();
+                renderWitnesses();
             }
         }
 
@@ -1361,22 +1523,23 @@
             const c = getActiveCase();
             if (c && c.witnesses) {
                 c.witnesses.splice(idx, 1);
+                saveToLocalStorage();
                 renderWitnesses();
             }
         }
 
-        /* DOMANDE TESTIMONI (AGGIUNGIBILI A PIACERE) */
         function addWitnessQuestionGroup() {
             const topic = prompt("Argomento / Domanda per il testimone:");
             if (!topic) return;
             const c = getActiveCase();
-            if (!c) return;
+            if (!c) { alert("Seleziona prima un cliente."); return; }
             if (!c.witnessQuestions) c.witnessQuestions = [];
             c.witnessQuestions.push({
                 id: 'wq_' + Date.now(),
                 topic: topic,
                 files: []
             });
+            saveToLocalStorage();
             renderWitnessQuestions();
         }
 
@@ -1407,11 +1570,162 @@
             const c = getActiveCase();
             if (c && c.witnessQuestions) {
                 c.witnessQuestions.splice(idx, 1);
+                saveToLocalStorage();
                 renderWitnessQuestions();
             }
         }
 
-        /* PLANNING / CALENDARIO ANNO 1900 */
+        function openDocumentWriterForCurrentCase() {
+            switchTab('documentEditor');
+            const docSel = document.getElementById('docClientSelect');
+            if (docSel && activeCaseId) {
+                docSel.value = activeCaseId;
+            }
+        }
+
+        function addParchmentPage() {
+            totalParchmentPages++;
+            const container = document.getElementById('parchmentPagesContainer');
+            if (!container) return;
+
+            const pageDiv = document.createElement('div');
+            pageDiv.className = "a4-page font-serif-vintage text-amber-950 relative";
+            pageDiv.id = `parchment_page_${totalParchmentPages}`;
+            pageDiv.innerHTML = `
+                <div class="flex-grow flex flex-col justify-start">
+                    <div class="border-b border-amber-950/40 pb-1 mb-2 text-center">
+                        <p class="font-typewriter text-xs text-amber-900 uppercase font-bold">STUDIO LEGALE OTIS CORBIN — CONTINUAZIONE ATTO (PAGINA ${totalParchmentPages})</p>
+                    </div>
+                    <div class="flex-grow my-2">
+                        <textarea id="docTextPage_${totalParchmentPages}" rows="18" placeholder="Continua il testo dell'atto..." class="w-full h-full min-h-[460px] bg-transparent border border-amber-900/10 rounded p-3 font-serif-vintage text-base leading-relaxed focus:outline-none focus:border-amber-900 resize-none"></textarea>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-amber-950/40 flex justify-between items-end avoid-break mt-auto">
+                    <span class="text-xs font-typewriter font-bold text-amber-900">1900 — Pagina ${totalParchmentPages}</span>
+                    <div class="relative text-center pr-4">
+                        <div class="wax-seal-container" style="left: -20px; top: -8px;">
+                            <div class="wax-seal-3d" style="width: 64px; height: 64px;">
+                                <div class="wax-seal-inner-stamp">
+                                    <span class="block text-[10px] font-bold text-amber-200 font-rye">OC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pl-12">
+                            <p class="font-signature text-4xl text-amber-950 font-bold mb-0 leading-none">Otis Corbin</p>
+                            <p class="font-bold text-xs text-red-950 uppercase font-serif-vintage mb-0" style="color: #6b1111;">Avv. Otis CORBIN</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(pageDiv);
+            document.getElementById('pageCounter').innerText = `Pagine Totali: ${totalParchmentPages}`;
+        }
+
+        function saveParchmentDocumentToDB() {
+            const clientId = document.getElementById('docClientSelect').value;
+            const title = "Atto_Studio_Corbin";
+            const date = document.getElementById('docDate').value;
+
+            const targetCase = casesData.find(c => c.id === clientId);
+            if (!targetCase) { alert("Seleziona prima un cliente valido."); return; }
+
+            let fullText = [];
+            for (let i = 1; i <= totalParchmentPages; i++) {
+                const txt = document.getElementById(`docTextPage_${i}`)?.value || '';
+                fullText.push(txt);
+            }
+
+            if (!targetCase.parchmentDocs) targetCase.parchmentDocs = [];
+            targetCase.parchmentDocs.push({
+                id: 'doc_' + Date.now(),
+                title: title,
+                date: date,
+                pages: fullText
+            });
+
+            saveToLocalStorage();
+            alert(`Atto salvato con successo nel fascicolo di ${targetCase.client.firstName} ${targetCase.client.lastName}!`);
+        }
+
+        function exportCurrentDoc(format) {
+            const city = document.getElementById('docCity').value || "Strawberry";
+            const title = `Atto_Studio_Corbin_${city}`;
+
+            if (format === 'pdf') {
+                window.print();
+            } else if (format === 'docx') {
+                exportDocxFormat(title);
+            } else if (format === 'png') {
+                exportPngFormat('parchment_page_1', title);
+            }
+        }
+
+        function exportLetter(format) {
+            const subject = document.getElementById('letterSubject').value || "Missiva_Ufficiale";
+            if (format === 'pdf') {
+                window.print();
+            } else if (format === 'docx') {
+                exportDocxFormat(subject);
+            } else if (format === 'png') {
+                exportPngFormat('letterheadSection', subject);
+            }
+        }
+
+        function exportDocxFormat(title) {
+            if (!window.docx) { alert("Libreria docx in caricamento..."); return; }
+            const { Document, Packer, Paragraph, TextRun } = window.docx;
+            
+            let paragraphs = [
+                new Paragraph({ children: [new TextRun({ text: "Studio Legale Otis Corbin", bold: true, size: 28, color: "6B1111" })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinante nello Stato delle Wildlands", italic: true, size: 20 })] }),
+                new Paragraph({ children: [new TextRun({ text: "Sede: Stato del West Elizabeth, Città di Strawberry — Presso il Native Post missiva CC523", size: 18 })] }),
+                new Paragraph({ text: "---------------------------------------------------------------------------------" }),
+                new Paragraph({ children: [new TextRun({ text: `Città di: ${document.getElementById('docCity').value} addì: ${document.getElementById('docDate').value}`, bold: true, size: 20 })] }),
+                new Paragraph({ text: "\n" })
+            ];
+
+            for (let i = 1; i <= totalParchmentPages; i++) {
+                const txt = document.getElementById(`docTextPage_${i}`)?.value || '';
+                paragraphs.push(new Paragraph({ children: [new TextRun({ text: txt, size: 22 })] }));
+                paragraphs.push(new Paragraph({ text: "\n" }));
+            }
+
+            paragraphs.push(
+                new Paragraph({ children: [new TextRun({ text: "Otis Corbin", bold: true, size: 32, italic: true })] }),
+                new Paragraph({ children: [new TextRun({ text: "Avv. Otis CORBIN", bold: true, size: 22, color: "6B1111" })] }),
+                new Paragraph({ children: [new TextRun({ text: "Patrocinatore e Difensore Legale", italic: true, size: 18 })] }),
+                new Paragraph({ children: [new TextRun({ text: "West Elizabeth • 1900", bold: true, size: 16 })] })
+            );
+
+            const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
+
+            Packer.toBlob(doc).then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${title.replace(/\s+/g, '_')}.docx`;
+                link.click();
+            });
+        }
+
+        function exportPngFormat(elementId, fileName) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            html2canvas(element, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${fileName.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function autoFillLetterFromCase() {
+            const selId = document.getElementById('letterCaseSelect').value;
+            const c = casesData.find(item => item.id === selId);
+            if (!c) return;
+            document.getElementById('letterRecipient').value = `${c.client.firstName} ${c.client.lastName} — ${c.client.city} (Missiva: ${c.client.mailNo})`;
+            document.getElementById('letterSubject').value = `Pratica ${c.client.mailNo} - ${c.title}`;
+        }
+
         const monthNames1900 = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
         function renderCalendar1900() {
@@ -1464,6 +1778,7 @@
                 date, time, clientId, title, notes
             });
 
+            saveToLocalStorage();
             closeModal('addAppointmentModal');
             renderCalendar1900();
             renderAppointmentsList();
@@ -1497,7 +1812,7 @@
                         <button onclick="deleteAppointment(${idx})" class="text-red-900 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                     <p class="font-bold text-amber-950">${escapeHtml(app.title)}</p>
-                    <p class="text-[11px] text-amber-900 font-typewriter">Cliente: ${clientName}</p>
+                    <p class="text-[11px] text-amber-900 font-typewriter">Cliente: ${escapeHtml(clientName)}</p>
                     ${app.notes ? `<p class="text-xs italic text-amber-900/80">${escapeHtml(app.notes)}</p>` : ''}
                 `;
                 container.appendChild(div);
@@ -1506,6 +1821,7 @@
 
         function deleteAppointment(idx) {
             appointments1900.splice(idx, 1);
+            saveToLocalStorage();
             renderCalendar1900();
             renderAppointmentsList();
         }
@@ -1533,16 +1849,6 @@
 
         function escapeHtml(str) {
             return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        function deleteCurrentCase() {
-            if (confirm("Sei sicuro di voler archiviare ed eliminare questa causa dal registro?")) {
-                casesData = casesData.filter(c => c.id !== activeCaseId);
-                if (casesData.length > 0) activeCaseId = casesData.id;
-                renderCasesList();
-                renderActiveCase();
-                populateClientDropdowns();
-            }
         }
     </script>
 </body>
