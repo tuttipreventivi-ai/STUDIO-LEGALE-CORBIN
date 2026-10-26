@@ -36,7 +36,7 @@
     /* CONTAINER PRINCIPALE A 3 COLONNE */
     .app-viewport {
         display: grid;
-        grid-template-columns: 280px 1fr 310px;
+        grid-template-columns: 290px 1fr 310px;
         gap: 15px;
         max-width: 1600px;
         margin: 0 auto;
@@ -107,6 +107,9 @@
         margin-bottom: 8px;
         cursor: pointer;
         transition: all 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .client-item:hover, .client-item.active {
@@ -115,26 +118,45 @@
         border-left: 6px solid var(--gold-accent);
     }
 
+    .client-info {
+        display: flex;
+        flex-direction: column;
+    }
+
     .client-item .client-name {
         font-weight: bold;
-        font-size: 1rem;
-        display: block;
+        font-size: 0.95rem;
     }
 
     .client-item .client-status-badge {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-family: 'Special Elite', cursive;
-        padding: 2px 6px;
+        padding: 2px 5px;
         background: var(--paper-bg);
         color: var(--ink);
         display: inline-block;
         margin-top: 4px;
         border: 1px solid var(--border-dark);
+        align-self: flex-start;
     }
 
     .client-item.active .client-status-badge {
         background: var(--gold-accent);
         color: #000;
+    }
+
+    .btn-delete-client {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 4px;
+        opacity: 0.7;
+        transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn-delete-client:hover {
+        opacity: 1;
+        transform: scale(1.3);
     }
 
     /* COLONNA CENTRALE: GABINETTO LEGALE */
@@ -581,22 +603,73 @@
         const query = document.getElementById('searchClient').value.toLowerCase();
         container.innerHTML = '';
 
-        clientiDB.filter(c => (c.nome + ' ' + c.cognome).toLowerCase().includes(query)).forEach(c => {
+        const filtrati = clientiDB.filter(c => (c.nome + ' ' + c.cognome).toLowerCase().includes(query));
+
+        if (filtrati.length === 0) {
+            container.innerHTML = '<li style="font-style:italic; padding:8px; font-size:0.85rem;">Nessun cliente in archivio.</li>';
+            return;
+        }
+
+        filtrati.forEach(c => {
             const li = document.createElement('li');
             li.className = 'client-item' + (c.id === attivoId ? ' active' : '');
             li.onclick = () => { attivoId = c.id; renderClientList(); caricaClienteInCentro(); };
+            
             li.innerHTML = `
-                <span class="client-name">${c.nome} ${c.cognome}</span>
-                <span class="client-status-badge">${c.stato}</span>
+                <div class="client-info">
+                    <span class="client-name">${c.nome} ${c.cognome}</span>
+                    <span class="client-status-badge">${c.stato}</span>
+                </div>
+                <button type="button" class="btn-delete-client" title="Elimina cliente e pratica" onclick="eliminaCliente(${c.id}, event)">🗑️</button>
             `;
             container.appendChild(li);
         });
     }
 
+    function eliminaCliente(id, event) {
+        if (event) event.stopPropagation();
+        const target = clientiDB.find(c => c.id === id);
+        if (!target) return;
+
+        if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati/allegati/appuntamenti associati?`)) {
+            clientiDB = clientiDB.filter(c => c.id !== id);
+            
+            if (attivoId === id) {
+                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
+            }
+            
+            renderClientList();
+            caricaClienteInCentro();
+        }
+    }
+
     function caricaClienteInCentro() {
         const c = getClienteAttivo();
-        if (!c) return;
+        const fieldset = document.getElementById('mainFormFieldset');
 
+        if (!c) {
+            document.getElementById('nome').value = '';
+            document.getElementById('cognome').value = '';
+            document.getElementById('motivo').value = '';
+            document.getElementById('missiva').value = '';
+            document.getElementById('acconto').value = 0;
+            document.getElementById('tariffa').value = 0;
+            document.getElementById('indennizzo').value = 0;
+            document.getElementById('pagamenti').value = 0;
+            document.getElementById('totaleOnorario').value = 0;
+            document.getElementById('noteTrattativa').value = '';
+            
+            ['listAttiProcura', 'listComTribunale', 'listPerizieMediche', 'listPerizieTecniche', 
+             'listTrattativeFiles', 'listIstanzeFiles', 'listArringheFiles', 'listSentenzaFiles', 
+             'witnessContainer', 'testeUdienzaContainer', 'appointmentsContainer'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+
+            fieldset.disabled = true;
+            return;
+        }
+
+        fieldset.disabled = false;
         document.getElementById('statoPratica').value = c.stato;
         document.getElementById('motivo').value = c.motivo || '';
         document.getElementById('nome').value = c.nome || '';
@@ -674,7 +747,6 @@
         document.getElementById('totaleOnorario').value = totale > 0 ? totale : 0;
     }
 
-    // RENDER ALLEGATI CON TASTO ELIMINA
     function renderAllegati(containerId, list, prop) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -731,6 +803,7 @@
         const c = getClienteAttivo();
         const container = document.getElementById('witnessContainer');
         container.innerHTML = '';
+        if (!c) return;
         (c.testimoni || []).forEach((w, idx) => {
             const div = document.createElement('div');
             div.style.background = 'var(--paper-card)';
@@ -783,6 +856,7 @@
         const c = getClienteAttivo();
         const container = document.getElementById('testeUdienzaContainer');
         container.innerHTML = '';
+        if (!c) return;
         (c.testimoni || []).forEach((w, idx) => {
             const div = document.createElement('div');
             div.style.padding = '6px';
@@ -795,11 +869,11 @@
         });
     }
 
-    // RENDER APPUNTAMENTI CON MODIFICA (✏️) ED ELIMINAZIONE (🗑️)
     function renderAppuntamenti() {
         const c = getClienteAttivo();
         const container = document.getElementById('appointmentsContainer');
         container.innerHTML = '';
+        if (!c) return;
         (c.appuntamenti || []).forEach((a, idx) => {
             const card = document.createElement('div');
             card.className = 'appointment-card';
@@ -846,6 +920,7 @@
 
     function aggiungiAppuntamento() {
         const c = getClienteAttivo();
+        if (!c) return alert("Nessun cliente attivo selezionato.");
         const data = document.getElementById('appData').value;
         const note = document.getElementById('appNote').value;
         if (!data || !note) return alert("Inserire data e oggetto appuntamento.");
@@ -855,7 +930,7 @@
     }
 
     function creaNuovoCliente() {
-        const newId = clientiDB.length + 1;
+        const newId = clientiDB.length > 0 ? Math.max(...clientiDB.map(c => c.id)) + 1 : 1;
         clientiDB.push({
             id: newId,
             nome: "Nuovo",
