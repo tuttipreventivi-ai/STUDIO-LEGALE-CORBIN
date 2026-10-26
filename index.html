@@ -240,7 +240,7 @@
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .grid-4 { display: grid; grid-template-columns: 120px 1fr 1fr 1fr; gap: 10px; }
+    .grid-4 { display: grid; grid-template-columns: 110px 1fr 1fr 140px; gap: 10px; }
 
     .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
     .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
@@ -476,7 +476,7 @@
                 </div>
             </div>
 
-            <!-- ANAGRAFICA CLIENTE CON MENU TITOLO -->
+            <!-- ANAGRAFICA CLIENTE CON MENU TITOLO E MISSIVA -->
             <div class="grid-4">
                 <div class="form-group">
                     <label>Titolo:</label>
@@ -586,7 +586,7 @@
 
             <!-- 6. PARTE PROCESSUALE -->
             <div class="section-title">6. Parte Processuale</div>
-            <div class="subsection-title">Testimoni (Anagrafiche Dedicate con Titolo)</div>
+            <div class="subsection-title">Testimoni (con Titolo e Missiva Editabile)</div>
             <div id="witnessContainer"></div>
             <button type="button" class="btn-action" id="btnAddWitness" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
 
@@ -669,7 +669,7 @@
                     files: [{ name: "Bozza_Accordo_Sceriffo.pdf", url: null }]
                 }
             ],
-            testimoni: [{ titolo: "Sig.ra", nome: "Sadie", cognome: "Adler", files: [{ name: "Dichiarazione_Adler.txt", url: null }] }],
+            testimoni: [{ titolo: "Sig.ra", nome: "Sadie", cognome: "Adler", missiva: "CC523-W1", files: [{ name: "Dichiarazione_Adler.txt", url: null }] }],
             istanzeFiles: [{ name: "Istanza_Rilascio_Cauzione.pdf", url: null }],
             arringheFiles: [{ name: "Arringa_Finale_Corbin.docx", url: null }],
             sentenzaFiles: [],
@@ -717,7 +717,7 @@
     let attivoId = 1;
 
     function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v15');
+        const salvati = localStorage.getItem('studioCorbinDB_v16');
         if (salvati) {
             try {
                 clientiDB = JSON.parse(salvati);
@@ -733,14 +733,14 @@
         if (ultimoAttivo && clientiDB.some(c => c.id == ultimoAttivo)) {
             attivoId = parseInt(ultimoAttivo);
         } else if (clientiDB.length > 0) {
-            attivoId = clientiDB[0].id;
+            attivoId = clientiDB.id;
         } else {
             attivoId = null;
         }
     }
 
     function salvaInLocalStorage() {
-        localStorage.setItem('studioCorbinDB_v15', JSON.stringify(clientiDB));
+        localStorage.setItem('studioCorbinDB_v16', JSON.stringify(clientiDB));
         if (attivoId !== null) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
         }
@@ -748,7 +748,7 @@
 
     function ripristinaDatiPredefiniti() {
         if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v15');
+            localStorage.removeItem('studioCorbinDB_v16');
             localStorage.removeItem('studioCorbinAttivoId');
             caricaDaLocalStorage();
             renderClientList();
@@ -811,7 +811,7 @@
         if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati associati?`)) {
             clientiDB = clientiDB.filter(c => c.id !== id);
             if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
+                attivoId = clientiDB.length > 0 ? clientiDB.id : null;
             }
             salvaInLocalStorage();
             renderClientList();
@@ -1121,12 +1121,12 @@
         });
     }
 
-    // TESTIMONI CON MENU TITOLO
+    // TESTIMONI CON MENU TITOLO E MISSIVA EDITABILE
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
         if (!c.testimoni) c.testimoni = [];
-        c.testimoni.push({ titolo: "Sig.", nome: "Nuovo", cognome: "Testimone", files: [] });
+        c.testimoni.push({ titolo: "Sig.", nome: "Nuovo", cognome: "Testimone", missiva: "CC523-T", files: [] });
         salvaInLocalStorage();
         renderTestimoni();
         renderTesteUdienza();
@@ -1176,11 +1176,15 @@
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
                         <label>Nome:</label>
-                        <input type="text" value="${w.nome}" placeholder="Nome" oninput="aggiornaTestimone(${idx}, 'nome', this.value)">
+                        <input type="text" value="${w.nome || ''}" placeholder="Nome" oninput="aggiornaTestimone(${idx}, 'nome', this.value)">
                     </div>
-                    <div class="form-group" style="margin-bottom:0; grid-column: span 2;">
+                    <div class="form-group" style="margin-bottom:0;">
                         <label>Cognome:</label>
-                        <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
+                        <input type="text" value="${w.cognome || ''}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Missiva (Alfanumerica):</label>
+                        <input type="text" value="${w.missiva || ''}" placeholder="es. CC523-W1" oninput="aggiornaTestimone(${idx}, 'missiva', this.value)">
                     </div>
                 </div>
                 <div class="upload-box" style="margin-top:5px;">
@@ -1226,7 +1230,8 @@
             div.style.marginBottom = '4px';
             div.style.fontSize = '0.85rem';
             const tStr = w.titolo ? w.titolo + ' ' : '';
-            div.innerHTML = `<strong>${tStr}${w.nome} ${w.cognome}</strong> (Convocato in Udienza)`;
+            const mStr = w.missiva ? ` [Missiva: ${w.missiva}]` : '';
+            div.innerHTML = `<strong>${tStr}${w.nome} ${w.cognome}</strong>${mStr} (Convocato in Udienza)`;
             container.appendChild(div);
         });
     }
