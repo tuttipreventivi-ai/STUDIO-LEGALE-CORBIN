@@ -224,15 +224,34 @@
     }
 
     .file-list { margin-top: 5px; }
+    
     .file-item {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
         background: var(--paper-bg);
         border: 1px solid var(--border-dark);
-        padding: 2px 6px;
-        margin: 2px;
+        padding: 3px 8px;
+        margin: 3px;
         font-size: 0.8rem;
-        text-decoration: underline;
+    }
+
+    .file-item a {
         color: var(--accent-red);
+        text-decoration: underline;
+        margin-right: 6px;
+    }
+
+    .btn-delete-file {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        padding: 0 2px;
+        line-height: 1;
+        transition: transform 0.1s;
+    }
+    .btn-delete-file:hover {
+        transform: scale(1.25);
     }
 
     /* TIMBRO WESTERN CASO CHIUSO */
@@ -578,14 +597,14 @@
         document.getElementById('noteTrattativa').value = c.noteTrattativa || '';
 
         calcolaTotale();
-        renderAllegati('listAttiProcura', c.attiProcura);
-        renderAllegati('listComTribunale', c.comTribunale);
-        renderAllegati('listPerizieMediche', c.perizieMediche);
-        renderAllegati('listPerizieTecniche', c.perizieTecniche);
-        renderAllegati('listTrattativeFiles', c.trattativeFiles);
-        renderAllegati('listIstanzeFiles', c.istanzeFiles);
-        renderAllegati('listArringheFiles', c.arringheFiles);
-        renderAllegati('listSentenzaFiles', c.sentenzaFiles);
+        renderAllegati('listAttiProcura', c.attiProcura, 'attiProcura');
+        renderAllegati('listComTribunale', c.comTribunale, 'comTribunale');
+        renderAllegati('listPerizieMediche', c.perizieMediche, 'perizieMediche');
+        renderAllegati('listPerizieTecniche', c.perizieTecniche, 'perizieTecniche');
+        renderAllegati('listTrattativeFiles', c.trattativeFiles, 'trattativeFiles');
+        renderAllegati('listIstanzeFiles', c.istanzeFiles, 'istanzeFiles');
+        renderAllegati('listArringheFiles', c.arringheFiles, 'arringheFiles');
+        renderAllegati('listSentenzaFiles', c.sentenzaFiles, 'sentenzaFiles');
 
         renderTestimoni();
         renderTesteUdienza();
@@ -643,17 +662,40 @@
         document.getElementById('totaleOnorario').value = totale > 0 ? totale : 0;
     }
 
-    function renderAllegati(containerId, list) {
+    // RENDER ALLEGATI CON TASTO ELIMINA
+    function renderAllegati(containerId, list, prop) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
-        (list || []).forEach(f => {
+        (list || []).forEach((f, idx) => {
+            const span = document.createElement('span');
+            span.className = 'file-item';
+            
             const a = document.createElement('a');
-            a.className = 'file-item';
             a.href = '#';
             a.onclick = (e) => { e.preventDefault(); alert("Apertura documento d'epoca: " + f); };
             a.innerText = '📄 ' + f;
-            container.appendChild(a);
+
+            const btnDel = document.createElement('button');
+            btnDel.type = 'button';
+            btnDel.className = 'btn-delete-file';
+            btnDel.title = 'Elimina allegato';
+            btnDel.innerText = '🗑️';
+            btnDel.onclick = (e) => {
+                e.stopPropagation();
+                eliminaAllegato(prop, idx);
+            };
+
+            span.appendChild(a);
+            span.appendChild(btnDel);
+            container.appendChild(span);
         });
+    }
+
+    function eliminaAllegato(prop, idx) {
+        const c = getClienteAttivo();
+        if (!c || !c[prop]) return;
+        c[prop].splice(idx, 1);
+        caricaClienteInCentro();
     }
 
     function aggiungiFile(event, prop) {
@@ -683,14 +725,46 @@
             div.style.padding = '8px';
             div.style.border = '1px solid var(--border-dark)';
             div.style.marginBottom = '6px';
+
+            let filesHtml = '';
+            (w.files || []).forEach((f, fIdx) => {
+                filesHtml += `
+                    <span class="file-item">
+                        <a href="#" onclick="event.preventDefault(); alert('Apertura: ${f}');">📄 ${f}</a>
+                        <button type="button" class="btn-delete-file" title="Elimina" onclick="eliminaAllegatoTestimone(${idx}, ${fIdx})">🗑️</button>
+                    </span>
+                `;
+            });
+
             div.innerHTML = `
                 <div class="grid-2">
-                    <input type="text" value="${w.nome}" oninput="c.testimoni[${idx}].nome=this.value; renderTesteUdienza();">
-                    <input type="text" value="${w.cognome}" oninput="c.testimoni[${idx}].cognome=this.value; renderTesteUdienza();">
+                    <input type="text" value="${w.nome}" placeholder="Nome" oninput="c.testimoni[${idx}].nome=this.value; renderTesteUdienza();">
+                    <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="c.testimoni[${idx}].cognome=this.value; renderTesteUdienza();">
+                </div>
+                <div class="upload-box" style="margin-top:5px;">
+                    <label>Allegati Testimone:</label>
+                    <input type="file" multiple onchange="aggiungiFileTestimone(event, ${idx})">
+                    <div class="file-list">${filesHtml}</div>
                 </div>
             `;
             container.appendChild(div);
         });
+    }
+
+    function aggiungiFileTestimone(event, witnessIdx) {
+        const c = getClienteAttivo();
+        if (!c || !c.testimoni[witnessIdx]) return;
+        for (let file of event.target.files) {
+            c.testimoni[witnessIdx].files.push(file.name);
+        }
+        renderTestimoni();
+    }
+
+    function eliminaAllegatoTestimone(witnessIdx, fileIdx) {
+        const c = getClienteAttivo();
+        if (!c || !c.testimoni[witnessIdx]) return;
+        c.testimoni[witnessIdx].files.splice(fileIdx, 1);
+        renderTestimoni();
     }
 
     function renderTesteUdienza() {
@@ -769,6 +843,4 @@
     window.onload = inizializzaApp;
 </script>
 </body>
-</html>
-</html>
 </html>
