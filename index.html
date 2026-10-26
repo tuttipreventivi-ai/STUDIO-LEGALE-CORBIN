@@ -244,6 +244,38 @@
     .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
     .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
 
+    /* STILE SPECIALE PER MOTIVO DELLA CONSULTAZIONE EVIDENZIATO */
+    .motivo-box-highlight {
+        background-color: #fdf8eb;
+        border: 2px solid var(--border-dark);
+        border-left: 6px solid var(--accent-red);
+        padding: 12px;
+        margin-bottom: 15px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .motivo-label-highlight {
+        font-family: 'Rye', cursive;
+        font-size: 1.05rem !important;
+        color: var(--accent-red);
+        letter-spacing: 1px;
+        margin-bottom: 6px !important;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .motivo-textarea-highlight {
+        font-size: 1.15rem !important;
+        font-weight: bold !important;
+        line-height: 1.4 !important;
+        min-height: 85px !important;
+        background-color: #fffef8 !important;
+        border: 1px solid var(--border-dark) !important;
+        color: var(--wood-dark) !important;
+        padding: 10px !important;
+    }
+
     input, textarea, select {
         font-family: 'Playfair Display', serif;
         padding: 6px 8px;
@@ -404,10 +436,14 @@
         </div>
 
         <fieldset id="mainFormFieldset" style="border:none; padding:0; margin:0;">
-            <div class="form-group">
-                <label>Motivo della Consultazione:</label>
-                <textarea id="motivo" oninput="salvaDatiAttivi()"></textarea>
+            <!-- MOTIVO DELLA CONSULTAZIONE - EVIDENZIATO E INGRANDITO -->
+            <div class="motivo-box-highlight">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="motivo-label-highlight">📜 MOTIVO DELLA CONSULTAZIONE:</label>
+                    <textarea id="motivo" class="motivo-textarea-highlight" placeholder="Indicare la motivazione legale principale della consultazione..." oninput="salvaDatiAttivi()"></textarea>
+                </div>
             </div>
+
             <div class="grid-3">
                 <div class="form-group">
                     <label>Nome:</label>
@@ -669,7 +705,7 @@
             clientiDB = clientiDB.filter(c => c.id !== id);
             
             if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
+                attivoId = clientiDB.length > 0 ? clientiDB.id : null;
             }
             
             renderClientList();
