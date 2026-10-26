@@ -476,7 +476,7 @@
                 </div>
             </div>
 
-            <!-- ANAGRAFICA CLIENTE CON MENU TITOLO E MISSIVA -->
+            <!-- ANAGRAFICA CLIENTE CON ETICHETTA MISSIVA PULITA -->
             <div class="grid-4">
                 <div class="form-group">
                     <label>Titolo:</label>
@@ -503,7 +503,7 @@
                     <input type="text" id="cognome" oninput="salvaDatiAttivi(true)">
                 </div>
                 <div class="form-group">
-                    <label>Missiva (Alfanumerica):</label>
+                    <label>Missiva:</label>
                     <input type="text" id="missiva" oninput="salvaDatiAttivi()">
                 </div>
             </div>
@@ -717,7 +717,7 @@
     let attivoId = 1;
 
     function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v16');
+        const salvati = localStorage.getItem('studioCorbinDB_v17');
         if (salvati) {
             try {
                 clientiDB = JSON.parse(salvati);
@@ -740,7 +740,7 @@
     }
 
     function salvaInLocalStorage() {
-        localStorage.setItem('studioCorbinDB_v16', JSON.stringify(clientiDB));
+        localStorage.setItem('studioCorbinDB_v17', JSON.stringify(clientiDB));
         if (attivoId !== null) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
         }
@@ -748,7 +748,7 @@
 
     function ripristinaDatiPredefiniti() {
         if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v16');
+            localStorage.removeItem('studioCorbinDB_v17');
             localStorage.removeItem('studioCorbinAttivoId');
             caricaDaLocalStorage();
             renderClientList();
@@ -1121,7 +1121,7 @@
         });
     }
 
-    // TESTIMONI CON MENU TITOLO E MISSIVA EDITABILE
+    // TESTIMONI CON ETICHETTA MISSIVA PULITA ED EDITABILE
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
@@ -1183,7 +1183,7 @@
                         <input type="text" value="${w.cognome || ''}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
                     </div>
                     <div class="form-group" style="margin-bottom:0;">
-                        <label>Missiva (Alfanumerica):</label>
+                        <label>Missiva:</label>
                         <input type="text" value="${w.missiva || ''}" placeholder="es. CC523-W1" oninput="aggiornaTestimone(${idx}, 'missiva', this.value)">
                     </div>
                 </div>
