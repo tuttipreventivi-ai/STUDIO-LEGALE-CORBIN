@@ -1,447 +1,773 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Legale Otis Corbin - Frontier Gazette (1900)</title>
+<title>Studio Legale Otis Corbin - West Elizabeth (1900)</title>
 <style>
     @import url('[suspicious link removed]');
 
     :root {
-        --paper-bg: #f4ecd8;
-        --paper-card: #ebe0c9;
-        --ink: #1c1714;
-        --accent-red: #8c2318;
-        --border-dark: #2a221e;
-        --disabled-bg: #d8ceb9;
+        --paper-bg: #f3e8d2;
+        --paper-card: #e8dbbe;
+        --ink: #221a15;
+        --wood-dark: #2d1b10;
+        --wood-light: #4a3222;
+        --accent-red: #8c1c13;
+        --gold-accent: #b8860b;
+        --border-dark: #3b2518;
+        --stamp-win: #1e5622;
+        --stamp-loss: #8c1c13;
     }
 
+    * { box-sizing: border-box; }
+
     body {
-        background-color: var(--paper-bg);
+        background-color: #1a120c;
+        background-image: radial-gradient(#2d1b10 15%, transparent 16%), radial-gradient(#2d1b10 15%, transparent 16%);
+        background-size: 60px 60px;
+        background-position: 0 0, 30px 30px;
         color: var(--ink);
         font-family: 'Playfair Display', Georgia, serif;
         margin: 0;
-        padding: 20px;
+        padding: 15px;
     }
 
-    .gazette-container {
-        max-width: 1000px;
+    /* CONTAINER PRINCIPALE A 3 COLONNE */
+    .app-viewport {
+        display: grid;
+        grid-template-columns: 280px 1fr 310px;
+        gap: 15px;
+        max-width: 1600px;
         margin: 0 auto;
-        border: 4px double var(--border-dark);
-        padding: 25px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        background-color: var(--paper-bg);
+        min-height: 95vh;
     }
 
-    header {
+    /* STILE PANNELLI D'EPOCA */
+    .western-panel {
+        background-color: var(--paper-bg);
+        border: 4px double var(--border-dark);
+        box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 30px rgba(74, 50, 34, 0.2);
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .panel-header {
+        background: var(--wood-dark);
+        color: var(--paper-bg);
+        text-align: center;
+        padding: 10px;
+        font-family: 'Rye', cursive;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        border: 2px solid var(--gold-accent);
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    /* COLONNA SINISTRA: REPERTORIO CLIENTI */
+    .client-search {
+        width: 100%;
+        padding: 8px;
+        background: var(--paper-card);
+        border: 1px solid var(--border-dark);
+        font-family: 'Special Elite', cursive;
+        margin-bottom: 10px;
+    }
+
+    .btn-add-client {
+        background: var(--accent-red);
+        color: #fff;
+        border: 1px solid var(--border-dark);
+        font-family: 'Rye', cursive;
+        padding: 8px;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    .btn-add-client:hover { background: #6b140d; }
+
+    .client-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    .client-item {
+        background: var(--paper-card);
+        border: 1px solid var(--border-dark);
+        padding: 10px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .client-item:hover, .client-item.active {
+        background: var(--wood-light);
+        color: #fff;
+        border-left: 6px solid var(--gold-accent);
+    }
+
+    .client-item .client-name {
+        font-weight: bold;
+        font-size: 1rem;
+        display: block;
+    }
+
+    .client-item .client-status-badge {
+        font-size: 0.75rem;
+        font-family: 'Special Elite', cursive;
+        padding: 2px 6px;
+        background: var(--paper-bg);
+        color: var(--ink);
+        display: inline-block;
+        margin-top: 4px;
+        border: 1px solid var(--border-dark);
+    }
+
+    .client-item.active .client-status-badge {
+        background: var(--gold-accent);
+        color: #000;
+    }
+
+    /* COLONNA CENTRALE: GABINETTO LEGALE */
+    .main-header {
         text-align: center;
         border-bottom: 3px double var(--border-dark);
-        padding-bottom: 15px;
-        margin-bottom: 20px;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
     }
 
-    h1.gazette-title {
-        font-size: 3.2rem;
-        font-weight: 900;
+    .main-title {
+        font-family: 'Rye', cursive;
+        font-size: 1.8rem;
         margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 2px;
+        color: var(--wood-dark);
     }
 
-    .gazette-subtitle {
+    .main-subtitle {
         font-family: 'Special Elite', cursive;
         color: var(--accent-red);
-        font-size: 1.1rem;
+        font-size: 0.95rem;
         margin-top: 5px;
-        font-weight: bold;
     }
 
-    .status-bar {
-        background: var(--border-dark);
+    .status-selector-bar {
+        background: var(--wood-dark);
         color: #fff;
-        padding: 12px;
+        padding: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
+        margin-bottom: 15px;
+        border: 1px solid var(--gold-accent);
         font-family: 'Special Elite', cursive;
     }
 
-    .status-bar select {
+    .status-selector-bar select {
         font-family: 'Special Elite', cursive;
-        font-size: 1rem;
-        padding: 5px 10px;
+        padding: 6px;
         background: var(--paper-bg);
         color: var(--ink);
         border: 1px solid var(--border-dark);
-        cursor: pointer;
+        font-weight: bold;
     }
 
     .section-title {
-        background: var(--border-dark);
+        background: var(--wood-light);
         color: #fff;
-        padding: 8px 12px;
-        font-size: 1.2rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-top: 25px;
-        margin-bottom: 15px;
-        border-left: 5px solid var(--accent-red);
+        padding: 6px 10px;
+        font-family: 'Rye', cursive;
+        font-size: 1rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border-left: 4px solid var(--gold-accent);
     }
 
     .subsection-title {
-        font-size: 1.05rem;
         font-weight: bold;
         color: var(--accent-red);
         border-bottom: 1px solid var(--border-dark);
-        margin: 10px 0;
-        padding-bottom: 3px;
-    }
-
-    .grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-
-    .grid-3 {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 15px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 12px;
-    }
-
-    .form-group label {
-        font-weight: bold;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
-    }
-
-    input[type="text"], input[type="number"], textarea, select {
-        font-family: 'Playfair Display', Georgia, serif;
-        padding: 8px;
-        background-color: var(--paper-card);
-        border: 1px solid var(--border-dark);
-        color: var(--ink);
+        margin: 8px 0;
+        padding-bottom: 2px;
         font-size: 0.95rem;
     }
 
-    textarea {
-        resize: vertical;
-        min-height: 80px;
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+    .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
+
+    input, textarea, select {
+        font-family: 'Playfair Display', serif;
+        padding: 6px 8px;
+        background-color: var(--paper-card);
+        border: 1px solid var(--border-dark);
+        color: var(--ink);
     }
+
+    textarea { resize: vertical; min-height: 60px; }
 
     .upload-box {
         border: 1px dashed var(--border-dark);
-        padding: 10px;
+        padding: 8px;
         background: var(--paper-card);
-        margin-top: 5px;
+        margin-top: 4px;
     }
 
-    .file-list {
-        margin-top: 8px;
-        font-size: 0.85rem;
-    }
-
+    .file-list { margin-top: 5px; }
     .file-item {
         display: inline-block;
         background: var(--paper-bg);
         border: 1px solid var(--border-dark);
-        padding: 3px 8px;
-        margin: 3px;
-        cursor: pointer;
+        padding: 2px 6px;
+        margin: 2px;
+        font-size: 0.8rem;
         text-decoration: underline;
+        color: var(--accent-red);
     }
 
-    .locked-notice {
+    /* TIMBRO WESTERN CASO CHIUSO */
+    .stamp-overlay {
         display: none;
-        background: var(--accent-red);
-        color: white;
-        padding: 8px;
-        text-align: center;
-        font-weight: bold;
-        margin-bottom: 15px;
+        position: absolute;
+        top: 80px;
+        right: 30px;
+        border: 5px double var(--stamp-win);
+        color: var(--stamp-win);
+        font-family: 'Rye', cursive;
+        font-size: 1.8rem;
+        padding: 10px 20px;
+        transform: rotate(-12deg);
+        opacity: 0.85;
+        pointer-events: none;
+        z-index: 10;
+        text-transform: uppercase;
     }
 
-    .witness-card {
-        border: 1px solid var(--border-dark);
-        padding: 12px;
+    /* COLONNA DESTRA: PLANNING APPUNTAMENTI */
+    .appointment-card {
         background: var(--paper-card);
-        margin-bottom: 12px;
+        border: 1px solid var(--border-dark);
+        padding: 8px;
+        margin-bottom: 8px;
+        border-left: 4px solid var(--accent-red);
     }
+
+    .appointment-card .date {
+        font-family: 'Special Elite', cursive;
+        font-weight: bold;
+        color: var(--accent-red);
+        font-size: 0.85rem;
+    }
+
+    .appointment-card .desc {
+        font-size: 0.85rem;
+        margin-top: 3px;
+    }
+
+    .btn-action {
+        background: var(--wood-dark);
+        color: #fff;
+        border: 1px solid var(--gold-accent);
+        font-family: 'Special Elite', cursive;
+        padding: 6px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 5px;
+    }
+    .btn-action:hover { background: var(--wood-light); }
 </style>
 </head>
 <body>
 
-<div class="gazette-container">
-    <header>
-        <h1 class="gazette-title">THE FRONTIER GAZETTE</h1>
-        <div class="gazette-subtitle">
-            Studio Legale Otis Corbin West Elizabeth-Strawberry presso il Native Post missiva CC523
-        </div>
-    </header>
+<div class="app-viewport">
 
-    <div id="lockedNotice" class="locked-notice">
-        🔒 PRATICA CHIUSA: Modifiche bloccate. Modificare lo stato per riabilitare l'editing.
+    <!-- ================= COLONNA SINISTRA: REPERTORIO CLIENTI ================= -->
+    <div class="western-panel">
+        <div class="panel-header">📜 REPERTORIO CLIENTI</div>
+        <input type="text" class="client-search" id="searchClient" placeholder="Cerca cliente..." oninput="filtraClienti()">
+        <button class="btn-add-client" onclick="creaNuovoCliente()">+ Nuovo Cliente</button>
+        <ul class="client-list" id="clientListContainer"></ul>
     </div>
 
-    <!-- 1. STATO PRATICA -->
-    <div class="status-bar">
-        <span>STATO PRATICA CLIENTE:</span>
-        <select id="statoPratica" onchange="gestisciStatoPratica()">
-            <option value="IN CARICO">IN CARICO</option>
-            <option value="IN LAVORAZIONE">IN LAVORAZIONE</option>
-            <option value="SOSPESA">SOSPESA</option>
-            <option value="REVISIONE">REVISIONE</option>
-            <option value="CHIUSA VINTA">CHIUSA VINTA</option>
-            <option value="CHIUSA PERSA">CHIUSA PERSA</option>
-        </select>
+    <!-- ================= COLONNA CENTRALE: GABINETTO LEGALE ================= -->
+    <div class="western-panel" style="overflow-y: auto;">
+        <div id="stampNotice" class="stamp-overlay">CASO CHIUSO</div>
+
+        <div class="main-header">
+            <h1 class="main-title">THE FRONTIER GAZETTE</h1>
+            <div class="main-subtitle">Studio Legale Otis Corbin West Elizabeth-Strawberry presso il Native Post missiva CC523</div>
+        </div>
+
+        <!-- 1. STATO PRATICA -->
+        <div class="status-selector-bar">
+            <span>STATO PRATICA:</span>
+            <select id="statoPratica" onchange="aggiornaStatoAttivo()">
+                <option value="IN CARICO">IN CARICO</option>
+                <option value="IN LAVORAZIONE">IN LAVORAZIONE</option>
+                <option value="SOSPESA">SOSPESA</option>
+                <option value="REVISIONE">REVISIONE</option>
+                <option value="CHIUSA VINTA">CHIUSA VINTA</option>
+                <option value="CHIUSA PERSA">CHIUSA PERSA</option>
+            </select>
+        </div>
+
+        <fieldset id="mainFormFieldset" style="border:none; padding:0; margin:0;">
+            <!-- 2. ANAGRAFICA CLIENTE -->
+            <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
+            <div class="form-group">
+                <label>Motivo della Consultazione:</label>
+                <textarea id="motivo" oninput="salvaDatiAttivi()"></textarea>
+            </div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" id="nome" oninput="salvaDatiAttivi(true)">
+                </div>
+                <div class="form-group">
+                    <label>Cognome:</label>
+                    <input type="text" id="cognome" oninput="salvaDatiAttivi(true)">
+                </div>
+                <div class="form-group">
+                    <label>Missiva (Alfanumerica):</label>
+                    <input type="text" id="missiva" oninput="salvaDatiAttivi()">
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Acconto ($):</label>
+                    <input type="number" id="acconto" oninput="calcolaTotale(); salvaDatiAttivi();">
+                </div>
+                <div class="form-group">
+                    <label>Tariffa Oraria ($):</label>
+                    <input type="number" id="tariffa" oninput="calcolaTotale(); salvaDatiAttivi();">
+                </div>
+                <div class="form-group">
+                    <label>Indennizzo Ottenuto ($):</label>
+                    <input type="number" id="indennizzo" oninput="salvaDatiAttivi()">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Pagamenti Effettuati ($):</label>
+                    <input type="number" id="pagamenti" oninput="calcolaTotale(); salvaDatiAttivi();">
+                </div>
+                <div class="form-group">
+                    <label>Totale Onorario ($):</label>
+                    <input type="number" id="totaleOnorario" readonly style="font-weight:bold;">
+                </div>
+            </div>
+
+            <!-- 3. ATTI UFFICIALI -->
+            <div class="section-title">3. Atti Ufficiali</div>
+            <div class="grid-2">
+                <div>
+                    <div class="subsection-title">Atti Procura</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'attiProcura')">
+                        <div id="listAttiProcura" class="file-list"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="subsection-title">Comunicazioni Tribunale</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'comTribunale')">
+                        <div id="listComTribunale" class="file-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. PERIZIE -->
+            <div class="section-title">4. Perizie</div>
+            <div class="grid-2">
+                <div>
+                    <div class="subsection-title">Perizie Mediche</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'perizieMediche')">
+                        <div id="listPerizieMediche" class="file-list"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="subsection-title">Perizie Tecniche</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'perizieTecniche')">
+                        <div id="listPerizieTecniche" class="file-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. TRATTATIVE -->
+            <div class="section-title">5. Trattative</div>
+            <div class="form-group">
+                <label>Note Trattativa Editabili:</label>
+                <textarea id="noteTrattativa" oninput="salvaDatiAttivi()"></textarea>
+            </div>
+            <div class="upload-box">
+                <label>Allegati Trattativa:</label>
+                <input type="file" multiple onchange="aggiungiFile(event, 'trattativeFiles')">
+                <div id="listTrattativeFiles" class="file-list"></div>
+            </div>
+
+            <!-- 6. PARTE PROCESSUALE -->
+            <div class="section-title">6. Parte Processuale</div>
+            <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
+            <div id="witnessContainer"></div>
+            <button type="button" class="btn-action" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
+
+            <div class="subsection-title" style="margin-top:12px;">Istanze Presentate</div>
+            <div class="upload-box">
+                <input type="file" multiple onchange="aggiungiFile(event, 'istanzeFiles')">
+                <div id="listIstanzeFiles" class="file-list"></div>
+            </div>
+
+            <div class="subsection-title" style="margin-top:12px;">Teste Udienza (Sincronizzati)</div>
+            <div id="testeUdienzaContainer"></div>
+
+            <!-- 7. UDIENZA -->
+            <div class="section-title">7. Udienza</div>
+            <div class="grid-2">
+                <div>
+                    <div class="subsection-title">Arringhe</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'arringheFiles')">
+                        <div id="listArringheFiles" class="file-list"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="subsection-title">Sentenza</div>
+                    <div class="upload-box">
+                        <input type="file" multiple onchange="aggiungiFile(event, 'sentenzaFiles')">
+                        <div id="listSentenzaFiles" class="file-list"></div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
     </div>
 
-    <fieldset id="praticaFormFields" style="border:none; padding:0; margin:0;">
-        <!-- 2. ANAGRAFICA CLIENTE -->
-        <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
-        <div class="form-group">
-            <label>Motivo della Consultazione:</label>
-            <textarea id="motivoConsultazione" placeholder="Descrivere il motivo legale..."></textarea>
-        </div>
-        <div class="grid-3">
-            <div class="form-group">
-                <label>Nome:</label>
-                <input type="text" id="nomeCliente">
-            </div>
-            <div class="form-group">
-                <label>Cognome:</label>
-                <input type="text" id="cognomeCliente">
-            </div>
-            <div class="form-group">
-                <label>Missiva (Alfanumerica):</label>
-                <input type="text" id="missiva" value="CC523">
-            </div>
-        </div>
-        <div class="grid-3">
-            <div class="form-group">
-                <label>Acconto ($):</label>
-                <input type="number" id="acconto" oninput="calcolaOnorario()">
-            </div>
-            <div class="form-group">
-                <label>Tariffa Oraria ($):</label>
-                <input type="number" id="tariffaOraria" oninput="calcolaOnorario()">
-            </div>
-            <div class="form-group">
-                <label>Indennizzo Ottenuto ($):</label>
-                <input type="number" id="indennizzo">
-            </div>
-        </div>
-        <div class="grid-2">
-            <div class="form-group">
-                <label>Pagamenti Effettuati ($):</label>
-                <input type="number" id="pagamenti" oninput="calcolaOnorario()">
-            </div>
-            <div class="form-group">
-                <label>Totale Onorario Calcolato ($):</label>
-                <input type="number" id="totaleOnorario" readonly style="font-weight:bold;">
-            </div>
+    <!-- ================= COLONNA DESTRA: PLANNING APPUNTAMENTI (1900) ================= -->
+    <div class="western-panel">
+        <div class="panel-header">📅 PLANNING (1900)</div>
+        <div style="font-size:0.8rem; font-style:italic; margin-bottom:10px; text-align:center;">
+            Agenda Appuntamenti dello Studio — Anno 1900
         </div>
 
-        <!-- 3. ATTI UFFICIALI -->
-        <div class="section-title">3. Atti Ufficiali</div>
-        <div class="grid-2">
-            <div>
-                <div class="subsection-title">Atti Procura</div>
-                <div class="upload-box">
-                    <label>Aggiungi Testo / Immagini:</label>
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listAttiProcura')">
-                    <div id="listAttiProcura" class="file-list"></div>
-                </div>
-            </div>
-            <div>
-                <div class="subsection-title">Comunicazioni Tribunale</div>
-                <div class="upload-box">
-                    <label>Aggiungi Testo / Immagini:</label>
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listComTribunale')">
-                    <div id="listComTribunale" class="file-list"></div>
-                </div>
-            </div>
-        </div>
+        <div style="flex-grow:1; overflow-y:auto;" id="appointmentsContainer"></div>
 
-        <!-- 4. PERIZIE -->
-        <div class="section-title">4. Perizie</div>
-        <div class="grid-2">
-            <div>
-                <div class="subsection-title">Perizie Mediche</div>
-                <div class="upload-box">
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listPerizieMediche')">
-                    <div id="listPerizieMediche" class="file-list"></div>
-                </div>
-            </div>
-            <div>
-                <div class="subsection-title">Perizie Tecniche</div>
-                <div class="upload-box">
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listPerizieTecniche')">
-                    <div id="listPerizieTecniche" class="file-list"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. TRATTATIVE -->
-        <div class="section-title">5. Trattative</div>
-        <div class="form-group">
-            <label>Note Trattativa (Editabili):</label>
-            <textarea id="noteTrattativa" placeholder="Inserire note sulla trattativa..."></textarea>
-        </div>
-        <div class="upload-box">
-            <label>Allegati Trattativa (Testo & Immagini):</label>
-            <input type="file" multiple onchange="gestisciAllegati(event, 'listTrattative')">
-            <div id="listTrattative" class="file-list"></div>
-        </div>
-
-        <!-- 6. PARTE PROCESSUALE -->
-        <div class="section-title">6. Parte Processuale</div>
-        
-        <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
-        <div id="testimoniContainer"></div>
-        <button type="button" onclick="aggiungiTestimone()" style="margin-bottom:15px; padding:6px 12px; cursor:pointer;">+ Aggiungi Testimone</button>
-
-        <div class="subsection-title">Istanze Presentate</div>
-        <div class="upload-box">
-            <input type="file" multiple onchange="gestisciAllegati(event, 'listIstanze')">
-            <div id="listIstanze" class="file-list"></div>
-        </div>
-
-        <div class="subsection-title" style="margin-top:15px;">Teste Udienza</div>
-        <p style="font-size:0.85rem; font-style:italic;">Elenco sincronizzato dalla sezione Testimoni con relativi allegati:</p>
-        <div id="testeUdienzaContainer"></div>
-
-        <!-- 7. UDIENZA -->
-        <div class="section-title">7. Udienza</div>
-        <div class="grid-2">
-            <div>
-                <div class="subsection-title">Arringhe</div>
-                <div class="upload-box">
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listArringhe')">
-                    <div id="listArringhe" class="file-list"></div>
-                </div>
-            </div>
-            <div>
-                <div class="subsection-title">Sentenza</div>
-                <div class="upload-box">
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listSentenza')">
-                    <div id="listSentenza" class="file-list"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 8. PLANNING APPUNTAMENTI -->
-        <div class="section-title">8. Planning Appuntamenti (Anno 1900)</div>
-        <div class="grid-3">
+        <div style="border-top:2px double var(--border-dark); padding-top:10px; margin-top:10px;">
+            <div class="subsection-title">Nuovo Appuntamento</div>
             <div class="form-group">
-                <label>Data Appuntamento (Anno 1900):</label>
-                <input type="date" id="dataApp" value="1900-01-01" min="1900-01-01" max="1900-12-31">
+                <label>Data (Anno 1900):</label>
+                <input type="date" id="appData" value="1900-01-01" min="1900-01-01" max="1900-12-31">
             </div>
-            <div class="form-group" style="grid-column: span 2;">
-                <label>Dettaglio Oggetto Appuntamento:</label>
-                <input type="text" id="noteApp" placeholder="Oggetto della riunione in studio...">
+            <div class="form-group">
+                <label>Descrizione / Oggetto:</label>
+                <input type="text" id="appNote" placeholder="Udienza o incontro in studio...">
             </div>
+            <button class="btn-action" onclick="aggiungiAppuntamento()">Registra Appuntamento</button>
         </div>
-    </fieldset>
+    </div>
+
 </div>
 
 <script>
-    function gestisciStatoPratica() {
+    // ARCHIVIO DATI CLIENTI
+    let clientiDB = [
+        {
+            id: 1,
+            nome: "Arthur",
+            cognome: "Morgan",
+            stato: "IN CARICO",
+            motivo: "Difesa legale da imputazione per presunta rapina al treno Leviticus Cornwall.",
+            missiva: "CC523-A",
+            acconto: 50,
+            tariffa: 15,
+            indennizzo: 200,
+            pagamenti: 30,
+            noteTrattativa: "Trattativa preliminare avviata con lo Sceriffo di Strawberry.",
+            attiProcura: ["Atto_Procura_Morgan.pdf"],
+            comTribunale: ["Notifica_Tribunale_Strawberry.png"],
+            perizieMediche: ["Referto_Dr_Barnes.pdf"],
+            perizieTecniche: ["Perizia_Balistica_Winchester.pdf"],
+            trattativeFiles: ["Bozza_Accordo_Sceriffo.pdf"],
+            testimoni: [{ nome: "Sadie", cognome: "Adler", files: ["Dichiarazione_Adler.txt"] }],
+            istanzeFiles: ["Istanza_Rilascio_Cauzione.pdf"],
+            arringheFiles: ["Arringa_Finale_Corbin.docx"],
+            sentenzaFiles: [],
+            appuntamenti: [
+                { data: "1900-03-15", note: "Udienza Preliminare Tribunale di Strawberry" },
+                { data: "1900-04-02", note: "Incontro in studio per deposito perizia balistica" }
+            ]
+        },
+        {
+            id: 2,
+            nome: "John",
+            cognome: "Marston",
+            stato: "CHIUSA VINTA",
+            motivo: "Acquisto terreno fiduciario presso Beecher's Hope e controversia pascolo.",
+            missiva: "CC523-B",
+            acconto: 100,
+            tariffa: 20,
+            indennizzo: 500,
+            pagamenti: 100,
+            noteTrattativa: "Accordo stragiudiziale siglato con la banca di Blackwater.",
+            attiProcura: ["Rogito_Terreno.pdf"],
+            comTribunale: [],
+            perizieMediche: [],
+            perizieTecniche: ["Mappa_Confini_BeechersHope.jpg"],
+            trattativeFiles: ["Accordo_Banca.pdf"],
+            testimoni: [],
+            istanzeFiles: [],
+            arringheFiles: [],
+            sentenzaFiles: ["Sentenza_Proscioglimento.pdf"],
+            appuntamenti: [
+                { data: "1900-01-10", note: "Firma Atto Notarile Beecher's Hope" }
+            ]
+        }
+    ];
+
+    let attivoId = 1;
+
+    function getClienteAttivo() {
+        return clientiDB.find(c => c.id === attivoId);
+    }
+
+    function inizializzaApp() {
+        renderClientList();
+        caricaClienteInCentro();
+    }
+
+    function renderClientList() {
+        const container = document.getElementById('clientListContainer');
+        const query = document.getElementById('searchClient').value.toLowerCase();
+        container.innerHTML = '';
+
+        clientiDB.filter(c => (c.nome + ' ' + c.cognome).toLowerCase().includes(query)).forEach(c => {
+            const li = document.createElement('li');
+            li.className = 'client-item' + (c.id === attivoId ? ' active' : '');
+            li.onclick = () => { attivoId = c.id; renderClientList(); caricaClienteInCentro(); };
+            li.innerHTML = `
+                <span class="client-name">${c.nome} ${c.cognome}</span>
+                <span class="client-status-badge">${c.stato}</span>
+            `;
+            container.appendChild(li);
+        });
+    }
+
+    function caricaClienteInCentro() {
+        const c = getClienteAttivo();
+        if (!c) return;
+
+        document.getElementById('statoPratica').value = c.stato;
+        document.getElementById('motivo').value = c.motivo || '';
+        document.getElementById('nome').value = c.nome || '';
+        document.getElementById('cognome').value = c.cognome || '';
+        document.getElementById('missiva').value = c.missiva || 'CC523';
+        document.getElementById('acconto').value = c.acconto || 0;
+        document.getElementById('tariffa').value = c.tariffa || 0;
+        document.getElementById('indennizzo').value = c.indennizzo || 0;
+        document.getElementById('pagamenti').value = c.pagamenti || 0;
+        document.getElementById('noteTrattativa').value = c.noteTrattativa || '';
+
+        calcolaTotale();
+        renderAllegati('listAttiProcura', c.attiProcura);
+        renderAllegati('listComTribunale', c.comTribunale);
+        renderAllegati('listPerizieMediche', c.perizieMediche);
+        renderAllegati('listPerizieTecniche', c.perizieTecniche);
+        renderAllegati('listTrattativeFiles', c.trattativeFiles);
+        renderAllegati('listIstanzeFiles', c.istanzeFiles);
+        renderAllegati('listArringheFiles', c.arringheFiles);
+        renderAllegati('listSentenzaFiles', c.sentenzaFiles);
+
+        renderTestimoni();
+        renderTesteUdienza();
+        renderAppuntamenti();
+        gestisciBloccoStato();
+    }
+
+    function salvaDatiAttivi(updateSidebar = false) {
+        const c = getClienteAttivo();
+        if (!c) return;
+
+        c.motivo = document.getElementById('motivo').value;
+        c.nome = document.getElementById('nome').value;
+        c.cognome = document.getElementById('cognome').value;
+        c.missiva = document.getElementById('missiva').value;
+        c.acconto = parseFloat(document.getElementById('acconto').value) || 0;
+        c.tariffa = parseFloat(document.getElementById('tariffa').value) || 0;
+        c.indennizzo = parseFloat(document.getElementById('indennizzo').value) || 0;
+        c.pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
+        c.noteTrattativa = document.getElementById('noteTrattativa').value;
+
+        if (updateSidebar) renderClientList();
+    }
+
+    function aggiornaStatoAttivo() {
+        const c = getClienteAttivo();
+        if (!c) return;
+        c.stato = document.getElementById('statoPratica').value;
+        renderClientList();
+        gestisciBloccoStato();
+    }
+
+    function gestisciBloccoStato() {
         const stato = document.getElementById('statoPratica').value;
-        const fieldset = document.getElementById('praticaFormFields');
-        const notice = document.getElementById('lockedNotice');
+        const fieldset = document.getElementById('mainFormFieldset');
+        const stamp = document.getElementById('stampNotice');
 
         if (stato === 'CHIUSA VINTA' || stato === 'CHIUSA PERSA') {
             fieldset.disabled = true;
-            notice.style.display = 'block';
+            stamp.style.display = 'block';
+            stamp.innerText = stato === 'CHIUSA VINTA' ? '✓ CASO VINTO' : '✗ CASO PERSO';
+            stamp.style.color = stato === 'CHIUSA VINTA' ? 'var(--stamp-win)' : 'var(--stamp-loss)';
+            stamp.style.borderColor = stamp.style.color;
         } else {
             fieldset.disabled = false;
-            notice.style.display = 'none';
+            stamp.style.display = 'none';
         }
     }
 
-    function calcolaOnorario() {
+    function calcolaTotale() {
         const acconto = parseFloat(document.getElementById('acconto').value) || 0;
-        const tariffa = parseFloat(document.getElementById('tariffaOraria').value) || 0;
+        const tariffa = parseFloat(document.getElementById('tariffa').value) || 0;
         const pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
-        
-        // Esempio formula onorario
-        const totale = (tariffa * 10) + acconto - pagamenti; 
+        const totale = (tariffa * 10) + acconto - pagamenti;
         document.getElementById('totaleOnorario').value = totale > 0 ? totale : 0;
     }
 
-    function gestisciAllegati(event, targetId) {
-        const files = event.target.files;
-        const container = document.getElementById(targetId);
-        for (let file of files) {
-            const fileURL = URL.createObjectURL(file);
-            const item = document.createElement('a');
-            item.className = 'file-item';
-            item.href = fileURL;
-            item.target = '_blank';
-            item.innerText = '📄 ' + file.name;
-            container.appendChild(item);
-        }
-    }
-
-    let countTestimoni = 0;
-    function aggiungiTestimone() {
-        countTestimoni++;
-        const container = document.getElementById('testimoniContainer');
-        const card = document.createElement('div');
-        card.className = 'witness-card';
-        card.id = 'witness_' + countTestimoni;
-        card.innerHTML = `
-            <strong>Testimone #${countTestimoni}</strong>
-            <div class="grid-2" style="margin-top:5px;">
-                <input type="text" placeholder="Nome" oninput="aggiornaTesteUdienza()">
-                <input type="text" placeholder="Cognome" oninput="aggiornaTesteUdienza()">
-            </div>
-            <div class="upload-box" style="margin-top:5px;">
-                <label>Allegati Testimone:</label>
-                <input type="file" multiple onchange="gestisciAllegati(event, 'listWit_${countTestimoni}')">
-                <div id="listWit_${countTestimoni}" class="file-list"></div>
-            </div>
-        `;
-        container.appendChild(card);
-        aggiornaTesteUdienza();
-    }
-
-    function aggiornaTesteUdienza() {
-        const testeContainer = document.getElementById('testeUdienzaContainer');
-        testeContainer.innerHTML = '';
-        const testimoni = document.querySelectorAll('#testimoniContainer .witness-card');
-        testimoni.forEach((t, idx) => {
-            const inputs = t.querySelectorAll('input[type="text"]');
-            const nome = inputs[0].value || 'Testimone';
-            const cognome = inputs[1].value || `#${idx+1}`;
-            
-            const item = document.createElement('div');
-            item.style.padding = '8px';
-            item.style.background = '#ebe0c9';
-            item.style.marginBottom = '5px';
-            item.style.border = '1px solid #2a221e';
-            item.innerHTML = `
-                <strong>${nome} ${cognome}</strong> (Presente in Udienza)
-                <div class="upload-box" style="margin-top:5px;">
-                    <label>Documenti / Immagini Udienza:</label>
-                    <input type="file" multiple onchange="gestisciAllegati(event, 'listTesteUd_${idx}')">
-                    <div id="listTesteUd_${idx}" class="file-list"></div>
-                </div>
-            `;
-            testeContainer.appendChild(item);
+    function renderAllegati(containerId, list) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        (list || []).forEach(f => {
+            const a = document.createElement('a');
+            a.className = 'file-item';
+            a.href = '#';
+            a.onclick = (e) => { e.preventDefault(); alert("Apertura documento d'epoca: " + f); };
+            a.innerText = '📄 ' + f;
+            container.appendChild(a);
         });
     }
-</script>
 
+    function aggiungiFile(event, prop) {
+        const c = getClienteAttivo();
+        if (!c) return;
+        for (let file of event.target.files) {
+            c[prop].push(file.name);
+        }
+        caricaClienteInCentro();
+    }
+
+    function nuovoTestimone() {
+        const c = getClienteAttivo();
+        if (!c) return;
+        c.testimoni.push({ nome: "Nuovo", cognome: "Testimone", files: [] });
+        renderTestimoni();
+        renderTesteUdienza();
+    }
+
+    function renderTestimoni() {
+        const c = getClienteAttivo();
+        const container = document.getElementById('witnessContainer');
+        container.innerHTML = '';
+        (c.testimoni || []).forEach((w, idx) => {
+            const div = document.createElement('div');
+            div.style.background = 'var(--paper-card)';
+            div.style.padding = '8px';
+            div.style.border = '1px solid var(--border-dark)';
+            div.style.marginBottom = '6px';
+            div.innerHTML = `
+                <div class="grid-2">
+                    <input type="text" value="${w.nome}" oninput="c.testimoni[${idx}].nome=this.value; renderTesteUdienza();">
+                    <input type="text" value="${w.cognome}" oninput="c.testimoni[${idx}].cognome=this.value; renderTesteUdienza();">
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function renderTesteUdienza() {
+        const c = getClienteAttivo();
+        const container = document.getElementById('testeUdienzaContainer');
+        container.innerHTML = '';
+        (c.testimoni || []).forEach((w, idx) => {
+            const div = document.createElement('div');
+            div.style.padding = '6px';
+            div.style.background = 'var(--paper-card)';
+            div.style.border = '1px solid var(--border-dark)';
+            div.style.marginBottom = '4px';
+            div.style.fontSize = '0.85rem';
+            div.innerHTML = `<strong>${w.nome} ${w.cognome}</strong> (Convocato in Udienza)`;
+            container.appendChild(div);
+        });
+    }
+
+    function renderAppuntamenti() {
+        const c = getClienteAttivo();
+        const container = document.getElementById('appointmentsContainer');
+        container.innerHTML = '';
+        (c.appuntamenti || []).forEach(a => {
+            const card = document.createElement('div');
+            card.className = 'appointment-card';
+            card.innerHTML = `
+                <div class="date">🗓️ ${a.data}</div>
+                <div class="desc">${a.note}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function aggiungiAppuntamento() {
+        const c = getClienteAttivo();
+        const data = document.getElementById('appData').value;
+        const note = document.getElementById('appNote').value;
+        if (!data || !note) return alert("Inserire data e oggetto appuntamento.");
+        c.appuntamenti.push({ data, note });
+        document.getElementById('appNote').value = '';
+        renderAppuntamenti();
+    }
+
+    function creaNuovoCliente() {
+        const newId = clientiDB.length + 1;
+        clientiDB.push({
+            id: newId,
+            nome: "Nuovo",
+            cognome: "Cliente " + newId,
+            stato: "IN CARICO",
+            motivo: "",
+            missiva: "CC523-" + newId,
+            acconto: 0,
+            tariffa: 0,
+            indennizzo: 0,
+            pagamenti: 0,
+            noteTrattativa: "",
+            attiProcura: [],
+            comTribunale: [],
+            perizieMediche: [],
+            perizieTecniche: [],
+            trattativeFiles: [],
+            testimoni: [],
+            istanzeFiles: [],
+            arringheFiles: [],
+            sentenzaFiles: [],
+            appuntamenti: []
+        });
+        attivoId = newId;
+        renderClientList();
+        caricaClienteInCentro();
+    }
+
+    function filtraClienti() { renderClientList(); }
+
+    window.onload = inizializzaApp;
+</script>
 </body>
 </html>
 </html>
