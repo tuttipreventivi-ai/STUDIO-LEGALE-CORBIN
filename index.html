@@ -18,6 +18,7 @@
         --border-dark: #3b2518;
         --stamp-win: #1e5622;
         --stamp-loss: #8c1c13;
+        --stamp-probono: #1f4e5b;
     }
 
     * { box-sizing: border-box; }
@@ -235,6 +236,7 @@
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
 
     .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
     .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
@@ -287,7 +289,7 @@
         transform: scale(1.3);
     }
 
-    /* TIMBRO WESTERN CASO CHIUSO */
+    /* TIMBRO WESTERN CASO CHIUSO / PRO BONO */
     .stamp-overlay {
         display: none;
         position: absolute;
@@ -296,13 +298,14 @@
         border: 5px double var(--stamp-win);
         color: var(--stamp-win);
         font-family: 'Rye', cursive;
-        font-size: 1.8rem;
-        padding: 10px 20px;
+        font-size: 1.7rem;
+        padding: 10px 18px;
         transform: rotate(-12deg);
-        opacity: 0.85;
+        opacity: 0.9;
         pointer-events: none;
         z-index: 10;
         text-transform: uppercase;
+        background: rgba(243, 232, 210, 0.85);
     }
 
     /* COLONNA DESTRA: PLANNING APPUNTAMENTI */
@@ -361,7 +364,7 @@
             <div class="main-subtitle">Patrocinante nello stato delle Wildlands - West Elizabeth - Strawberry presso il Native post missiva CC523</div>
         </div>
 
-        <!-- 1. STATO PRATICA -->
+        <!-- 1. STATO PRATICA & PRO BONO -->
         <div class="status-selector-bar">
             <span>STATO PRATICA:</span>
             <select id="statoPratica" onchange="aggiornaStatoAttivo()">
@@ -374,9 +377,23 @@
             </select>
         </div>
 
+        <!-- 2. ANAGRAFICA CLIENTE & PRO BONO -->
+        <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
+        
+        <div class="grid-2" style="background: var(--paper-card); padding: 8px; border: 1px solid var(--border-dark); margin-bottom: 12px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="color: var(--accent-red); font-size: 0.95rem;">⚖️ PATROCINIO PRO BONO:</label>
+                <select id="proBonoSelect" onchange="aggiornaProBono()" style="font-weight: bold; background: var(--paper-bg);">
+                    <option value="NO">NO - Pratica Ordinaria</option>
+                    <option value="SI">SI - Patrocinio Gratuito (Pro Bono)</option>
+                </select>
+            </div>
+            <div style="font-size:0.8rem; font-style:italic; align-self:center;">
+                Se impostato su <b>SI</b>, l'intera scheda pratica e tutte le sezioni legali vengono bloccate e rese incompilabili.
+            </div>
+        </div>
+
         <fieldset id="mainFormFieldset" style="border:none; padding:0; margin:0;">
-            <!-- 2. ANAGRAFICA CLIENTE -->
-            <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
             <div class="form-group">
                 <label>Motivo della Consultazione:</label>
                 <textarea id="motivo" oninput="salvaDatiAttivi()"></textarea>
@@ -474,7 +491,7 @@
             <div class="section-title">6. Parte Processuale</div>
             <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
             <div id="witnessContainer"></div>
-            <button type="button" class="btn-action" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
+            <button type="button" class="btn-action" id="btnAddWitness" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
 
             <div class="subsection-title" style="margin-top:12px;">Istanze Presentate</div>
             <div class="upload-box">
@@ -525,7 +542,7 @@
                 <label>Descrizione / Oggetto:</label>
                 <input type="text" id="appNote" placeholder="Udienza o incontro in studio...">
             </div>
-            <button class="btn-action" onclick="aggiungiAppuntamento()">Registra Appuntamento</button>
+            <button class="btn-action" id="btnAddApp" onclick="aggiungiAppuntamento()">Registra Appuntamento</button>
         </div>
     </div>
 
@@ -539,6 +556,7 @@
             nome: "Arthur",
             cognome: "Morgan",
             stato: "IN CARICO",
+            proBono: "NO",
             motivo: "Difesa legale da imputazione per presunta rapina al treno Leviticus Cornwall.",
             missiva: "CC523-A",
             acconto: 50,
@@ -565,6 +583,7 @@
             nome: "John",
             cognome: "Marston",
             stato: "CHIUSA VINTA",
+            proBono: "NO",
             motivo: "Acquisto terreno fiduciario presso Beecher's Hope e controversia pascolo.",
             missiva: "CC523-B",
             acconto: 100,
@@ -615,10 +634,13 @@
             li.className = 'client-item' + (c.id === attivoId ? ' active' : '');
             li.onclick = () => { attivoId = c.id; renderClientList(); caricaClienteInCentro(); };
             
+            const badgeText = c.proBono === 'SI' ? 'PRO BONO' : c.stato;
+            const badgeClass = c.proBono === 'SI' ? 'style="background:var(--stamp-probono); color:#fff;"' : '';
+
             li.innerHTML = `
                 <div class="client-info">
                     <span class="client-name">${c.nome} ${c.cognome}</span>
-                    <span class="client-status-badge">${c.stato}</span>
+                    <span class="client-status-badge" ${badgeClass}>${badgeText}</span>
                 </div>
                 <button type="button" class="btn-delete-client" title="Elimina cliente e pratica" onclick="eliminaCliente(${c.id}, event)">🗑️</button>
             `;
@@ -652,6 +674,7 @@
             document.getElementById('cognome').value = '';
             document.getElementById('motivo').value = '';
             document.getElementById('missiva').value = '';
+            document.getElementById('proBonoSelect').value = 'NO';
             document.getElementById('acconto').value = 0;
             document.getElementById('tariffa').value = 0;
             document.getElementById('indennizzo').value = 0;
@@ -671,6 +694,7 @@
 
         fieldset.disabled = false;
         document.getElementById('statoPratica').value = c.stato;
+        document.getElementById('proBonoSelect').value = c.proBono || 'NO';
         document.getElementById('motivo').value = c.motivo || '';
         document.getElementById('nome').value = c.nome || '';
         document.getElementById('cognome').value = c.cognome || '';
@@ -714,6 +738,25 @@
         if (updateSidebar) renderClientList();
     }
 
+    function aggiornaProBono() {
+        const c = getClienteAttivo();
+        if (!c) return;
+        c.proBono = document.getElementById('proBonoSelect').value;
+        
+        if (c.proBono === 'SI') {
+            c.acconto = 0;
+            c.tariffa = 0;
+            c.pagamenti = 0;
+            document.getElementById('acconto').value = 0;
+            document.getElementById('tariffa').value = 0;
+            document.getElementById('pagamenti').value = 0;
+            document.getElementById('totaleOnorario').value = 0;
+        }
+
+        renderClientList();
+        gestisciBloccoStato();
+    }
+
     function aggiornaStatoAttivo() {
         const c = getClienteAttivo();
         if (!c) return;
@@ -723,15 +766,26 @@
     }
 
     function gestisciBloccoStato() {
-        const stato = document.getElementById('statoPratica').value;
+        const c = getClienteAttivo();
         const fieldset = document.getElementById('mainFormFieldset');
         const stamp = document.getElementById('stampNotice');
+        
+        if (!c) return;
 
-        if (stato === 'CHIUSA VINTA' || stato === 'CHIUSA PERSA') {
+        const isProBono = (c.proBono === 'SI');
+        const isChiusa = (c.stato === 'CHIUSA VINTA' || c.stato === 'CHIUSA PERSA');
+
+        if (isProBono) {
             fieldset.disabled = true;
             stamp.style.display = 'block';
-            stamp.innerText = stato === 'CHIUSA VINTA' ? '✓ CASO VINTO' : '✗ CASO PERSO';
-            stamp.style.color = stato === 'CHIUSA VINTA' ? 'var(--stamp-win)' : 'var(--stamp-loss)';
+            stamp.innerText = '⚖️ PATROCINIO PRO BONO';
+            stamp.style.color = 'var(--stamp-probono)';
+            stamp.style.borderColor = 'var(--stamp-probono)';
+        } else if (isChiusa) {
+            fieldset.disabled = true;
+            stamp.style.display = 'block';
+            stamp.innerText = c.stato === 'CHIUSA VINTA' ? '✓ CASO VINTO' : '✗ CASO PERSO';
+            stamp.style.color = c.stato === 'CHIUSA VINTA' ? 'var(--stamp-win)' : 'var(--stamp-loss)';
             stamp.style.borderColor = stamp.style.color;
         } else {
             fieldset.disabled = false;
@@ -740,6 +794,11 @@
     }
 
     function calcolaTotale() {
+        const c = getClienteAttivo();
+        if (c && c.proBono === 'SI') {
+            document.getElementById('totaleOnorario').value = 0;
+            return;
+        }
         const acconto = parseFloat(document.getElementById('acconto').value) || 0;
         const tariffa = parseFloat(document.getElementById('tariffa').value) || 0;
         const pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
@@ -777,14 +836,14 @@
 
     function eliminaAllegato(prop, idx) {
         const c = getClienteAttivo();
-        if (!c || !c[prop]) return;
+        if (!c || !c[prop] || c.proBono === 'SI') return;
         c[prop].splice(idx, 1);
         caricaClienteInCentro();
     }
 
     function aggiungiFile(event, prop) {
         const c = getClienteAttivo();
-        if (!c) return;
+        if (!c || c.proBono === 'SI') return;
         for (let file of event.target.files) {
             c[prop].push(file.name);
         }
@@ -793,7 +852,7 @@
 
     function nuovoTestimone() {
         const c = getClienteAttivo();
-        if (!c) return;
+        if (!c || c.proBono === 'SI') return;
         c.testimoni.push({ nome: "Nuovo", cognome: "Testimone", files: [] });
         renderTestimoni();
         renderTesteUdienza();
@@ -838,7 +897,7 @@
 
     function aggiungiFileTestimone(event, witnessIdx) {
         const c = getClienteAttivo();
-        if (!c || !c.testimoni[witnessIdx]) return;
+        if (!c || !c.testimoni[witnessIdx] || c.proBono === 'SI') return;
         for (let file of event.target.files) {
             c.testimoni[witnessIdx].files.push(file.name);
         }
@@ -847,7 +906,7 @@
 
     function eliminaAllegatoTestimone(witnessIdx, fileIdx) {
         const c = getClienteAttivo();
-        if (!c || !c.testimoni[witnessIdx]) return;
+        if (!c || !c.testimoni[witnessIdx] || c.proBono === 'SI') return;
         c.testimoni[witnessIdx].files.splice(fileIdx, 1);
         renderTestimoni();
     }
@@ -936,6 +995,7 @@
             nome: "Nuovo",
             cognome: "Cliente " + newId,
             stato: "IN CARICO",
+            proBono: "NO",
             motivo: "",
             missiva: "CC523-" + newId,
             acconto: 0,
