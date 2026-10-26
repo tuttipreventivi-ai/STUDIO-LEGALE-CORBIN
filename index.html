@@ -240,6 +240,7 @@
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .grid-4 { display: grid; grid-template-columns: 120px 1fr 1fr 1fr; gap: 10px; }
 
     .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
     .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
@@ -446,7 +447,6 @@
         <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
         
         <div class="grid-2" style="background: var(--paper-card); padding: 10px; border: 1px solid var(--border-dark); margin-bottom: 12px;">
-            <!-- RAMO SINISTRO: PRO BONO -->
             <div class="form-group" style="margin-bottom:0;">
                 <label style="color: var(--accent-red); font-size: 0.95rem;">⚖️ PATROCINIO PRO BONO:</label>
                 <select id="proBonoSelect" onchange="aggiornaProBono()" style="font-weight: bold; background: var(--paper-bg);">
@@ -458,7 +458,6 @@
                 </div>
             </div>
 
-            <!-- RAMO DESTRO: SEZIONE PROCURA -->
             <div class="form-group" style="margin-bottom:0;">
                 <label style="color: var(--wood-dark); font-size: 0.95rem;">📜 PROCURA ALLE LITI (Delega):</label>
                 <div class="upload-box" style="padding:4px; margin-top:2px;">
@@ -477,7 +476,24 @@
                 </div>
             </div>
 
-            <div class="grid-3">
+            <!-- ANAGRAFICA CLIENTE CON MENU TITOLO -->
+            <div class="grid-4">
+                <div class="form-group">
+                    <label>Titolo:</label>
+                    <select id="titoloCliente" onchange="salvaDatiAttivi(true)">
+                        <option value="Sig.">Sig.</option>
+                        <option value="Sig.na">Sig.na</option>
+                        <option value="Sig.ra">Sig.ra</option>
+                        <option value="Sceriffo">Sceriffo</option>
+                        <option value="Caposceriffo">Caposceriffo</option>
+                        <option value="Agente">Agente</option>
+                        <option value="Sergente">Sergente</option>
+                        <option value="Marshal">Marshal</option>
+                        <option value="Dott.">Dott.</option>
+                        <option value="Dott.ssa">Dott.ssa</option>
+                        <option value="Avv.">Avv.</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Nome:</label>
                     <input type="text" id="nome" oninput="salvaDatiAttivi(true)">
@@ -518,7 +534,7 @@
                 </div>
             </div>
 
-            <!-- 3. ATTI UFFICIALI (COMPRENDE ANCHE ISTANZE PRESENTATE) -->
+            <!-- 3. ATTI UFFICIALI -->
             <div class="section-title">3. Atti Ufficiali</div>
             <div class="grid-3">
                 <div>
@@ -563,14 +579,14 @@
                 </div>
             </div>
 
-            <!-- 5. TRATTATIVE (MULTILIVELLO: OFFERTE E CONTROOFFERTE) -->
+            <!-- 5. TRATTATIVE -->
             <div class="section-title">5. Trattative (Offerte e Controofferte)</div>
             <div id="trattativeContainer"></div>
             <button type="button" class="btn-action" onclick="nuovaTrattativa()">+ Aggiungi Trattativa / Offerta</button>
 
             <!-- 6. PARTE PROCESSUALE -->
             <div class="section-title">6. Parte Processuale</div>
-            <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
+            <div class="subsection-title">Testimoni (Anagrafiche Dedicate con Titolo)</div>
             <div id="witnessContainer"></div>
             <button type="button" class="btn-action" id="btnAddWitness" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
 
@@ -624,9 +640,12 @@
 </div>
 
 <script>
+    const TITOLI_OPZIONI = ["Sig.", "Sig.na", "Sig.ra", "Sceriffo", "Caposceriffo", "Agente", "Sergente", "Marshal", "Dott.", "Dott.ssa", "Avv."];
+
     const DEMO_DATA = [
         {
             id: 1,
+            titolo: "Sig.",
             nome: "Arthur",
             cognome: "Morgan",
             stato: "IN CARICO",
@@ -648,25 +667,19 @@
                     importo: 150,
                     commento: "Proposta iniziale di accordo bonario inviata allo Sceriffo.",
                     files: [{ name: "Bozza_Accordo_Sceriffo.pdf", url: null }]
-                },
-                {
-                    titolo: "Controofferta Sceriffo Strawberry",
-                    importo: 200,
-                    commento: "Richiesta integrazione indennizzo con rinuncia alle pretese pendenti.",
-                    files: []
                 }
             ],
-            testimoni: [{ nome: "Sadie", cognome: "Adler", files: [{ name: "Dichiarazione_Adler.txt", url: null }] }],
+            testimoni: [{ titolo: "Sig.ra", nome: "Sadie", cognome: "Adler", files: [{ name: "Dichiarazione_Adler.txt", url: null }] }],
             istanzeFiles: [{ name: "Istanza_Rilascio_Cauzione.pdf", url: null }],
             arringheFiles: [{ name: "Arringa_Finale_Corbin.docx", url: null }],
             sentenzaFiles: [],
             appuntamenti: [
-                { data: "1900-03-15", note: "Udienza Preliminare Tribunale di Strawberry" },
-                { data: "1900-04-02", note: "Incontro in studio per deposito perizia balistica" }
+                { data: "1900-03-15", note: "Udienza Preliminare Tribunale di Strawberry" }
             ]
         },
         {
             id: 2,
+            titolo: "Sig.",
             nome: "John",
             cognome: "Marston",
             stato: "CHIUSA VINTA",
@@ -703,9 +716,8 @@
     let clientiDB = [];
     let attivoId = 1;
 
-    // LOCAL STORAGE
     function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v14');
+        const salvati = localStorage.getItem('studioCorbinDB_v15');
         if (salvati) {
             try {
                 clientiDB = JSON.parse(salvati);
@@ -728,7 +740,7 @@
     }
 
     function salvaInLocalStorage() {
-        localStorage.setItem('studioCorbinDB_v14', JSON.stringify(clientiDB));
+        localStorage.setItem('studioCorbinDB_v15', JSON.stringify(clientiDB));
         if (attivoId !== null) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
         }
@@ -736,7 +748,7 @@
 
     function ripristinaDatiPredefiniti() {
         if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v14');
+            localStorage.removeItem('studioCorbinDB_v15');
             localStorage.removeItem('studioCorbinAttivoId');
             caricaDaLocalStorage();
             renderClientList();
@@ -759,7 +771,7 @@
         const query = document.getElementById('searchClient').value.toLowerCase();
         container.innerHTML = '';
 
-        const filtrati = clientiDB.filter(c => (c.nome + ' ' + c.cognome).toLowerCase().includes(query));
+        const filtrati = clientiDB.filter(c => ((c.titolo||'') + ' ' + c.nome + ' ' + c.cognome).toLowerCase().includes(query));
 
         if (filtrati.length === 0) {
             container.innerHTML = '<li style="font-style:italic; padding:8px; font-size:0.85rem;">Nessun cliente in archivio.</li>';
@@ -778,10 +790,11 @@
             
             const badgeText = c.proBono === 'SI' ? 'PRO BONO' : c.stato;
             const badgeClass = c.proBono === 'SI' ? 'style="background:var(--stamp-probono); color:#fff;"' : '';
+            const titoloStr = c.titolo ? c.titolo + ' ' : '';
 
             li.innerHTML = `
                 <div class="client-info">
-                    <span class="client-name">${c.nome} ${c.cognome}</span>
+                    <span class="client-name">${titoloStr}${c.nome} ${c.cognome}</span>
                     <span class="client-status-badge" ${badgeClass}>${badgeText}</span>
                 </div>
                 <button type="button" class="btn-delete-client" title="Elimina cliente e pratica" onclick="eliminaCliente(${c.id}, event)">🗑️</button>
@@ -795,13 +808,11 @@
         const target = clientiDB.find(c => c.id === id);
         if (!target) return;
 
-        if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati/allegati/appuntamenti associati?`)) {
+        if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati associati?`)) {
             clientiDB = clientiDB.filter(c => c.id !== id);
-            
             if (attivoId === id) {
                 attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
             }
-            
             salvaInLocalStorage();
             renderClientList();
             caricaClienteInCentro();
@@ -813,6 +824,7 @@
         const fieldset = document.getElementById('mainFormFieldset');
 
         if (!c) {
+            document.getElementById('titoloCliente').value = 'Sig.';
             document.getElementById('nome').value = '';
             document.getElementById('cognome').value = '';
             document.getElementById('motivo').value = '';
@@ -839,6 +851,7 @@
         document.getElementById('statoPratica').value = c.stato;
         document.getElementById('proBonoSelect').value = c.proBono || 'NO';
         document.getElementById('motivo').value = c.motivo || '';
+        document.getElementById('titoloCliente').value = c.titolo || 'Sig.';
         document.getElementById('nome').value = c.nome || '';
         document.getElementById('cognome').value = c.cognome || '';
         document.getElementById('missiva').value = c.missiva || 'CC523';
@@ -869,6 +882,7 @@
         if (!c) return;
 
         c.motivo = document.getElementById('motivo').value;
+        c.titolo = document.getElementById('titoloCliente').value;
         c.nome = document.getElementById('nome').value;
         c.cognome = document.getElementById('cognome').value;
         c.missiva = document.getElementById('missiva').value;
@@ -888,14 +902,9 @@
         const c = getClienteAttivo();
         if (!c) return;
         c.proBono = document.getElementById('proBonoSelect').value;
-        
         if (c.proBono === 'SI') {
-            c.acconto = 0;
-            c.tariffa = 0;
-            c.indennizzo = 0;
-            c.pagamenti = 0;
+            c.acconto = 0; c.tariffa = 0; c.indennizzo = 0; c.pagamenti = 0;
         }
-
         salvaInLocalStorage();
         renderClientList();
         caricaClienteInCentro();
@@ -914,14 +923,12 @@
         const c = getClienteAttivo();
         const fieldset = document.getElementById('mainFormFieldset');
         const stamp = document.getElementById('stampNotice');
-        
         if (!c) return;
 
         const isProBono = (c.proBono === 'SI');
         const isChiusa = (c.stato === 'CHIUSA VINTA' || c.stato === 'CHIUSA PERSA');
 
-        const finFields = ['acconto', 'tariffa', 'indennizzo', 'pagamenti'];
-        finFields.forEach(fId => {
+        ['acconto', 'tariffa', 'indennizzo', 'pagamenti'].forEach(fId => {
             const elem = document.getElementById(fId);
             if (elem) {
                 elem.disabled = isProBono || isChiusa;
@@ -929,9 +936,7 @@
             }
         });
 
-        if (isProBono) {
-            document.getElementById('totaleOnorario').value = 0;
-        }
+        if (isProBono) document.getElementById('totaleOnorario').value = 0;
 
         if (isChiusa) {
             fieldset.disabled = true;
@@ -941,7 +946,6 @@
             stamp.style.borderColor = stamp.style.color;
         } else {
             fieldset.disabled = false;
-            
             if (isProBono) {
                 stamp.style.display = 'block';
                 stamp.innerText = '⚖️ PATROCINIO PRO BONO';
@@ -980,26 +984,19 @@
         container.innerHTML = '';
         (list || []).forEach((item, idx) => {
             const fileObj = (typeof item === 'string') ? { name: item, url: null } : item;
-            
             const span = document.createElement('span');
             span.className = 'file-item';
             
             const a = document.createElement('a');
             a.innerText = '📄 ' + fileObj.name;
-            a.onclick = (e) => {
-                e.preventDefault();
-                apriDocumento(fileObj);
-            };
+            a.onclick = (e) => { e.preventDefault(); apriDocumento(fileObj); };
 
             const btnDel = document.createElement('button');
             btnDel.type = 'button';
             btnDel.className = 'btn-delete-file';
-            btnDel.title = 'Elimina allegato';
+            btnDel.title = 'Elimina';
             btnDel.innerText = '🗑️';
-            btnDel.onclick = (e) => {
-                e.stopPropagation();
-                eliminaAllegato(prop, idx);
-            };
+            btnDel.onclick = (e) => { e.stopPropagation(); eliminaAllegato(prop, idx); };
 
             span.appendChild(a);
             span.appendChild(btnDel);
@@ -1027,17 +1024,12 @@
         caricaClienteInCentro();
     }
 
-    // GESTIONE TRATTATIVE MULTILIVELLO
+    // TRATTATIVE MULTILIVELLO
     function nuovaTrattativa() {
         const c = getClienteAttivo();
         if (!c) return;
         if (!c.trattative) c.trattative = [];
-        c.trattative.push({
-            titolo: "Nuova Trattativa / Offerta",
-            importo: 0,
-            commento: "",
-            files: []
-        });
+        c.trattative.push({ titolo: "Nuova Trattativa / Offerta", importo: 0, commento: "", files: [] });
         salvaInLocalStorage();
         renderTrattative();
     }
@@ -1129,12 +1121,12 @@
         });
     }
 
-    // TESTIMONI
+    // TESTIMONI CON MENU TITOLO
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
         if (!c.testimoni) c.testimoni = [];
-        c.testimoni.push({ nome: "Nuovo", cognome: "Testimone", files: [] });
+        c.testimoni.push({ titolo: "Sig.", nome: "Nuovo", cognome: "Testimone", files: [] });
         salvaInLocalStorage();
         renderTestimoni();
         renderTesteUdienza();
@@ -1153,12 +1145,15 @@
         const container = document.getElementById('witnessContainer');
         container.innerHTML = '';
         if (!c) return;
+
         (c.testimoni || []).forEach((w, idx) => {
             const div = document.createElement('div');
             div.style.background = 'var(--paper-card)';
             div.style.padding = '8px';
             div.style.border = '1px solid var(--border-dark)';
             div.style.marginBottom = '6px';
+
+            let optionsHtml = TITOLI_OPZIONI.map(t => `<option value="${t}" ${w.titolo === t ? 'selected' : ''}>${t}</option>`).join('');
 
             let filesHtml = '';
             (w.files || []).forEach((f, fIdx) => {
@@ -1172,9 +1167,21 @@
             });
 
             div.innerHTML = `
-                <div class="grid-2">
-                    <input type="text" value="${w.nome}" placeholder="Nome" oninput="aggiornaTestimone(${idx}, 'nome', this.value)">
-                    <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
+                <div class="grid-4">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Titolo:</label>
+                        <select onchange="aggiornaTestimone(${idx}, 'titolo', this.value)">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Nome:</label>
+                        <input type="text" value="${w.nome}" placeholder="Nome" oninput="aggiornaTestimone(${idx}, 'nome', this.value)">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0; grid-column: span 2;">
+                        <label>Cognome:</label>
+                        <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
+                    </div>
                 </div>
                 <div class="upload-box" style="margin-top:5px;">
                     <label>Allegati Testimone:</label>
@@ -1211,14 +1218,15 @@
         const container = document.getElementById('testeUdienzaContainer');
         container.innerHTML = '';
         if (!c) return;
-        (c.testimoni || []).forEach((w, idx) => {
+        (c.testimoni || []).forEach((w) => {
             const div = document.createElement('div');
             div.style.padding = '6px';
             div.style.background = 'var(--paper-card)';
             div.style.border = '1px solid var(--border-dark)';
             div.style.marginBottom = '4px';
             div.style.fontSize = '0.85rem';
-            div.innerHTML = `<strong>${w.nome} ${w.cognome}</strong> (Convocato in Udienza)`;
+            const tStr = w.titolo ? w.titolo + ' ' : '';
+            div.innerHTML = `<strong>${tStr}${w.nome} ${w.cognome}</strong> (Convocato in Udienza)`;
             container.appendChild(div);
         });
     }
@@ -1290,6 +1298,7 @@
         const newId = clientiDB.length > 0 ? Math.max(...clientiDB.map(c => c.id)) + 1 : 1;
         clientiDB.push({
             id: newId,
+            titolo: "Sig.",
             nome: "Nuovo",
             cognome: "Cliente " + newId,
             stato: "IN CARICO",
