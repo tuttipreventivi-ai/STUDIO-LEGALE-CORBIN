@@ -248,10 +248,10 @@
         font-size: 0.9rem;
         padding: 0 2px;
         line-height: 1;
-        transition: transform 0.1s;
+        transition: transform 0.15s;
     }
     .btn-delete-file:hover {
-        transform: scale(1.25);
+        transform: scale(1.3);
     }
 
     /* TIMBRO WESTERN CASO CHIUSO */
@@ -290,7 +290,7 @@
 
     .appointment-card .desc {
         font-size: 0.85rem;
-        margin-top: 3px;
+        margin-top: 4px;
     }
 
     .btn-action {
@@ -783,19 +783,53 @@
         });
     }
 
+    // RENDER APPUNTAMENTI CON MODIFICA (✏️) ED ELIMINAZIONE (🗑️)
     function renderAppuntamenti() {
         const c = getClienteAttivo();
         const container = document.getElementById('appointmentsContainer');
         container.innerHTML = '';
-        (c.appuntamenti || []).forEach(a => {
+        (c.appuntamenti || []).forEach((a, idx) => {
             const card = document.createElement('div');
             card.className = 'appointment-card';
             card.innerHTML = `
-                <div class="date">🗓️ ${a.data}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="date">🗓️ ${a.data}</div>
+                    <div>
+                        <button type="button" class="btn-delete-file" title="Modifica Appuntamento" onclick="modificaAppuntamento(${idx})">✏️</button>
+                        <button type="button" class="btn-delete-file" title="Elimina Appuntamento" onclick="eliminaAppuntamento(${idx})">🗑️</button>
+                    </div>
+                </div>
                 <div class="desc">${a.note}</div>
             `;
             container.appendChild(card);
         });
+    }
+
+    function modificaAppuntamento(idx) {
+        const c = getClienteAttivo();
+        if (!c || !c.appuntamenti[idx]) return;
+        const app = c.appuntamenti[idx];
+        
+        const nuovaData = prompt("Modifica data appuntamento (AAAA-MM-GG, Anno 1900):", app.data);
+        if (nuovaData === null) return;
+        
+        const nuovaDesc = prompt("Modifica descrizione / oggetto dell'appuntamento:", app.note);
+        if (nuovaDesc === null) return;
+        
+        if (nuovaData.trim() && nuovaDesc.trim()) {
+            app.data = nuovaData.trim();
+            app.note = nuovaDesc.trim();
+            renderAppuntamenti();
+        }
+    }
+
+    function eliminaAppuntamento(idx) {
+        const c = getClienteAttivo();
+        if (!c || !c.appuntamenti[idx]) return;
+        if (confirm("Vuoi davvero cancellare questo appuntamento dal planning?")) {
+            c.appuntamenti.splice(idx, 1);
+            renderAppuntamenti();
+        }
     }
 
     function aggiungiAppuntamento() {
