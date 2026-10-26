@@ -244,7 +244,7 @@
     .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
     .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
 
-    /* STILE SPECIALE PER MOTIVO DELLA CONSULTAZIONE EVIDENZIATO */
+    /* EVIDENZIATORE MOTIVO CONSULTAZIONE */
     .motivo-box-highlight {
         background-color: #fdf8eb;
         border: 2px solid var(--border-dark);
@@ -381,6 +381,19 @@
         margin-top: 5px;
     }
     .btn-action:hover { background: var(--wood-light); }
+
+    .btn-reset {
+        background: none;
+        border: 1px dashed var(--accent-red);
+        color: var(--accent-red);
+        font-family: 'Special Elite', cursive;
+        font-size: 0.75rem;
+        padding: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .btn-reset:hover { background: rgba(140, 28, 19, 0.1); }
 </style>
 </head>
 <body>
@@ -393,6 +406,7 @@
         <input type="text" class="client-search" id="searchClient" placeholder="Cerca cliente..." oninput="filtraClienti()">
         <button class="btn-add-client" onclick="creaNuovoCliente()">+ Nuovo Cliente</button>
         <ul class="client-list" id="clientListContainer"></ul>
+        <button class="btn-reset" onclick="ripristinaDatiPredefiniti()">⚠️ Reset Dati Iniziali Demo</button>
     </div>
 
     <!-- ================= COLONNA CENTRALE: GABINETTO LEGALE ================= -->
@@ -431,12 +445,12 @@
                 </select>
             </div>
             <div style="font-size:0.8rem; font-style:italic; align-self:center;">
-                Se impostato su <b>SI</b>, vengono bloccati ed azzerati <b>solo i 5 campi contabili</b>. Tutto il resto rimane liberamente compilabile.
+                Se impostato su <b>SI</b>, vengono bloccati ed azzerati <b>solo i 5 campi contabili</b>.
             </div>
         </div>
 
         <fieldset id="mainFormFieldset" style="border:none; padding:0; margin:0;">
-            <!-- MOTIVO DELLA CONSULTAZIONE - EVIDENZIATO E INGRANDITO -->
+            <!-- MOTIVO DELLA CONSULTAZIONE EVIDENZIATO -->
             <div class="motivo-box-highlight">
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="motivo-label-highlight">📜 MOTIVO DELLA CONSULTAZIONE:</label>
@@ -459,7 +473,7 @@
                 </div>
             </div>
 
-            <!-- SEZIONE CONTABILE (Disabilitata se Pro Bono = SI) -->
+            <!-- SEZIONE CONTABILE -->
             <div class="grid-3" style="border-top:1px dashed var(--border-dark); padding-top:8px; margin-top:4px;">
                 <div class="form-group">
                     <label>Acconto ($):</label>
@@ -597,8 +611,7 @@
 </div>
 
 <script>
-    // ARCHIVIO DATI CLIENTI
-    let clientiDB = [
+    const DEMO_DATA = [
         {
             id: 1,
             nome: "Arthur",
@@ -654,13 +667,56 @@
         }
     ];
 
+    let clientiDB = [];
     let attivoId = 1;
+
+    // GESTIONE LOCAL STORAGE
+    function caricaDaLocalStorage() {
+        const salvati = localStorage.getItem('studioCorbinDB_v11');
+        if (salvati) {
+            try {
+                clientiDB = JSON.parse(salvati);
+            } catch(e) {
+                console.error("Errore lettura dati da localStorage:", e);
+                clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
+            }
+        } else {
+            clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
+        }
+
+        const ultimoAttivo = localStorage.getItem('studioCorbinAttivoId');
+        if (ultimoAttivo && clientiDB.some(c => c.id == ultimoAttivo)) {
+            attivoId = parseInt(ultimoAttivo);
+        } else if (clientiDB.length > 0) {
+            attivoId = clientiDB[0].id;
+        } else {
+            attivoId = null;
+        }
+    }
+
+    function salvaInLocalStorage() {
+        localStorage.setItem('studioCorbinDB_v11', JSON.stringify(clientiDB));
+        if (attivoId !== null) {
+            localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
+        }
+    }
+
+    function ripristinaDatiPredefiniti() {
+        if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
+            localStorage.removeItem('studioCorbinDB_v11');
+            localStorage.removeItem('studioCorbinAttivoId');
+            caricaDaLocalStorage();
+            renderClientList();
+            caricaClienteInCentro();
+        }
+    }
 
     function getClienteAttivo() {
         return clientiDB.find(c => c.id === attivoId);
     }
 
     function inizializzaApp() {
+        caricaDaLocalStorage();
         renderClientList();
         caricaClienteInCentro();
     }
@@ -680,7 +736,12 @@
         filtrati.forEach(c => {
             const li = document.createElement('li');
             li.className = 'client-item' + (c.id === attivoId ? ' active' : '');
-            li.onclick = () => { attivoId = c.id; renderClientList(); caricaClienteInCentro(); };
+            li.onclick = () => { 
+                attivoId = c.id; 
+                salvaInLocalStorage();
+                renderClientList(); 
+                caricaClienteInCentro(); 
+            };
             
             const badgeText = c.proBono === 'SI' ? 'PRO BONO' : c.stato;
             const badgeClass = c.proBono === 'SI' ? 'style="background:var(--stamp-probono); color:#fff;"' : '';
@@ -705,9 +766,10 @@
             clientiDB = clientiDB.filter(c => c.id !== id);
             
             if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB.id : null;
+                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
             }
             
+            salvaInLocalStorage();
             renderClientList();
             caricaClienteInCentro();
         }
@@ -787,6 +849,7 @@
         
         c.noteTrattativa = document.getElementById('noteTrattativa').value;
 
+        salvaInLocalStorage();
         if (updateSidebar) renderClientList();
     }
 
@@ -802,6 +865,7 @@
             c.pagamenti = 0;
         }
 
+        salvaInLocalStorage();
         renderClientList();
         caricaClienteInCentro();
     }
@@ -810,6 +874,7 @@
         const c = getClienteAttivo();
         if (!c) return;
         c.stato = document.getElementById('statoPratica').value;
+        salvaInLocalStorage();
         renderClientList();
         gestisciBloccoStato();
     }
@@ -824,7 +889,6 @@
         const isProBono = (c.proBono === 'SI');
         const isChiusa = (c.stato === 'CHIUSA VINTA' || c.stato === 'CHIUSA PERSA');
 
-        // GESTIONE CAMPI CONTABILI PRO BONO
         const finFields = ['acconto', 'tariffa', 'indennizzo', 'pagamenti'];
         finFields.forEach(fId => {
             const elem = document.getElementById(fId);
@@ -838,7 +902,6 @@
             document.getElementById('totaleOnorario').value = 0;
         }
 
-        // SE CASO CHIUSO: BLOCCA L'INTERA SCHEDA
         if (isChiusa) {
             fieldset.disabled = true;
             stamp.style.display = 'block';
@@ -904,6 +967,7 @@
         const c = getClienteAttivo();
         if (!c || !c[prop]) return;
         c[prop].splice(idx, 1);
+        salvaInLocalStorage();
         caricaClienteInCentro();
     }
 
@@ -913,6 +977,7 @@
         for (let file of event.target.files) {
             c[prop].push(file.name);
         }
+        salvaInLocalStorage();
         caricaClienteInCentro();
     }
 
@@ -920,6 +985,7 @@
         const c = getClienteAttivo();
         if (!c) return;
         c.testimoni.push({ nome: "Nuovo", cognome: "Testimone", files: [] });
+        salvaInLocalStorage();
         renderTestimoni();
         renderTesteUdienza();
     }
@@ -948,8 +1014,8 @@
 
             div.innerHTML = `
                 <div class="grid-2">
-                    <input type="text" value="${w.nome}" placeholder="Nome" oninput="c.testimoni[${idx}].nome=this.value; renderTesteUdienza();">
-                    <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="c.testimoni[${idx}].cognome=this.value; renderTesteUdienza();">
+                    <input type="text" value="${w.nome}" placeholder="Nome" oninput="c.testimoni[${idx}].nome=this.value; salvaInLocalStorage(); renderTesteUdienza();">
+                    <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="c.testimoni[${idx}].cognome=this.value; salvaInLocalStorage(); renderTesteUdienza();">
                 </div>
                 <div class="upload-box" style="margin-top:5px;">
                     <label>Allegati Testimone:</label>
@@ -967,6 +1033,7 @@
         for (let file of event.target.files) {
             c.testimoni[witnessIdx].files.push(file.name);
         }
+        salvaInLocalStorage();
         renderTestimoni();
     }
 
@@ -974,6 +1041,7 @@
         const c = getClienteAttivo();
         if (!c || !c.testimoni[witnessIdx]) return;
         c.testimoni[witnessIdx].files.splice(fileIdx, 1);
+        salvaInLocalStorage();
         renderTestimoni();
     }
 
@@ -1030,6 +1098,7 @@
         if (nuovaData.trim() && nuovaDesc.trim()) {
             app.data = nuovaData.trim();
             app.note = nuovaDesc.trim();
+            salvaInLocalStorage();
             renderAppuntamenti();
         }
     }
@@ -1039,6 +1108,7 @@
         if (!c || !c.appuntamenti[idx]) return;
         if (confirm("Vuoi davvero cancellare questo appuntamento dal planning?")) {
             c.appuntamenti.splice(idx, 1);
+            salvaInLocalStorage();
             renderAppuntamenti();
         }
     }
@@ -1051,6 +1121,7 @@
         if (!data || !note) return alert("Inserire data e oggetto appuntamento.");
         c.appuntamenti.push({ data, note });
         document.getElementById('appNote').value = '';
+        salvaInLocalStorage();
         renderAppuntamenti();
     }
 
@@ -1081,6 +1152,7 @@
             appuntamenti: []
         });
         attivoId = newId;
+        salvaInLocalStorage();
         renderClientList();
         caricaClienteInCentro();
     }
