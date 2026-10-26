@@ -315,1181 +315,6 @@
         color: var(--accent-red);
         text-decoration: underline;
         margin-right: 6px;
-    }
-
-    .btn-delete-file {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 0.9rem;
-        padding: 0 2px;
-        line-height: 1;
-        transition: transform 0.15s;
-    }
-    .btn-delete-file:hover {
-        transform: scale(1.3);
-    }
-
-    /* TIMBRO WESTERN CASO CHIUSO / PRO BONO */
-    .stamp-overlay {
-        display: none;
-        position: absolute;
-        top: 85px;
-        right: 30px;
-        border: 5px double var(--stamp-win);
-        color: var(--stamp-win);
-        font-family: 'Rye', cursive;
-        font-size: 1.6rem;
-        padding: 8px 16px;
-        transform: rotate(-12deg);
-        opacity: 0.9;
-        pointer-events: none;
-        z-index: 10;
-        text-transform: uppercase;
-        background: rgba(243, 232, 210, 0.9);
-    }
-
-    /* COLONNA DESTRA: PLANNING APPUNTAMENTI */
-    .appointment-card {
-        background: var(--paper-card);
-        border: 1px solid var(--border-dark);
-        padding: 8px;
-        margin-bottom: 8px;
-        border-left: 4px solid var(--accent-red);
-    }
-
-    .appointment-card .date {
-        font-family: 'Special Elite', cursive;
-        font-weight: bold;
-        color: var(--accent-red);
-        font-size: 0.85rem;
-    }
-
-    .appointment-card .desc {
-        font-size: 0.85rem;
-        margin-top: 4px;
-    }
-
-    .btn-action {
-        background: var(--wood-dark);
-        color: #fff;
-        border: 1px solid var(--gold-accent);
-        font-family: 'Special Elite', cursive;
-        padding: 6px;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 5px;
-    }
-    .btn-action:hover { background: var(--wood-light); }
-
-    .btn-reset {
-        background: none;
-        border: 1px dashed var(--accent-red);
-        color: var(--accent-red);
-        font-family: 'Special Elite', cursive;
-        font-size: 0.75rem;
-        padding: 4px;
-        cursor: pointer;
-        margin-top: 10px;
-        width: 100%;
-    }
-    .btn-reset:hover { background: rgba(140, 28, 19, 0.1); }
-</style>
-</head>
-<body>
-
-<div class="app-viewport">
-
-    <!-- ================= COLONNA SINISTRA: REPERTORIO CLIENTI ================= -->
-    <div class="western-panel">
-        <div class="panel-header">📜 REPERTORIO CLIENTI</div>
-        <input type="text" class="client-search" id="searchClient" placeholder="Cerca cliente..." oninput="filtraClienti()">
-        <button class="btn-add-client" onclick="creaNuovoCliente()">+ Nuovo Cliente</button>
-        <ul class="client-list" id="clientListContainer"></ul>
-        <button class="btn-reset" onclick="ripristinaDatiPredefiniti()">⚠️ Reset Dati Iniziali Demo</button>
-    </div>
-
-    <!-- ================= COLONNA CENTRALE: GABINETTO LEGALE ================= -->
-    <div class="western-panel" style="overflow-y: auto;">
-        <div id="stampNotice" class="stamp-overlay">CASO CHIUSO</div>
-
-        <div class="main-header">
-            <div class="header-flourish">★ ⚖️ ★</div>
-            <h1 class="main-title">STUDIO LEGALE OTIS CORBIN</h1>
-            <div class="main-subtitle">Patrocinante nello stato delle Wildlands - West Elizabeth - Strawberry presso il Native post missiva CC523</div>
-        </div>
-
-        <!-- 1. STATO PRATICA -->
-        <div class="status-selector-bar">
-            <span>STATO PRATICA:</span>
-            <select id="statoPratica" onchange="aggiornaStatoAttivo()">
-                <option value="IN CARICO">IN CARICO</option>
-                <option value="IN LAVORAZIONE">IN LAVORAZIONE</option>
-                <option value="SOSPESA">SOSPESA</option>
-                <option value="REVISIONE">REVISIONE</option>
-                <option value="PATTEGGIAMENTO">PATTEGGIAMENTO</option>
-                <option value="CHIUSA VINTA">CHIUSA VINTA</option>
-                <option value="CHIUSA PERSA">CHIUSA PERSA</option>
-            </select>
-        </div>
-
-        <!-- 2. ANAGRAFICA CLIENTE & CONTABILITÀ -->
-        <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
-        
-        <div class="grid-2" style="background: var(--paper-card); padding: 8px; border: 1px solid var(--border-dark); margin-bottom: 12px;">
-            <div class="form-group" style="margin-bottom:0;">
-                <label style="color: var(--accent-red); font-size: 0.95rem;">⚖️ PATROCINIO PRO BONO:</label>
-                <select id="proBonoSelect" onchange="aggiornaProBono()" style="font-weight: bold; background: var(--paper-bg);">
-                    <option value="NO">NO - Pratica Ordinaria</option>
-                    <option value="SI">SI - Patrocinio Gratuito (Pro Bono)</option>
-                </select>
-            </div>
-            <div style="font-size:0.8rem; font-style:italic; align-self:center;">
-                Se impostato su <b>SI</b>, vengono bloccati ed azzerati <b>solo i 5 campi contabili</b>.
-            </div>
-        </div>
-
-        <fieldset id="mainFormFieldset" style="border:none; padding:0; margin:0;">
-            <!-- MOTIVO DELLA CONSULTAZIONE EVIDENZIATO -->
-            <div class="motivo-box-highlight">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label class="motivo-label-highlight">📜 MOTIVO DELLA CONSULTAZIONE:</label>
-                    <textarea id="motivo" class="motivo-textarea-highlight" placeholder="Indicare la motivazione legale principale della consultazione..." oninput="salvaDatiAttivi()"></textarea>
-                </div>
-            </div>
-
-            <div class="grid-3">
-                <div class="form-group">
-                    <label>Nome:</label>
-                    <input type="text" id="nome" oninput="salvaDatiAttivi(true)">
-                </div>
-                <div class="form-group">
-                    <label>Cognome:</label>
-                    <input type="text" id="cognome" oninput="salvaDatiAttivi(true)">
-                </div>
-                <div class="form-group">
-                    <label>Missiva (Alfanumerica):</label>
-                    <input type="text" id="missiva" oninput="salvaDatiAttivi()">
-                </div>
-            </div>
-
-            <!-- SEZIONE CONTABILE -->
-            <div class="grid-3" style="border-top:1px dashed var(--border-dark); padding-top:8px; margin-top:4px;">
-                <div class="form-group">
-                    <label>Acconto ($):</label>
-                    <input type="number" id="acconto" oninput="calcolaTotale(); salvaDatiAttivi();">
-                </div>
-                <div class="form-group">
-                    <label>Tariffa Oraria ($):</label>
-                    <input type="number" id="tariffa" oninput="calcolaTotale(); salvaDatiAttivi();">
-                </div>
-                <div class="form-group">
-                    <label>Indennizzo Ottenuto ($):</label>
-                    <input type="number" id="indennizzo" oninput="salvaDatiAttivi()">
-                </div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>Pagamenti Effettuati ($):</label>
-                    <input type="number" id="pagamenti" oninput="calcolaTotale(); salvaDatiAttivi();">
-                </div>
-                <div class="form-group">
-                    <label>Totale Onorario ($):</label>
-                    <input type="number" id="totaleOnorario" readonly style="font-weight:bold;">
-                </div>
-            </div>
-
-            <!-- 3. ATTI UFFICIALI -->
-            <div class="section-title">3. Atti Ufficiali</div>
-            <div class="grid-2">
-                <div>
-                    <div class="subsection-title">Atti Procura</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFileAttiProcura" multiple onchange="aggiungiFile(event, 'attiProcura')">
-                        <div id="listAttiProcura" class="file-list"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="subsection-title">Comunicazioni Tribunale</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFileComTribunale" multiple onchange="aggiungiFile(event, 'comTribunale')">
-                        <div id="listComTribunale" class="file-list"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. PERIZIE -->
-            <div class="section-title">4. Perizie</div>
-            <div class="grid-2">
-                <div>
-                    <div class="subsection-title">Perizie Mediche</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFilePerizieMediche" multiple onchange="aggiungiFile(event, 'perizieMediche')">
-                        <div id="listPerizieMediche" class="file-list"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="subsection-title">Perizie Tecniche</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFilePerizieTecniche" multiple onchange="aggiungiFile(event, 'perizieTecniche')">
-                        <div id="listPerizieTecniche" class="file-list"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. TRATTATIVE -->
-            <div class="section-title">5. Trattative</div>
-            <div class="form-group">
-                <label>Note Trattativa Editabili:</label>
-                <textarea id="noteTrattativa" oninput="salvaDatiAttivi()"></textarea>
-            </div>
-            <div class="upload-box">
-                <label>Allegati Trattativa:</label>
-                <input type="file" id="inputFileTrattative" multiple onchange="aggiungiFile(event, 'trattativeFiles')">
-                <div id="listTrattativeFiles" class="file-list"></div>
-            </div>
-
-            <!-- 6. PARTE PROCESSUALE -->
-            <div class="section-title">6. Parte Processuale</div>
-            <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
-            <div id="witnessContainer"></div>
-            <button type="button" class="btn-action" id="btnAddWitness" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
-
-            <div class="subsection-title" style="margin-top:12px;">Istanze Presentate</div>
-            <div class="upload-box">
-                <input type="file" id="inputFileIstanze" multiple onchange="aggiungiFile(event, 'istanzeFiles')">
-                <div id="listIstanzeFiles" class="file-list"></div>
-            </div>
-
-            <div class="subsection-title" style="margin-top:12px;">Teste Udienza (Sincronizzati)</div>
-            <div id="testeUdienzaContainer"></div>
-
-            <!-- 7. UDIENZA -->
-            <div class="section-title">7. Udienza</div>
-            <div class="grid-2">
-                <div>
-                    <div class="subsection-title">Arringhe</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFileArringhe" multiple onchange="aggiungiFile(event, 'arringheFiles')">
-                        <div id="listArringheFiles" class="file-list"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="subsection-title">Sentenza</div>
-                    <div class="upload-box">
-                        <input type="file" id="inputFileSentenza" multiple onchange="aggiungiFile(event, 'sentenzaFiles')">
-                        <div id="listSentenzaFiles" class="file-list"></div>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-
-    <!-- ================= COLONNA DESTRA: PLANNING APPUNTAMENTI (1900) ================= -->
-    <div class="western-panel">
-        <div class="panel-header">📅 PLANNING (1900)</div>
-        <div style="font-size:0.8rem; font-style:italic; margin-bottom:10px; text-align:center;">
-            Agenda Appuntamenti dello Studio — Anno 1900
-        </div>
-
-        <div style="flex-grow:1; overflow-y:auto;" id="appointmentsContainer"></div>
-
-        <div style="border-top:2px double var(--border-dark); padding-top:10px; margin-top:10px;">
-            <div class="subsection-title">Nuovo Appuntamento</div>
-            <div class="form-group">
-                <label>Data (Anno 1900):</label>
-                <input type="date" id="appData" value="1900-01-01" min="1900-01-01" max="1900-12-31">
-            </div>
-            <div class="form-group">
-                <label>Descrizione / Oggetto:</label>
-                <input type="text" id="appNote" placeholder="Udienza o incontro in studio...">
-            </div>
-            <button class="btn-action" id="btnAddApp" onclick="aggiungiAppuntamento()">Registra Appuntamento</button>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    const DEMO_DATA = [
-        {
-            id: 1,
-            nome: "Arthur",
-            cognome: "Morgan",
-            stato: "IN CARICO",
-            proBono: "NO",
-            motivo: "Difesa legale da imputazione per presunta rapina al treno Leviticus Cornwall.",
-            missiva: "CC523-A",
-            acconto: 50,
-            tariffa: 15,
-            indennizzo: 200,
-            pagamenti: 30,
-            noteTrattativa: "Trattativa preliminare avviata con lo Sceriffo di Strawberry.",
-            attiProcura: ["Atto_Procura_Morgan.pdf"],
-            comTribunale: ["Notifica_Tribunale_Strawberry.png"],
-            perizieMediche: ["Referto_Dr_Barnes.pdf"],
-            perizieTecniche: ["Perizia_Balistica_Winchester.pdf"],
-            trattativeFiles: ["Bozza_Accordo_Sceriffo.pdf"],
-            testimoni: [{ nome: "Sadie", cognome: "Adler", files: ["Dichiarazione_Adler.txt"] }],
-            istanzeFiles: ["Istanza_Rilascio_Cauzione.pdf"],
-            arringheFiles: ["Arringa_Finale_Corbin.docx"],
-            sentenzaFiles: [],
-            appuntamenti: [
-                { data: "1900-03-15", note: "Udienza Preliminare Tribunale di Strawberry" },
-                { data: "1900-04-02", note: "Incontro in studio per deposito perizia balistica" }
-            ]
-        },
-        {
-            id: 2,
-            nome: "John",
-            cognome: "Marston",
-            stato: "CHIUSA VINTA",
-            proBono: "NO",
-            motivo: "Acquisto terreno fiduciario presso Beecher's Hope e controversia pascolo.",
-            missiva: "CC523-B",
-            acconto: 100,
-            tariffa: 20,
-            indennizzo: 500,
-            pagamenti: 100,
-            noteTrattativa: "Accordo stragiudiziale siglato con la banca di Blackwater.",
-            attiProcura: ["Rogito_Terreno.pdf"],
-            comTribunale: [],
-            perizieMediche: [],
-            perizieTecniche: ["Mappa_Confini_BeechersHope.jpg"],
-            trattativeFiles: ["Accordo_Banca.pdf"],
-            testimoni: [],
-            istanzeFiles: [],
-            arringheFiles: [],
-            sentenzaFiles: ["Sentenza_Proscioglimento.pdf"],
-            appuntamenti: [
-                { data: "1900-01-10", note: "Firma Atto Notarile Beecher's Hope" }
-            ]
-        }
-    ];
-
-    let clientiDB = [];
-    let attivoId = 1;
-
-    // GESTIONE LOCAL STORAGE
-    function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v12');
-        if (salvati) {
-            try {
-                clientiDB = JSON.parse(salvati);
-            } catch(e) {
-                console.error("Errore lettura dati da localStorage:", e);
-                clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
-            }
-        } else {
-            clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
-        }
-
-        const ultimoAttivo = localStorage.getItem('studioCorbinAttivoId');
-        if (ultimoAttivo && clientiDB.some(c => c.id == ultimoAttivo)) {
-            attivoId = parseInt(ultimoAttivo);
-        } else if (clientiDB.length > 0) {
-            attivoId = clientiDB[0].id;
-        } else {
-            attivoId = null;
-        }
-    }
-
-    function salvaInLocalStorage() {
-        localStorage.setItem('studioCorbinDB_v12', JSON.stringify(clientiDB));
-        if (attivoId !== null) {
-            localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
-        }
-    }
-
-    function ripristinaDatiPredefiniti() {
-        if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v12');
-            localStorage.removeItem('studioCorbinAttivoId');
-            caricaDaLocalStorage();
-            renderClientList();
-            caricaClienteInCentro();
-        }
-    }
-
-    function getClienteAttivo() {
-        return clientiDB.find(c => c.id === attivoId);
-    }
-
-    function inizializzaApp() {
-        caricaDaLocalStorage();
-        renderClientList();
-        caricaClienteInCentro();
-    }
-
-    function renderClientList() {
-        const container = document.getElementById('clientListContainer');
-        const query = document.getElementById('searchClient').value.toLowerCase();
-        container.innerHTML = '';
-
-        const filtrati = clientiDB.filter(c => (c.nome + ' ' + c.cognome).toLowerCase().includes(query));
-
-        if (filtrati.length === 0) {
-            container.innerHTML = '<li style="font-style:italic; padding:8px; font-size:0.85rem;">Nessun cliente in archivio.</li>';
-            return;
-        }
-
-        filtrati.forEach(c => {
-            const li = document.createElement('li');
-            li.className = 'client-item' + (c.id === attivoId ? ' active' : '');
-            li.onclick = () => { 
-                attivoId = c.id; 
-                salvaInLocalStorage();
-                renderClientList(); 
-                caricaClienteInCentro(); 
-            };
-            
-            const badgeText = c.proBono === 'SI' ? 'PRO BONO' : c.stato;
-            const badgeClass = c.proBono === 'SI' ? 'style="background:var(--stamp-probono); color:#fff;"' : '';
-
-            li.innerHTML = `
-                <div class="client-info">
-                    <span class="client-name">${c.nome} ${c.cognome}</span>
-                    <span class="client-status-badge" ${badgeClass}>${badgeText}</span>
-                </div>
-                <button type="button" class="btn-delete-client" title="Elimina cliente e pratica" onclick="eliminaCliente(${c.id}, event)">🗑️</button>
-            `;
-            container.appendChild(li);
-        });
-    }
-
-    function eliminaCliente(id, event) {
-        if (event) event.stopPropagation();
-        const target = clientiDB.find(c => c.id === id);
-        if (!target) return;
-
-        if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati/allegati/appuntamenti associati?`)) {
-            clientiDB = clientiDB.filter(c => c.id !== id);
-            
-            if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
-            }
-            
-            salvaInLocalStorage();
-            renderClientList();
-            caricaClienteInCentro();
-        }
-    }
-
-    function caricaClienteInCentro() {
-        const c = getClienteAttivo();
-        const fieldset = document.getElementById('mainFormFieldset');
-
-        if (!c) {
-            document.getElementById('nome').value = '';
-            document.getElementById('cognome').value = '';
-            document.getElementById('motivo').value = '';
-            document.getElementById('missiva').value = '';
-            document.getElementById('proBonoSelect').value = 'NO';
-            document.getElementById('acconto').value = 0;
-            document.getElementById('tariffa').value = 0;
-            document.getElementById('indennizzo').value = 0;
-            document.getElementById('pagamenti').value = 0;
-            document.getElementById('totaleOnorario').value = 0;
-            document.getElementById('noteTrattativa').value = '';
-            
-            ['listAttiProcura', 'listComTribunale', 'listPerizieMediche', 'listPerizieTecniche', 
-             'listTrattativeFiles', 'listIstanzeFiles', 'listArringheFiles', 'listSentenzaFiles', 
-             'witnessContainer', 'testeUdienzaContainer', 'appointmentsContainer'].forEach(id => {
-                document.getElementById(id).innerHTML = '';
-            });
-
-            fieldset.disabled = true;
-            return;
-        }
-
-        fieldset.disabled = false;
-        document.getElementById('statoPratica').value = c.stato;
-        document.getElementById('proBonoSelect').value = c.proBono || 'NO';
-        document.getElementById('motivo').value = c.motivo || '';
-        document.getElementById('nome').value = c.nome || '';
-        document.getElementById('cognome').value = c.cognome || '';
-        document.getElementById('missiva').value = c.missiva || 'CC523';
-        document.getElementById('acconto').value = c.acconto || 0;
-        document.getElementById('tariffa').value = c.tariffa || 0;
-        document.getElementById('indennizzo').value = c.indennizzo || 0;
-        document.getElementById('pagamenti').value = c.pagamenti || 0;
-        document.getElementById('noteTrattativa').value = c.noteTrattativa || '';
-
-        calcolaTotale();
-        renderAllegati('listAttiProcura', c.attiProcura, 'attiProcura');
-        renderAllegati('listComTribunale', c.comTribunale, 'comTribunale');
-        renderAllegati('listPerizieMediche', c.perizieMediche, 'perizieMediche');
-        renderAllegati('listPerizieTecniche', c.perizieTecniche, 'perizieTecniche');
-        renderAllegati('listTrattativeFiles', c.trattativeFiles, 'trattativeFiles');
-        renderAllegati('listIstanzeFiles', c.istanzeFiles, 'istanzeFiles');
-        renderAllegati('listArringheFiles', c.arringheFiles, 'arringheFiles');
-        renderAllegati('listSentenzaFiles', c.sentenzaFiles, 'sentenzaFiles');
-
-        renderTestimoni();
-        renderTesteUdienza();
-        renderAppuntamenti();
-        gestisciBloccoStato();
-    }
-
-    function salvaDatiAttivi(updateSidebar = false) {
-        const c = getClienteAttivo();
-        if (!c) return;
-
-        c.motivo = document.getElementById('motivo').value;
-        c.nome = document.getElementById('nome').value;
-        c.cognome = document.getElementById('cognome').value;
-        c.missiva = document.getElementById('missiva').value;
-        
-        if (c.proBono !== 'SI') {
-            c.acconto = parseFloat(document.getElementById('acconto').value) || 0;
-            c.tariffa = parseFloat(document.getElementById('tariffa').value) || 0;
-            c.indennizzo = parseFloat(document.getElementById('indennizzo').value) || 0;
-            c.pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
-        }
-        
-        c.noteTrattativa = document.getElementById('noteTrattativa').value;
-
-        salvaInLocalStorage();
-        if (updateSidebar) renderClientList();
-    }
-
-    function aggiornaProBono() {
-        const c = getClienteAttivo();
-        if (!c) return;
-        c.proBono = document.getElementById('proBonoSelect').value;
-        
-        if (c.proBono === 'SI') {
-            c.acconto = 0;
-            c.tariffa = 0;
-            c.indennizzo = 0;
-            c.pagamenti = 0;
-        }
-
-        salvaInLocalStorage();
-        renderClientList();
-        caricaClienteInCentro();
-    }
-
-    function aggiornaStatoAttivo() {
-        const c = getClienteAttivo();
-        if (!c) return;
-        c.stato = document.getElementById('statoPratica').value;
-        salvaInLocalStorage();
-        renderClientList();
-        gestisciBloccoStato();
-    }
-
-    function gestisciBloccoStato() {
-        const c = getClienteAttivo();
-        const fieldset = document.getElementById('mainFormFieldset');
-        const stamp = document.getElementById('stampNotice');
-        
-        if (!c) return;
-
-        const isProBono = (c.proBono === 'SI');
-        const isChiusa = (c.stato === 'CHIUSA VINTA' || c.stato === 'CHIUSA PERSA');
-
-        const finFields = ['acconto', 'tariffa', 'indennizzo', 'pagamenti'];
-        finFields.forEach(fId => {
-            const elem = document.getElementById(fId);
-            if (elem) {
-                elem.disabled = isProBono || isChiusa;
-                if (isProBono) elem.value = 0;
-            }
-        });
-
-        if (isProBono) {
-            document.getElementById('totaleOnorario').value = 0;
-        }
-
-        if (isChiusa) {
-            fieldset.disabled = true;
-            stamp.style.display = 'block';
-            stamp.innerText = c.stato === 'CHIUSA VINTA' ? '✓ CASO VINTO' : '✗ CASO PERSO';
-            stamp.style.color = c.stato === 'CHIUSA VINTA' ? 'var(--stamp-win)' : 'var(--stamp-loss)';
-            stamp.style.borderColor = stamp.style.color;
-        } else {
-            fieldset.disabled = false;
-            
-            if (isProBono) {
-                stamp.style.display = 'block';
-                stamp.innerText = '⚖️ PATROCINIO PRO BONO';
-                stamp.style.color = 'var(--stamp-probono)';
-                stamp.style.borderColor = 'var(--stamp-probono)';
-            } else {
-                stamp.style.display = 'none';
-            }
-        }
-    }
-
-    function calcolaTotale() {
-        const c = getClienteAttivo();
-        if (c && c.proBono === 'SI') {
-            document.getElementById('totaleOnorario').value = 0;
-            return;
-        }
-        const acconto = parseFloat(document.getElementById('acconto').value) || 0;
-        const tariffa = parseFloat(document.getElementById('tariffa').value) || 0;
-        const pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
-        const totale = (tariffa * 10) + acconto - pagamenti;
-        document.getElementById('totaleOnorario').value = totale > 0 ? totale : 0;
-    }
-
-    function renderAllegati(containerId, list, prop) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        (list || []).forEach((f, idx) => {
-            const span = document.createElement('span');
-            span.className = 'file-item';
-            
-            const a = document.createElement('a');
-            a.href = '#';
-            a.onclick = (e) => { e.preventDefault(); alert("Apertura documento d'epoca: " + f); };
-            a.innerText = '📄 ' + f;
-
-            const btnDel = document.createElement('button');
-            btnDel.type = 'button';
-            btnDel.className = 'btn-delete-file';
-            btnDel.title = 'Elimina allegato';
-            btnDel.innerText = '🗑️';
-            btnDel.onclick = (e) => {
-                e.stopPropagation();
-                eliminaAllegato(prop, idx);
-            };
-
-            span.appendChild(a);
-            span.appendChild(btnDel);
-            container.appendChild(span);
-        });
-    }
-
-    function eliminaAllegato(prop, idx) {
-        const c = getClienteAttivo();
-        if (!c || !c[prop]) return;
-        c[prop].splice(idx, 1);
-        salvaInLocalStorage();
-        caricaClienteInCentro();
-    }
-
-    function aggiungiFile(event, prop) {
-        const c = getClienteAttivo();
-        if (!c) return;
-        for (let file of event.target.files) {
-            c[prop].push(file.name);
-        }
-        salvaInLocalStorage();
-        caricaClienteInCentro();
-    }
-
-    function nuovoTestimone() {
-        const c = getClienteAttivo();
-        if (!c) return;
-        if (!c.testimoni) c.testimoni = [];
-        c.testimoni.push({ nome: "Nuovo", cognome: "Testimone", files: [] });
-        salvaInLocalStorage();
-        renderTestimoni();
-        renderTesteUdienza();
-    }
-
-    function aggiornaTestimone(witnessIdx, campo, valore) {
-        const c = getClienteAttivo();
-        if (!c || !c.testimoni || !c.testimoni[witnessIdx]) return;
-        c.testimoni[witnessIdx][campo] = valore;
-        salvaInLocalStorage();
-        renderTesteUdienza();
-    }
-
-    function renderTestimoni() {
-        const c = getClienteAttivo();
-        const container = document.getElementById('witnessContainer');
-        container.innerHTML = '';
-        if (!c) return;
-        (c.testimoni || []).forEach((w, idx) => {
-            const div = document.createElement('div');
-            div.style.background = 'var(--paper-card)';
-            div.style.padding = '8px';
-            div.style.border = '1px solid var(--border-dark)';
-            div.style.marginBottom = '6px';
-
-            let filesHtml = '';
-            (w.files || []).forEach((f, fIdx) => {
-                filesHtml += `
-                    <span class="file-item">
-                        <a href="#" onclick="event.preventDefault(); alert('Apertura: ${f}');">📄 ${f}</a>
-                        <button type="button" class="btn-delete-file" title="Elimina" onclick="eliminaAllegatoTestimone(${idx}, ${fIdx})">🗑️</button>
-                    </span>
-                `;
-            });
-
-            div.innerHTML = `
-                <div class="grid-2">
-                    <input type="text" value="${w.nome}" placeholder="Nome" oninput="aggiornaTestimone(${idx}, 'nome', this.value)">
-                    <input type="text" value="${w.cognome}" placeholder="Cognome" oninput="aggiornaTestimone(${idx}, 'cognome', this.value)">
-                </div>
-                <div class="upload-box" style="margin-top:5px;">
-                    <label>Allegati Testimone:</label>
-                    <input type="file" multiple onchange="aggiungiFileTestimone(event, ${idx})">
-                    <div class="file-list">${filesHtml}</div>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function aggiungiFileTestimone(event, witnessIdx) {
-        const c = getClienteAttivo();
-        if (!c || !c.testimoni[witnessIdx]) return;
-        for (let file of event.target.files) {
-            c.testimoni[witnessIdx].files.push(file.name);
-        }
-        salvaInLocalStorage();
-        renderTestimoni();
-    }
-
-    function eliminaAllegatoTestimone(witnessIdx, fileIdx) {
-        const c = getClienteAttivo();
-        if (!c || !c.testimoni[witnessIdx]) return;
-        c.testimoni[witnessIdx].files.splice(fileIdx, 1);
-        salvaInLocalStorage();
-        renderTestimoni();
-    }
-
-    function renderTesteUdienza() {
-        const c = getClienteAttivo();
-        const container = document.getElementById('testeUdienzaContainer');
-        container.innerHTML = '';
-        if (!c) return;
-        (c.testimoni || []).forEach((w, idx) => {
-            const div = document.createElement('div');
-            div.style.padding = '6px';
-            div.style.background = 'var(--paper-card)';
-            div.style.border = '1px solid var(--border-dark)';
-            div.style.marginBottom = '4px';
-            div.style.fontSize = '0.85rem';
-            div.innerHTML = `<strong>${w.nome} ${w.cognome}</strong> (Convocato in Udienza)`;
-            container.appendChild(div);
-        });
-    }
-
-    function renderAppuntamenti() {
-        const c = getClienteAttivo();
-        const container = document.getElementById('appointmentsContainer');
-        container.innerHTML = '';
-        if (!c) return;
-        (c.appuntamenti || []).forEach((a, idx) => {
-            const card = document.createElement('div');
-            card.className = 'appointment-card';
-            card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div class="date">🗓️ ${a.data}</div>
-                    <div>
-                        <button type="button" class="btn-delete-file" title="Modifica Appuntamento" onclick="modificaAppuntamento(${idx})">✏️</button>
-                        <button type="button" class="btn-delete-file" title="Elimina Appuntamento" onclick="eliminaAppuntamento(${idx})">🗑️</button>
-                    </div>
-                </div>
-                <div class="desc">${a.note}</div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function modificaAppuntamento(idx) {
-        const c = getClienteAttivo();
-        if (!c || !c.appuntamenti[idx]) return;
-        const app = c.appuntamenti[idx];
-        
-        const nuovaData = prompt("Modifica data appuntamento (AAAA-MM-GG, Anno 1900):", app.data);
-        if (nuovaData === null) return;
-        
-        const nuovaDesc = prompt("Modifica descrizione / oggetto dell'appuntamento:", app.note);
-        if (nuovaDesc === null) return;
-        
-        if (nuovaData.trim() && nuovaDesc.trim()) {
-            app.data = nuovaData.trim();
-            app.note = nuovaDesc.trim();
-            salvaInLocalStorage();
-            renderAppuntamenti();
-        }
-    }
-
-    function eliminaAppuntamento(idx) {
-        const c = getClienteAttivo();
-        if (!c || !c.appuntamenti[idx]) return;
-        if (confirm("Vuoi davvero cancellare questo appuntamento dal planning?")) {
-            c.appuntamenti.splice(idx, 1);
-            salvaInLocalStorage();
-            renderAppuntamenti();
-        }
-    }
-
-    function aggiungiAppuntamento() {
-        const c = getClienteAttivo();
-        if (!c) return alert("Nessun cliente attivo selezionato.");
-        const data = document.getElementById('appData').value;
-        const note = document.getElementById('appNote').value;
-        if (!data || !note) return alert("Inserire data e oggetto appuntamento.");
-        c.appuntamenti.push({ data, note });
-        document.getElementById('appNote').value = '';
-        salvaInLocalStorage();
-        renderAppuntamenti();
-    }
-
-    function creaNuovoCliente() {
-        const newId = clientiDB.length > 0 ? Math.max(...clientiDB.map(c => c.id)) + 1 : 1;
-        clientiDB.push({
-            id: newId,
-            nome: "Nuovo",
-            cognome: "Cliente " + newId,
-            stato: "IN CARICO",
-            proBono: "NO",
-            motivo: "",
-            missiva: "CC523-" + newId,
-            acconto: 0,
-            tariffa: 0,
-            indennizzo: 0,
-            pagamenti: 0,
-            noteTrattativa: "",
-            attiProcura: [],
-            comTribunale: [],
-            perizieMediche: [],
-            perizieTecniche: [],
-            trattativeFiles: [],
-            testimoni: [],
-            istanzeFiles: [],
-            arringheFiles: [],
-            sentenzaFiles: [],
-            appuntamenti: []
-        });
-        attivoId = newId;
-        salvaInLocalStorage();
-        renderClientList();
-        caricaClienteInCentro();
-    }
-
-    function filtraClienti() { renderClientList(); }
-
-    window.onload = inizializzaApp;
-</script>
-</body>
-</html>
-Inoltre ho generato e salvato il PDF aggiornato frontier-gazette-studio-legale-v11.pdf nel tuo pannello Studio!keep_pinSalva nella notakeep_pincopythumb_upthumb_downquando allego un documento e lo apro dal sito me lo scarica nella cartella download, io vorrei che lo aprisse direttamente senza salvarlo Thoughts expand_moreIl modo in cui un file si apre quando ci clicchi sopra dipende da due fattori principali: il tipo di file e le impostazioni del browser.Ecco come funziona e cosa si può fare per aprirli direttamente senza scaricarli:1. Differenza tra i tipi di fileFile visualizzabili nel browser (PDF, PNG, JPG, TXT): Il browser è in grado di mostrare questi file direttamente in una nuova scheda.File non supportati nativamente (DOCX, XLSX, ZIP, ecc.): Il browser non ha un visualizzatore integrato per i documenti Word o Excel, quindi per sicurezza ed esigenza tecnica è costretto a scaricare il file sul tuo computer prima che tu possa aprirlo con il relativo programma.2. Impostazione del Browser (Chrome / Edge / Firefox)Se anche i file PDF ti vengono scaricati invece di aprirsi nel browser:Apri le Impostazioni del browser (es. Google Chrome o Microsoft Edge).Cerca la sezione Privacy e Sicurezza $\rightarrow$ Impostazioni sito $\rightarrow$ Documenti PDF.Seleziona l'opzione "Apri i PDF nel browser" (anziché "Scarica i PDF").3. Aggiornamento del Codice per la tua Applicazione WebNella tua applicazione web, possiamo modificare la gestione degli allegati per far sì che, quando carichi un file dal tuo computer (PDF o immagine), la pagina crei un link temporaneo di anteprima (URL.createObjectURL). Cliccando sull'allegato, il file si aprirà direttamente in una nuova scheda del browser senza costringerti a cercarlo nella cartella Download.Vuoi che aggiorni il codice della web app includendo l'apertura automatica in scheda per i file caricati? 🤠keep_pinSalva nella notakeep_pincopythumb_upthumb_downsotto impostazioni sito di chrome non c'è la voce pdf Thoughts expand_moreIn Google Chrome la voce Documenti PDF è nascosta all'interno di un sotto-menu in fondo alla pagina delle impostazioni del sito.Ecco i due modi per raggiungerla subito:1. Metodo Rapido (Consigliato)Copia e incolla questo testo direttamente nella barra degli indirizzi di Chrome e premi Invio:chrome://settings/content/pdf
-Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF in Chrome".2. Metodo Manuale Passo-PassoApri le Impostazioni di Chrome (i tre pallini in alto a destra $\rightarrow$ Impostazioni).Seleziona Privacy e sicurezza dal menu a sinistra.Clicca su Impostazioni sito.Scorri fino in fondo alla pagina e clicca sulla freccetta per espandere Impostazioni contenuti aggiuntivi.Troverai la voce Documenti PDF.Seleziona "Apri i PDF in Chrome" (anziché "Scarica i PDF").In alternativa, posso modificare il codice della tua applicazione web HTML per far sì che qualunque PDF o immagine caricata venga aperta automaticamente in una nuova scheda tramite un link temporaneo (URL.createObjectURL).Vuoi che ti aggiorni il codice della web app con questa funzione? 🤠keep_pinSalva nella notakeep_pincopythumb_upthumb_downè impostato apri pdf ma li salva lo stesso Thoughts expand_moreQuesto accade perché, quando un file viene caricato da un form HTML, Chrome lo tratta come un allegato generico di download a meno che non venga aperto esplicitamente come stream di memoria temporaneo (blob:URL) in una nuova scheda.Ho aggiornato il codice della tua applicazione web (Versione v13) per risolvere definitivamente questo problema!💡 Come funziona l'Apertura Diretta (v13):Generazione di un Blob URL in Memoria: Quando selezioni un file (PDF o immagine) dal tuo computer, l'applicazione crea un indirizzo di memoria temporaneo (URL.createObjectURL).Apertura Nativa in Nuova Scheda: Cliccando sul nome del file allegato, il sistema esegue window.open(url, '_blank').Nessun Download: Il file si aprirà direttamente nella scheda del browser sfruttando il visualizzatore nativo di Chrome, senza salvare alcun file nella cartella Download.🗞️ Codice HTML + CSS + JavaScript Completo (Versione v13)Salva questo codice sul tuo computer come file .html (ad esempio studio_corbin_v13.html) ed aprilo nel browser:<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Legale Otis Corbin - West Elizabeth (1900)</title>
-<style>
-    @import url('[suspicious link removed]');
-
-    :root {
-        --paper-bg: #f3e8d2;
-        --paper-card: #e8dbbe;
-        --ink: #221a15;
-        --wood-dark: #2d1b10;
-        --wood-light: #4a3222;
-        --accent-red: #8c1c13;
-        --gold-accent: #b8860b;
-        --border-dark: #3b2518;
-        --stamp-win: #1e5622;
-        --stamp-loss: #8c1c13;
-        --stamp-probono: #1f4e5b;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-        background-color: #1a120c;
-        background-image: radial-gradient(#2d1b10 15%, transparent 16%), radial-gradient(#2d1b10 15%, transparent 16%);
-        background-size: 60px 60px;
-        background-position: 0 0, 30px 30px;
-        color: var(--ink);
-        font-family: 'Playfair Display', Georgia, serif;
-        margin: 0;
-        padding: 15px;
-    }
-
-    /* CONTAINER PRINCIPALE A 3 COLONNE */
-    .app-viewport {
-        display: grid;
-        grid-template-columns: 290px 1fr 310px;
-        gap: 15px;
-        max-width: 1600px;
-        margin: 0 auto;
-        min-height: 95vh;
-    }
-
-    /* STILE PANNELLI D'EPOCA */
-    .western-panel {
-        background-color: var(--paper-bg);
-        border: 4px double var(--border-dark);
-        box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 30px rgba(74, 50, 34, 0.2);
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        border-radius: 2px;
-        position: relative;
-    }
-
-    .panel-header {
-        background: var(--wood-dark);
-        color: var(--paper-bg);
-        text-align: center;
-        padding: 10px;
-        font-family: 'Rye', cursive;
-        font-size: 1.1rem;
-        letter-spacing: 1px;
-        border: 2px solid var(--gold-accent);
-        margin-bottom: 15px;
-        text-transform: uppercase;
-    }
-
-    /* COLONNA SINISTRA: REPERTORIO CLIENTI */
-    .client-search {
-        width: 100%;
-        padding: 8px;
-        background: var(--paper-card);
-        border: 1px solid var(--border-dark);
-        font-family: 'Special Elite', cursive;
-        margin-bottom: 10px;
-    }
-
-    .btn-add-client {
-        background: var(--accent-red);
-        color: #fff;
-        border: 1px solid var(--border-dark);
-        font-family: 'Rye', cursive;
-        padding: 8px;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-    }
-    .btn-add-client:hover { background: #6b140d; }
-
-    .client-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        overflow-y: auto;
-        flex-grow: 1;
-    }
-
-    .client-item {
-        background: var(--paper-card);
-        border: 1px solid var(--border-dark);
-        padding: 10px;
-        margin-bottom: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .client-item:hover, .client-item.active {
-        background: var(--wood-light);
-        color: #fff;
-        border-left: 6px solid var(--gold-accent);
-    }
-
-    .client-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .client-item .client-name {
-        font-weight: bold;
-        font-size: 0.95rem;
-    }
-
-    .client-item .client-status-badge {
-        font-size: 0.7rem;
-        font-family: 'Special Elite', cursive;
-        padding: 2px 5px;
-        background: var(--paper-bg);
-        color: var(--ink);
-        display: inline-block;
-        margin-top: 4px;
-        border: 1px solid var(--border-dark);
-        align-self: flex-start;
-    }
-
-    .client-item.active .client-status-badge {
-        background: var(--gold-accent);
-        color: #000;
-    }
-
-    .btn-delete-client {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        padding: 4px;
-        opacity: 0.7;
-        transition: transform 0.15s, opacity 0.15s;
-    }
-    .btn-delete-client:hover {
-        opacity: 1;
-        transform: scale(1.3);
-    }
-
-    /* INTESTAZIONE GRAFICA WESTERN SCENOGRAFICA */
-    .main-header {
-        text-align: center;
-        background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper-bg) 100%);
-        border: 3px double var(--gold-accent);
-        padding: 15px 10px;
-        margin-bottom: 15px;
-        position: relative;
-        box-shadow: inset 0 0 10px rgba(45, 27, 16, 0.15);
-    }
-
-    .header-flourish {
-        font-family: 'Rye', cursive;
-        color: var(--gold-accent);
-        font-size: 1.2rem;
-        letter-spacing: 4px;
-        margin-bottom: 2px;
-    }
-
-    .main-title {
-        font-family: 'Rye', cursive;
-        font-size: 2.1rem;
-        margin: 0;
-        color: var(--wood-dark);
-        letter-spacing: 2px;
-        text-shadow: 1px 1px 0px var(--gold-accent);
-    }
-
-    .main-subtitle {
-        font-family: 'Special Elite', cursive;
-        color: var(--accent-red);
-        font-size: 0.95rem;
-        margin-top: 8px;
-        font-weight: bold;
-        line-height: 1.3;
-    }
-
-    .status-selector-bar {
-        background: var(--wood-dark);
-        color: #fff;
-        padding: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        border: 1px solid var(--gold-accent);
-        font-family: 'Special Elite', cursive;
-    }
-
-    .status-selector-bar select {
-        font-family: 'Special Elite', cursive;
-        padding: 6px;
-        background: var(--paper-bg);
-        color: var(--ink);
-        border: 1px solid var(--border-dark);
-        font-weight: bold;
-    }
-
-    .section-title {
-        background: var(--wood-light);
-        color: #fff;
-        padding: 6px 10px;
-        font-family: 'Rye', cursive;
-        font-size: 1rem;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        border-left: 4px solid var(--gold-accent);
-    }
-
-    .subsection-title {
-        font-weight: bold;
-        color: var(--accent-red);
-        border-bottom: 1px solid var(--border-dark);
-        margin: 8px 0;
-        padding-bottom: 2px;
-        font-size: 0.95rem;
-    }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-    .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
-    .form-group label { font-size: 0.85rem; font-weight: bold; margin-bottom: 3px; }
-
-    /* EVIDENZIATORE MOTIVO CONSULTAZIONE */
-    .motivo-box-highlight {
-        background-color: #fdf8eb;
-        border: 2px solid var(--border-dark);
-        border-left: 6px solid var(--accent-red);
-        padding: 12px;
-        margin-bottom: 15px;
-        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .motivo-label-highlight {
-        font-family: 'Rye', cursive;
-        font-size: 1.05rem !important;
-        color: var(--accent-red);
-        letter-spacing: 1px;
-        margin-bottom: 6px !important;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .motivo-textarea-highlight {
-        font-size: 1.15rem !important;
-        font-weight: bold !important;
-        line-height: 1.4 !important;
-        min-height: 85px !important;
-        background-color: #fffef8 !important;
-        border: 1px solid var(--border-dark) !important;
-        color: var(--wood-dark) !important;
-        padding: 10px !important;
-    }
-
-    input, textarea, select {
-        font-family: 'Playfair Display', serif;
-        padding: 6px 8px;
-        background-color: var(--paper-card);
-        border: 1px solid var(--border-dark);
-        color: var(--ink);
-    }
-
-    input:disabled, textarea:disabled {
-        background-color: #dcd0b8;
-        color: #665544;
-        cursor: not-allowed;
-    }
-
-    textarea { resize: vertical; min-height: 60px; }
-
-    .upload-box {
-        border: 1px dashed var(--border-dark);
-        padding: 8px;
-        background: var(--paper-card);
-        margin-top: 4px;
-    }
-
-    .file-list { margin-top: 5px; }
-    
-    .file-item {
-        display: inline-flex;
-        align-items: center;
-        background: var(--paper-bg);
-        border: 1px solid var(--border-dark);
-        padding: 3px 8px;
-        margin: 3px;
-        font-size: 0.8rem;
-    }
-
-    .file-item a {
-        color: var(--accent-red);
-        text-decoration: underline;
-        margin-right: 6px;
         cursor: pointer;
     }
 
@@ -1570,6 +395,14 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
         width: 100%;
     }
     .btn-reset:hover { background: rgba(140, 28, 19, 0.1); }
+
+    .trattativa-card {
+        background: var(--paper-card);
+        border: 1px solid var(--border-dark);
+        padding: 10px;
+        margin-bottom: 10px;
+        border-left: 4px solid var(--wood-dark);
+    }
 </style>
 </head>
 <body>
@@ -1612,16 +445,26 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
         <!-- 2. ANAGRAFICA CLIENTE & CONTABILITÀ -->
         <div class="section-title">2. Anagrafica Cliente & Contabilità</div>
         
-        <div class="grid-2" style="background: var(--paper-card); padding: 8px; border: 1px solid var(--border-dark); margin-bottom: 12px;">
+        <div class="grid-2" style="background: var(--paper-card); padding: 10px; border: 1px solid var(--border-dark); margin-bottom: 12px;">
+            <!-- RAMO SINISTRO: PRO BONO -->
             <div class="form-group" style="margin-bottom:0;">
                 <label style="color: var(--accent-red); font-size: 0.95rem;">⚖️ PATROCINIO PRO BONO:</label>
                 <select id="proBonoSelect" onchange="aggiornaProBono()" style="font-weight: bold; background: var(--paper-bg);">
                     <option value="NO">NO - Pratica Ordinaria</option>
                     <option value="SI">SI - Patrocinio Gratuito (Pro Bono)</option>
                 </select>
+                <div style="font-size:0.75rem; font-style:italic; margin-top:4px;">
+                    Se SI, vengono azzerati e bloccati i soli 5 campi contabili.
+                </div>
             </div>
-            <div style="font-size:0.8rem; font-style:italic; align-self:center;">
-                Se impostato su <b>SI</b>, vengono bloccati ed azzerati <b>solo i 5 campi contabili</b>.
+
+            <!-- RAMO DESTRO: SEZIONE PROCURA -->
+            <div class="form-group" style="margin-bottom:0;">
+                <label style="color: var(--wood-dark); font-size: 0.95rem;">📜 PROCURA ALLE LITI (Delega):</label>
+                <div class="upload-box" style="padding:4px; margin-top:2px;">
+                    <input type="file" id="inputFileProcura" multiple onchange="aggiungiFile(event, 'procuraFiles')">
+                    <div id="listProcuraFiles" class="file-list"></div>
+                </div>
             </div>
         </div>
 
@@ -1675,9 +518,9 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
                 </div>
             </div>
 
-            <!-- 3. ATTI UFFICIALI -->
+            <!-- 3. ATTI UFFICIALI (COMPRENDE ANCHE ISTANZE PRESENTATE) -->
             <div class="section-title">3. Atti Ufficiali</div>
-            <div class="grid-2">
+            <div class="grid-3">
                 <div>
                     <div class="subsection-title">Atti Procura</div>
                     <div class="upload-box">
@@ -1690,6 +533,13 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
                     <div class="upload-box">
                         <input type="file" id="inputFileComTribunale" multiple onchange="aggiungiFile(event, 'comTribunale')">
                         <div id="listComTribunale" class="file-list"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="subsection-title">Istanze Presentate</div>
+                    <div class="upload-box">
+                        <input type="file" id="inputFileIstanze" multiple onchange="aggiungiFile(event, 'istanzeFiles')">
+                        <div id="listIstanzeFiles" class="file-list"></div>
                     </div>
                 </div>
             </div>
@@ -1713,29 +563,16 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
                 </div>
             </div>
 
-            <!-- 5. TRATTATIVE -->
-            <div class="section-title">5. Trattative</div>
-            <div class="form-group">
-                <label>Note Trattativa Editabili:</label>
-                <textarea id="noteTrattativa" oninput="salvaDatiAttivi()"></textarea>
-            </div>
-            <div class="upload-box">
-                <label>Allegati Trattativa:</label>
-                <input type="file" id="inputFileTrattative" multiple onchange="aggiungiFile(event, 'trattativeFiles')">
-                <div id="listTrattativeFiles" class="file-list"></div>
-            </div>
+            <!-- 5. TRATTATIVE (MULTILIVELLO: OFFERTE E CONTROOFFERTE) -->
+            <div class="section-title">5. Trattative (Offerte e Controofferte)</div>
+            <div id="trattativeContainer"></div>
+            <button type="button" class="btn-action" onclick="nuovaTrattativa()">+ Aggiungi Trattativa / Offerta</button>
 
             <!-- 6. PARTE PROCESSUALE -->
             <div class="section-title">6. Parte Processuale</div>
             <div class="subsection-title">Testimoni (Anagrafiche Dedicate)</div>
             <div id="witnessContainer"></div>
             <button type="button" class="btn-action" id="btnAddWitness" onclick="nuovoTestimone()">+ Aggiungi Testimone</button>
-
-            <div class="subsection-title" style="margin-top:12px;">Istanze Presentate</div>
-            <div class="upload-box">
-                <input type="file" id="inputFileIstanze" multiple onchange="aggiungiFile(event, 'istanzeFiles')">
-                <div id="listIstanzeFiles" class="file-list"></div>
-            </div>
 
             <div class="subsection-title" style="margin-top:12px;">Teste Udienza (Sincronizzati)</div>
             <div id="testeUdienzaContainer"></div>
@@ -1800,12 +637,25 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
             tariffa: 15,
             indennizzo: 200,
             pagamenti: 30,
-            noteTrattativa: "Trattativa preliminare avviata con lo Sceriffo di Strawberry.",
+            procuraFiles: [{ name: "Delega_Procura_Morgan.pdf", url: null }],
             attiProcura: [{ name: "Atto_Procura_Morgan.pdf", url: null }],
             comTribunale: [{ name: "Notifica_Tribunale_Strawberry.png", url: null }],
             perizieMediche: [{ name: "Referto_Dr_Barnes.pdf", url: null }],
             perizieTecniche: [{ name: "Perizia_Balistica_Winchester.pdf", url: null }],
-            trattativeFiles: [{ name: "Bozza_Accordo_Sceriffo.pdf", url: null }],
+            trattative: [
+                {
+                    titolo: "Prima Proposta Risarcitoria",
+                    importo: 150,
+                    commento: "Proposta iniziale di accordo bonario inviata allo Sceriffo.",
+                    files: [{ name: "Bozza_Accordo_Sceriffo.pdf", url: null }]
+                },
+                {
+                    titolo: "Controofferta Sceriffo Strawberry",
+                    importo: 200,
+                    commento: "Richiesta integrazione indennizzo con rinuncia alle pretese pendenti.",
+                    files: []
+                }
+            ],
             testimoni: [{ nome: "Sadie", cognome: "Adler", files: [{ name: "Dichiarazione_Adler.txt", url: null }] }],
             istanzeFiles: [{ name: "Istanza_Rilascio_Cauzione.pdf", url: null }],
             arringheFiles: [{ name: "Arringa_Finale_Corbin.docx", url: null }],
@@ -1827,12 +677,19 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
             tariffa: 20,
             indennizzo: 500,
             pagamenti: 100,
-            noteTrattativa: "Accordo stragiudiziale siglato con la banca di Blackwater.",
+            procuraFiles: [{ name: "Delega_Generale_Marston.pdf", url: null }],
             attiProcura: [{ name: "Rogito_Terreno.pdf", url: null }],
             comTribunale: [],
             perizieMediche: [],
             perizieTecniche: [{ name: "Mappa_Confini_BeechersHope.jpg", url: null }],
-            trattativeFiles: [{ name: "Accordo_Banca.pdf", url: null }],
+            trattative: [
+                {
+                    titolo: "Accordo Fiduciario Banca Blackwater",
+                    importo: 500,
+                    commento: "Chiusura transazione con contestuale svincolo ipoteca.",
+                    files: [{ name: "Accordo_Banca.pdf", url: null }]
+                }
+            ],
             testimoni: [],
             istanzeFiles: [],
             arringheFiles: [],
@@ -1846,14 +703,14 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
     let clientiDB = [];
     let attivoId = 1;
 
-    // GESTIONE LOCAL STORAGE
+    // LOCAL STORAGE
     function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v13');
+        const salvati = localStorage.getItem('studioCorbinDB_v14');
         if (salvati) {
             try {
                 clientiDB = JSON.parse(salvati);
             } catch(e) {
-                console.error("Errore lettura dati da localStorage:", e);
+                console.error("Errore lettura localStorage:", e);
                 clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
             }
         } else {
@@ -1871,12 +728,7 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
     }
 
     function salvaInLocalStorage() {
-        // Serializziamo pulendo i riferimenti binari temporanei non memorizzabili
-        const pulito = clientiDB.map(c => {
-            const copia = JSON.parse(JSON.stringify(c));
-            return copia;
-        });
-        localStorage.setItem('studioCorbinDB_v13', JSON.stringify(pulito));
+        localStorage.setItem('studioCorbinDB_v14', JSON.stringify(clientiDB));
         if (attivoId !== null) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
         }
@@ -1884,7 +736,7 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
 
     function ripristinaDatiPredefiniti() {
         if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v13');
+            localStorage.removeItem('studioCorbinDB_v14');
             localStorage.removeItem('studioCorbinAttivoId');
             caricaDaLocalStorage();
             renderClientList();
@@ -1971,11 +823,11 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
             document.getElementById('indennizzo').value = 0;
             document.getElementById('pagamenti').value = 0;
             document.getElementById('totaleOnorario').value = 0;
-            document.getElementById('noteTrattativa').value = '';
             
-            ['listAttiProcura', 'listComTribunale', 'listPerizieMediche', 'listPerizieTecniche', 
-             'listTrattativeFiles', 'listIstanzeFiles', 'listArringheFiles', 'listSentenzaFiles', 
-             'witnessContainer', 'testeUdienzaContainer', 'appointmentsContainer'].forEach(id => {
+            ['listProcuraFiles', 'listAttiProcura', 'listComTribunale', 'listIstanzeFiles', 
+             'listPerizieMediche', 'listPerizieTecniche', 'trattativeContainer', 
+             'witnessContainer', 'testeUdienzaContainer', 'listArringheFiles', 
+             'listSentenzaFiles', 'appointmentsContainer'].forEach(id => {
                 document.getElementById(id).innerHTML = '';
             });
 
@@ -1994,18 +846,18 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
         document.getElementById('tariffa').value = c.tariffa || 0;
         document.getElementById('indennizzo').value = c.indennizzo || 0;
         document.getElementById('pagamenti').value = c.pagamenti || 0;
-        document.getElementById('noteTrattativa').value = c.noteTrattativa || '';
 
         calcolaTotale();
+        renderAllegati('listProcuraFiles', c.procuraFiles, 'procuraFiles');
         renderAllegati('listAttiProcura', c.attiProcura, 'attiProcura');
         renderAllegati('listComTribunale', c.comTribunale, 'comTribunale');
+        renderAllegati('listIstanzeFiles', c.istanzeFiles, 'istanzeFiles');
         renderAllegati('listPerizieMediche', c.perizieMediche, 'perizieMediche');
         renderAllegati('listPerizieTecniche', c.perizieTecniche, 'perizieTecniche');
-        renderAllegati('listTrattativeFiles', c.trattativeFiles, 'trattativeFiles');
-        renderAllegati('listIstanzeFiles', c.istanzeFiles, 'istanzeFiles');
         renderAllegati('listArringheFiles', c.arringheFiles, 'arringheFiles');
         renderAllegati('listSentenzaFiles', c.sentenzaFiles, 'sentenzaFiles');
 
+        renderTrattative();
         renderTestimoni();
         renderTesteUdienza();
         renderAppuntamenti();
@@ -2027,8 +879,6 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
             c.indennizzo = parseFloat(document.getElementById('indennizzo').value) || 0;
             c.pagamenti = parseFloat(document.getElementById('pagamenti').value) || 0;
         }
-        
-        c.noteTrattativa = document.getElementById('noteTrattativa').value;
 
         salvaInLocalStorage();
         if (updateSidebar) renderClientList();
@@ -2116,13 +966,10 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
         document.getElementById('totaleOnorario').value = totale > 0 ? totale : 0;
     }
 
-    // GESTIONE APERTURA DIRETTA IN SCHEDA DEL FILE REALE
     function apriDocumento(fileObj) {
         if (fileObj.url) {
             const win = window.open(fileObj.url, '_blank');
-            if (!win) {
-                alert("Attenzione: sblocca i pop-up nel browser per aprire il documento in una nuova scheda.");
-            }
+            if (!win) alert("Sblocca i pop-up nel browser per aprire il documento.");
         } else {
             alert("Documento d'epoca di simulazione: " + (fileObj.name || fileObj));
         }
@@ -2180,6 +1027,109 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
         caricaClienteInCentro();
     }
 
+    // GESTIONE TRATTATIVE MULTILIVELLO
+    function nuovaTrattativa() {
+        const c = getClienteAttivo();
+        if (!c) return;
+        if (!c.trattative) c.trattative = [];
+        c.trattative.push({
+            titolo: "Nuova Trattativa / Offerta",
+            importo: 0,
+            commento: "",
+            files: []
+        });
+        salvaInLocalStorage();
+        renderTrattative();
+    }
+
+    function aggiornaTrattativa(idx, campo, valore) {
+        const c = getClienteAttivo();
+        if (!c || !c.trattative || !c.trattative[idx]) return;
+        c.trattative[idx][campo] = valore;
+        salvaInLocalStorage();
+    }
+
+    function eliminaTrattativa(idx) {
+        const c = getClienteAttivo();
+        if (!c || !c.trattative || !c.trattative[idx]) return;
+        if (confirm("Cancellare questa trattativa/offerta dal registro?")) {
+            c.trattative.splice(idx, 1);
+            salvaInLocalStorage();
+            renderTrattative();
+        }
+    }
+
+    function aggiungiFileTrattativa(event, trattativaIdx) {
+        const c = getClienteAttivo();
+        if (!c || !c.trattative[trattativaIdx]) return;
+        if (!c.trattative[trattativaIdx].files) c.trattative[trattativaIdx].files = [];
+        for (let file of event.target.files) {
+            const blobUrl = URL.createObjectURL(file);
+            c.trattative[trattativaIdx].files.push({ name: file.name, url: blobUrl });
+        }
+        salvaInLocalStorage();
+        renderTrattative();
+    }
+
+    function eliminaAllegatoTrattativa(trattativaIdx, fileIdx) {
+        const c = getClienteAttivo();
+        if (!c || !c.trattative[trattativaIdx]) return;
+        c.trattative[trattativaIdx].files.splice(fileIdx, 1);
+        salvaInLocalStorage();
+        renderTrattative();
+    }
+
+    function renderTrattative() {
+        const c = getClienteAttivo();
+        const container = document.getElementById('trattativeContainer');
+        container.innerHTML = '';
+        if (!c) return;
+
+        (c.trattative || []).forEach((t, idx) => {
+            const card = document.createElement('div');
+            card.className = 'trattativa-card';
+
+            let filesHtml = '';
+            (t.files || []).forEach((f, fIdx) => {
+                const fObj = (typeof f === 'string') ? { name: f, url: null } : f;
+                filesHtml += `
+                    <span class="file-item">
+                        <a onclick="event.preventDefault(); apriDocumento(${JSON.stringify(fObj).replace(/"/g, '&quot;')});">📄 ${fObj.name}</a>
+                        <button type="button" class="btn-delete-file" title="Elimina" onclick="eliminaAllegatoTrattativa(${idx}, ${fIdx})">🗑️</button>
+                    </span>
+                `;
+            });
+
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <strong style="color:var(--accent-red); font-size:0.95rem;">Trattativa / Fase #${idx + 1}</strong>
+                    <button type="button" class="btn-delete-file" title="Elimina Trattativa" onclick="eliminaTrattativa(${idx})">🗑️</button>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Titolo / Fase Offerta:</label>
+                        <input type="text" value="${t.titolo || ''}" placeholder="es. Proposta Iniziale / Controofferta" oninput="aggiornaTrattativa(${idx}, 'titolo', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Importo Proposto ($):</label>
+                        <input type="number" value="${t.importo || 0}" oninput="aggiornaTrattativa(${idx}, 'importo', parseFloat(this.value)||0)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Commento / Dettagli Negoziazione:</label>
+                    <textarea placeholder="Inserire note, condizioni o esito dell'offerta..." oninput="aggiornaTrattativa(${idx}, 'commento', this.value)">${t.commento || ''}</textarea>
+                </div>
+                <div class="upload-box">
+                    <label>Allegati di Questa Trattativa:</label>
+                    <input type="file" multiple onchange="aggiungiFileTrattativa(event, ${idx})">
+                    <div class="file-list">${filesHtml}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // TESTIMONI
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
@@ -2350,14 +1300,14 @@ Verrai portato direttamente alla schermata dove potrai selezionare "Apri i PDF i
             tariffa: 0,
             indennizzo: 0,
             pagamenti: 0,
-            noteTrattativa: "",
+            procuraFiles: [],
             attiProcura: [],
             comTribunale: [],
+            istanzeFiles: [],
             perizieMediche: [],
             perizieTecniche: [],
-            trattativeFiles: [],
+            trattative: [],
             testimoni: [],
-            istanzeFiles: [],
             arringheFiles: [],
             sentenzaFiles: [],
             appuntamenti: []
