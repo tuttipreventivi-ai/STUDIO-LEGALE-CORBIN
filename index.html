@@ -614,26 +614,36 @@
         </fieldset>
     </div>
 
-    <!-- ================= COLONNA DESTRA: PLANNING APPUNTAMENTI (1900) ================= -->
+    <!-- ================= COLONNA DESTRA: AGENDA UNIFICATA PLANNING (1900) ================= -->
     <div class="western-panel">
-        <div class="panel-header">📅 PLANNING (1900)</div>
+        <div class="panel-header">📅 AGENDA STUDIO (1900)</div>
         <div style="font-size:0.8rem; font-style:italic; margin-bottom:10px; text-align:center;">
-            Agenda Appuntamenti dello Studio — Anno 1900
+            Planning Unificato Appuntamenti Studio & Clienti — Anno 1900
         </div>
 
         <div style="flex-grow:1; overflow-y:auto;" id="appointmentsContainer"></div>
 
         <div style="border-top:2px double var(--border-dark); padding-top:10px; margin-top:10px;">
             <div class="subsection-title">Nuovo Appuntamento</div>
+            
+            <div class="form-group">
+                <label>Riferimento / Cliente (Opzionale):</label>
+                <select id="appClienteSelect" style="font-size:0.85rem;">
+                    <!-- Popolato dinamicamente -->
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Data (Anno 1900):</label>
                 <input type="date" id="appData" value="1900-01-01" min="1900-01-01" max="1900-12-31">
             </div>
+            
             <div class="form-group">
                 <label>Descrizione / Oggetto:</label>
-                <input type="text" id="appNote" placeholder="Udienza o incontro in studio...">
+                <input type="text" id="appNote" placeholder="Udienza, incontro o impegno studio...">
             </div>
-            <button class="btn-action" id="btnAddApp" onclick="aggiungiAppuntamento()">Registra Appuntamento</button>
+            
+            <button class="btn-action" id="btnAddApp" onclick="aggiungiAppuntamento()">Registra in Agenda</button>
         </div>
     </div>
 
@@ -713,11 +723,16 @@
         }
     ];
 
+    const DEMO_APPUNTAMENTI_GENERALI = [
+        { id: 101, data: "1900-02-01", note: "Pagamento tassa di concessione dello Studio Legale presso il municipio" }
+    ];
+
     let clientiDB = [];
+    let appuntamentiGeneraliDB = [];
     let attivoId = 1;
 
     function caricaDaLocalStorage() {
-        const keysToTry = ['studioCorbinDB', 'studioCorbinDB_v17', 'studioCorbinDB_v16', 'studioCorbinDB_v15', 'studioCorbinDB_v14'];
+        const keysToTry = ['studioCorbinDB', 'studioCorbinDB_v19', 'studioCorbinDB_v18', 'studioCorbinDB_v17'];
         let salvati = null;
         for (let k of keysToTry) {
             salvati = localStorage.getItem(k);
@@ -728,11 +743,22 @@
             try {
                 clientiDB = JSON.parse(salvati);
             } catch(e) {
-                console.error("Errore lettura localStorage:", e);
+                console.error("Errore lettura clientiDB:", e);
                 clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
             }
         } else {
             clientiDB = JSON.parse(JSON.stringify(DEMO_DATA));
+        }
+
+        const salvatiGen = localStorage.getItem('studioCorbinAppuntamentiGenerali');
+        if (salvatiGen) {
+            try {
+                appuntamentiGeneraliDB = JSON.parse(salvatiGen);
+            } catch(e) {
+                appuntamentiGeneraliDB = JSON.parse(JSON.stringify(DEMO_APPUNTAMENTI_GENERALI));
+            }
+        } else {
+            appuntamentiGeneraliDB = JSON.parse(JSON.stringify(DEMO_APPUNTAMENTI_GENERALI));
         }
 
         const ultimoAttivo = localStorage.getItem('studioCorbinAttivoId');
@@ -747,7 +773,8 @@
 
     function salvaInLocalStorage() {
         localStorage.setItem('studioCorbinDB', JSON.stringify(clientiDB));
-        localStorage.setItem('studioCorbinDB_v17', JSON.stringify(clientiDB));
+        localStorage.setItem('studioCorbinDB_v19', JSON.stringify(clientiDB));
+        localStorage.setItem('studioCorbinAppuntamentiGenerali', JSON.stringify(appuntamentiGeneraliDB));
         if (attivoId !== null && attivoId !== undefined) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
         } else {
@@ -818,12 +845,9 @@
 
         if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati associati?`)) {
             clientiDB = clientiDB.filter(c => c.id !== id);
-            
-            // CORREZIONE BUG: Se eliminiamo il cliente attivo, seleziona il primo cliente rimanente in modo corretto
             if (attivoId === id) {
                 attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
             }
-            
             salvaInLocalStorage();
             renderClientList();
             caricaClienteInCentro();
@@ -850,11 +874,12 @@
             ['listProcuraFiles', 'listAttiProcura', 'listComTribunale', 'listIstanzeFiles', 
              'listPerizieMediche', 'listPerizieTecniche', 'trattativeContainer', 
              'witnessContainer', 'testeUdienzaContainer', 'listArringheFiles', 
-             'listSentenzaFiles', 'appointmentsContainer'].forEach(id => {
+             'listSentenzaFiles'].forEach(id => {
                 document.getElementById(id).innerHTML = '';
             });
 
             fieldset.disabled = true;
+            renderAppuntamenti();
             return;
         }
 
@@ -1132,7 +1157,7 @@
         });
     }
 
-    // TESTIMONI CON CESTINO DI ELIMINAZIONE
+    // TESTIMONI CON ELIMINAZIONE
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
@@ -1262,39 +1287,128 @@
         });
     }
 
+    // GESTIONE AGENDA UNIFICATA (GENERALI + CLIENTI)
+    function popolaSelectClienteApp() {
+        const select = document.getElementById('appClienteSelect');
+        if (!select) return;
+        
+        let html = '<option value="NONE">-- Nessun Cliente (Generale Studio) --</option>';
+        (clientiDB || []).forEach(c => {
+            const tStr = c.titolo ? c.titolo + ' ' : '';
+            const isSelected = (c.id === attivoId) ? 'selected' : '';
+            html += `<option value="${c.id}" ${isSelected}>👤 ${tStr}${c.nome} ${c.cognome}</option>`;
+        });
+        
+        select.innerHTML = html;
+    }
+
     function renderAppuntamenti() {
-        const c = getClienteAttivo();
         const container = document.getElementById('appointmentsContainer');
         container.innerHTML = '';
-        if (!c) return;
-        (c.appuntamenti || []).forEach((a, idx) => {
+
+        let lista = [];
+
+        // Appuntamenti Generali dello Studio
+        (appuntamentiGeneraliDB || []).forEach((a, idx) => {
+            lista.push({
+                tipo: 'GENERAL',
+                clientId: null,
+                idx: idx,
+                data: a.data,
+                note: a.note,
+                label: '🏛️ Generale Studio',
+                badgeStyle: 'background:var(--wood-dark); color:#fff;'
+            });
+        });
+
+        // Appuntamenti associati a ciascun cliente
+        (clientiDB || []).forEach(c => {
+            (c.appuntamenti || []).forEach((a, idx) => {
+                const tStr = c.titolo ? c.titolo + ' ' : '';
+                lista.push({
+                    tipo: 'CLIENT',
+                    clientId: c.id,
+                    idx: idx,
+                    data: a.data,
+                    note: a.note,
+                    label: `👤 ${tStr}${c.nome} ${c.cognome}`,
+                    badgeStyle: 'background:var(--gold-accent); color:#000;'
+                });
+            });
+        });
+
+        // Ordinamento per data
+        lista.sort((a, b) => a.data.localeCompare(b.data));
+
+        if (lista.length === 0) {
+            container.innerHTML = '<div style="font-style:italic; padding:10px; font-size:0.85rem; text-align:center;">Nessun appuntamento in agenda.</div>';
+            popolaSelectClienteApp();
+            return;
+        }
+
+        lista.forEach(item => {
             const card = document.createElement('div');
             card.className = 'appointment-card';
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div class="date">🗓️ ${a.data}</div>
+                    <div class="date">🗓️ ${item.data}</div>
                     <div>
-                        <button type="button" class="btn-delete-file" title="Modifica Appuntamento" onclick="modificaAppuntamento(${idx})">✏️</button>
-                        <button type="button" class="btn-delete-file" title="Elimina Appuntamento" onclick="eliminaAppuntamento(${idx})">🗑️</button>
+                        <button type="button" class="btn-delete-file" title="Modifica Appuntamento" onclick="modificaAppuntamento('${item.tipo}', ${item.clientId}, ${item.idx})">✏️</button>
+                        <button type="button" class="btn-delete-file" title="Elimina Appuntamento" onclick="eliminaAppuntamento('${item.tipo}', ${item.clientId}, ${item.idx})">🗑️</button>
                     </div>
                 </div>
-                <div class="desc">${a.note}</div>
+                <div style="margin-top:2px; margin-bottom:4px;">
+                    <span class="client-status-badge" style="${item.badgeStyle}">${item.label}</span>
+                </div>
+                <div class="desc">${item.note}</div>
             `;
             container.appendChild(card);
         });
+
+        popolaSelectClienteApp();
     }
 
-    function modificaAppuntamento(idx) {
-        const c = getClienteAttivo();
-        if (!c || !c.appuntamenti[idx]) return;
-        const app = c.appuntamenti[idx];
-        
+    function aggiungiAppuntamento() {
+        const data = document.getElementById('appData').value;
+        const note = document.getElementById('appNote').value;
+        const selectVal = document.getElementById('appClienteSelect').value;
+
+        if (!data || !note.trim()) return alert("Inserire sia la data che l'oggetto dell'appuntamento.");
+
+        if (selectVal === 'NONE') {
+            appuntamentiGeneraliDB.push({ data, note: note.trim() });
+        } else {
+            const targetClient = clientiDB.find(c => c.id == selectVal);
+            if (targetClient) {
+                if (!targetClient.appuntamenti) targetClient.appuntamenti = [];
+                targetClient.appuntamenti.push({ data, note: note.trim() });
+            } else {
+                appuntamentiGeneraliDB.push({ data, note: note.trim() });
+            }
+        }
+
+        document.getElementById('appNote').value = '';
+        salvaInLocalStorage();
+        renderAppuntamenti();
+    }
+
+    function modificaAppuntamento(tipo, clientId, idx) {
+        let app = null;
+        if (tipo === 'GENERAL') {
+            app = appuntamentiGeneraliDB[idx];
+        } else {
+            const c = clientiDB.find(client => client.id == clientId);
+            if (c && c.appuntamenti) app = c.appuntamenti[idx];
+        }
+
+        if (!app) return;
+
         const nuovaData = prompt("Modifica data appuntamento (AAAA-MM-GG, Anno 1900):", app.data);
         if (nuovaData === null) return;
-        
+
         const nuovaDesc = prompt("Modifica descrizione / oggetto dell'appuntamento:", app.note);
         if (nuovaDesc === null) return;
-        
+
         if (nuovaData.trim() && nuovaDesc.trim()) {
             app.data = nuovaData.trim();
             app.note = nuovaDesc.trim();
@@ -1303,24 +1417,18 @@
         }
     }
 
-    function eliminaAppuntamento(idx) {
-        const c = getClienteAttivo();
-        if (!c || !c.appuntamenti[idx]) return;
-        if (confirm("Vuoi davvero cancellare questo appuntamento dal planning?")) {
-            c.appuntamenti.splice(idx, 1);
-            salvaInLocalStorage();
-            renderAppuntamenti();
-        }
-    }
+    function eliminaAppuntamento(tipo, clientId, idx) {
+        if (!confirm("Vuoi davvero cancellare questo appuntamento dall'agenda dello Studio?")) return;
 
-    function aggiungiAppuntamento() {
-        const c = getClienteAttivo();
-        if (!c) return alert("Nessun cliente attivo selezionato.");
-        const data = document.getElementById('appData').value;
-        const note = document.getElementById('appNote').value;
-        if (!data || !note) return alert("Inserire data e oggetto appuntamento.");
-        c.appuntamenti.push({ data, note });
-        document.getElementById('appNote').value = '';
+        if (tipo === 'GENERAL') {
+            appuntamentiGeneraliDB.splice(idx, 1);
+        } else {
+            const c = clientiDB.find(client => client.id == clientId);
+            if (c && c.appuntamenti) {
+                c.appuntamenti.splice(idx, 1);
+            }
+        }
+
         salvaInLocalStorage();
         renderAppuntamenti();
     }
