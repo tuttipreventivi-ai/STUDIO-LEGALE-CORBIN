@@ -476,7 +476,7 @@
                 </div>
             </div>
 
-            <!-- ANAGRAFICA CLIENTE CON ETICHETTA MISSIVA PULITA -->
+            <!-- ANAGRAFICA CLIENTE -->
             <div class="grid-4">
                 <div class="form-group">
                     <label>Titolo:</label>
@@ -717,7 +717,13 @@
     let attivoId = 1;
 
     function caricaDaLocalStorage() {
-        const salvati = localStorage.getItem('studioCorbinDB_v17');
+        const keysToTry = ['studioCorbinDB', 'studioCorbinDB_v17', 'studioCorbinDB_v16', 'studioCorbinDB_v15', 'studioCorbinDB_v14'];
+        let salvati = null;
+        for (let k of keysToTry) {
+            salvati = localStorage.getItem(k);
+            if (salvati) break;
+        }
+
         if (salvati) {
             try {
                 clientiDB = JSON.parse(salvati);
@@ -733,23 +739,25 @@
         if (ultimoAttivo && clientiDB.some(c => c.id == ultimoAttivo)) {
             attivoId = parseInt(ultimoAttivo);
         } else if (clientiDB.length > 0) {
-            attivoId = clientiDB.id;
+            attivoId = clientiDB[0].id;
         } else {
             attivoId = null;
         }
     }
 
     function salvaInLocalStorage() {
+        localStorage.setItem('studioCorbinDB', JSON.stringify(clientiDB));
         localStorage.setItem('studioCorbinDB_v17', JSON.stringify(clientiDB));
-        if (attivoId !== null) {
+        if (attivoId !== null && attivoId !== undefined) {
             localStorage.setItem('studioCorbinAttivoId', attivoId.toString());
+        } else {
+            localStorage.removeItem('studioCorbinAttivoId');
         }
     }
 
     function ripristinaDatiPredefiniti() {
         if (confirm("Attenzione: questo ripristinerà i dati iniziali di esempio cancellando le modifiche salvate nel browser. Continuare?")) {
-            localStorage.removeItem('studioCorbinDB_v17');
-            localStorage.removeItem('studioCorbinAttivoId');
+            localStorage.clear();
             caricaDaLocalStorage();
             renderClientList();
             caricaClienteInCentro();
@@ -810,9 +818,12 @@
 
         if (confirm(`Sei sicuro di voler eliminare definitivamente la pratica di ${target.nome} ${target.cognome} e tutti i dati associati?`)) {
             clientiDB = clientiDB.filter(c => c.id !== id);
+            
+            // CORREZIONE BUG: Se eliminiamo il cliente attivo, seleziona il primo cliente rimanente in modo corretto
             if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB.id : null;
+                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
             }
+            
             salvaInLocalStorage();
             renderClientList();
             caricaClienteInCentro();
@@ -1121,7 +1132,7 @@
         });
     }
 
-    // TESTIMONI CON ETICHETTA MISSIVA PULITA ED EDITABILE
+    // TESTIMONI CON CESTINO DI ELIMINAZIONE
     function nuovoTestimone() {
         const c = getClienteAttivo();
         if (!c) return;
@@ -1138,6 +1149,17 @@
         c.testimoni[witnessIdx][campo] = valore;
         salvaInLocalStorage();
         renderTesteUdienza();
+    }
+
+    function eliminaTestimone(witnessIdx) {
+        const c = getClienteAttivo();
+        if (!c || !c.testimoni || !c.testimoni[witnessIdx]) return;
+        if (confirm("Cancellare questo testimone dal registro processuale?")) {
+            c.testimoni.splice(witnessIdx, 1);
+            salvaInLocalStorage();
+            renderTestimoni();
+            renderTesteUdienza();
+        }
     }
 
     function renderTestimoni() {
@@ -1167,6 +1189,10 @@
             });
 
             div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <strong style="color:var(--wood-dark); font-size:0.85rem;">Testimone #${idx + 1}</strong>
+                    <button type="button" class="btn-delete-file" title="Elimina Testimone" onclick="eliminaTestimone(${idx})">🗑️</button>
+                </div>
                 <div class="grid-4">
                     <div class="form-group" style="margin-bottom:0;">
                         <label>Titolo:</label>
