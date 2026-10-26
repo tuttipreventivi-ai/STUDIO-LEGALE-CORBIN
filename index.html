@@ -381,6 +381,7 @@
                 <option value="IN LAVORAZIONE">IN LAVORAZIONE</option>
                 <option value="SOSPESA">SOSPESA</option>
                 <option value="REVISIONE">REVISIONE</option>
+                <option value="PATTEGGIAMENTO">PATTEGGIAMENTO</option>
                 <option value="CHIUSA VINTA">CHIUSA VINTA</option>
                 <option value="CHIUSA PERSA">CHIUSA PERSA</option>
             </select>
@@ -668,7 +669,7 @@
             clientiDB = clientiDB.filter(c => c.id !== id);
             
             if (attivoId === id) {
-                attivoId = clientiDB.length > 0 ? clientiDB.id : null;
+                attivoId = clientiDB.length > 0 ? clientiDB[0].id : null;
             }
             
             renderClientList();
